@@ -14,6 +14,10 @@ export interface BaseOpts<A extends Acts> {
 }
 
 export type Replacer = [RegExp | string, string];
+export type ReplacerMatch = RegExp | string
+export type ReplacerValue = string | {
+	(substr: string, ...args: any[]): string
+};
 
 export interface StringOpts<A extends Acts> extends BaseOpts<A> {
 	script: string
