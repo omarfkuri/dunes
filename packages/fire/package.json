@@ -1,6 +1,6 @@
 {
   "name": "@dunes/fire",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -20,8 +20,8 @@
     "build": "rm -rf lib && tsc && npm version patch"
   },
   "dependencies": {
+    "@dunes/tools": "^0.9.60",
     "firebase": "^10.4.0",
-    "firebase-admin": "^11.11.0",
-    "@dunes/tools": "^0.9.59"
+    "firebase-admin": "^11.11.0"
   }
 }
