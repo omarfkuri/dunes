@@ -21,7 +21,7 @@ try {
 			[/div/g, "span"]
 		],
 		replaceAfter: [
-			[/div/g, "span"]
+			[/div/g, e => e]
 		],
 		treeshake: false,
 
