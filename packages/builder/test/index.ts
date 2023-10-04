@@ -14,6 +14,7 @@ const builder = new Builder({
 				pragma: "Elem.create",
 				useSpread: true,
 			},
+			keeps: new Set()
 		})],
 		treeshake: true
 	}),
