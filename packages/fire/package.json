@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "firebase": "^10.4.0",
-    "firebase-admin": "^11.11.0"
+    "firebase-admin": "^11.11.0",
+    "@dunes/tools": "^0.9.59"
   }
 }

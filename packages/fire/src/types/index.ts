@@ -1,4 +1,5 @@
 import type { firestore } from "firebase-admin";
+import "@dunes/tools";
 
 /**
  * Adds properties present in every Firebase document
@@ -19,13 +20,6 @@ export type Doc<T> = TimeDoc<T> & {
  * Function of array of documents
  * */
 export type DocFn<T> = ArrayFn<Doc<T>>
-
-/**
- * Function of array
- * */
-export type ArrayFn<T> = {
-	(array: T[]): void
-}
 
 /**
  * Basic Response Object
