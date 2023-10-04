@@ -1,6 +1,6 @@
-import { Elem } from "@dunes/tag";
-import { Redirect, RouterConfig, ViewConst, ViewRevealType } from "../types";
-import { View } from "./View";
+import { Elem, type Template } from "@dunes/tag";
+import type { Redirect, RouterConfig, ViewConst, ViewRevealType } from "../types";
+import type { View } from "./View";
 
 export class Router {
 
@@ -71,15 +71,12 @@ export class Router {
 	}
 
 	async #reveal(view: View, url: URL, type: ViewRevealType) {
-		const elRes = await view.content();
-		if (!Elem.isElement(elRes)) {
-			return await this.go(elRes);
-		}
 		const willRes = await view.willShow(type);
 		if (willRes) {
 			return await this.go(willRes);
 		}
-		elRes.replace(this.root);
+
+		Elem.create(view.content as Template, {view}).replace(this.root);
 		history.pushState("", "", url);
 		this.latestURL = url;
 

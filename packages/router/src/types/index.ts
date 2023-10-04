@@ -1,6 +1,7 @@
 
 import "@dunes/tools"
 import type { View } from "../class/View"
+import type { Comp } from "@dunes/tag"
 
 export interface Director {
 	(url: URL): Prom<void>
@@ -25,7 +26,7 @@ export interface Redirect {
 
 export type ViewEventRes = Prom<Redirect | void>;
 
-export type ViewProduction = Prom<JSX.Element | Redirect>
+export type ViewProduction<Props extends obj> = Comp<Props>
 
 export interface ViewConst {
 	new(): View

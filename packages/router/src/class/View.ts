@@ -1,8 +1,9 @@
-import { ViewEventRes, ViewProduction, ViewRevealType } from "../types";
+import { Comp } from "@dunes/tag";
+import { ViewEventRes, ViewRevealType } from "../types";
 
 
-export abstract class View {
-	abstract content(): ViewProduction
+export abstract class View<Props extends obj = {}> {
+	abstract content({view}: {view: View<Props>}, comp: Comp<Props>): JSX.Element
 
 	willShow(type: ViewRevealType): ViewEventRes {}
 	hasShown(type: ViewRevealType): ViewEventRes {}
