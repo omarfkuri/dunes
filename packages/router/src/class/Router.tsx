@@ -9,7 +9,24 @@ export class Router {
 
 	#views = new Map<string, ViewConst>();
 	get root(): HTMLElement {
-		return document.querySelector(this.config.root)!;
+		const root = document.querySelector<HTMLElement>(
+			this.config.root
+		);
+		if (!root) {
+			throw `${this.config.root} was not found`
+		}
+		return root;
+	}
+	get link(): HTMLLinkElement {
+		const link = document.querySelector<HTMLLinkElement>(
+			this.config.rootStyles
+		);
+		if (!link) {
+			throw `${this.config.rootStyles} was not found`
+		}
+		if (link.tagName !== "LINK")
+			throw `${this.config.rootStyles} is not a link`
+		return link;
 	}
 
 	constructor(public config: RouterConfig) {}
@@ -76,6 +93,10 @@ export class Router {
 			return await this.go(willRes);
 		}
 
+		const linkClone = this.link.cloneNode(true) as HTMLLinkElement;
+		linkClone.href = view.stylesRef();
+		this.link.replaceWith(linkClone);
+
 		Elem.create(view.content as Template, {view}).replace(this.root);
 		history.pushState("", "", url);
 		this.latestURL = url;
@@ -87,23 +108,24 @@ export class Router {
 		this.latestView = view;
 	}
 
-	async go(redirect: Redirect): Promise<void>
-	async go(to: string, w?: string): Promise<void>
-	async go(red: string | Redirect, w?: string): Promise<void> {
+	go(redirect: Redirect): Promise<void>
+	go(to: string, w?: string): Promise<void>
+	go(red: string | Redirect, w?: string): Promise<void> {
 		if (typeof red === "object") {
-			await this.render(red.to)
+			return this.render(red.to)
 		}
 		else {
-			await this.render(red)
+			return this.render(red)
 		}
 	}
 
 	async #load(pathname: string): Promise<ViewConst> {
-		const path = `${this.config.views.folder}${pathname}.js`;
-		const {default: Vc} = await import(path);
+		const path = `${this.config.views.folder}/js${pathname}.js`;
+		const {default: Vc} = (await import(path)) as {default: ViewConst};
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
 		}
+		Vc.stylesRef = `${this.config.views.folder}/css${pathname}.css`;
 		return Vc;
 	}
 }

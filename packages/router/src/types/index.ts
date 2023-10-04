@@ -17,6 +17,7 @@ export interface RouterConfig {
 		error: string
 	}
 	root: string
+	rootStyles: string
 }
 
 export interface Redirect {
@@ -30,6 +31,7 @@ export type ViewProduction<Props extends obj> = Comp<Props>
 
 export interface ViewConst {
 	new(): View
+	stylesRef: string
 }
 
 export type ViewRevealType = "load" | "reload"

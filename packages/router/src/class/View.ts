@@ -3,6 +3,12 @@ import { ViewEventRes, ViewRevealType } from "../types";
 
 
 export abstract class View {
+
+	static stylesRef: string
+	stylesRef() {
+		return (this.constructor as typeof View).stylesRef
+	}
+
 	abstract content({view}: {view: View}, comp: Comp<{}>): JSX.Element
 
 	willShow(type: ViewRevealType): ViewEventRes {}
