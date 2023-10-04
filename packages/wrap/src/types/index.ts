@@ -13,7 +13,7 @@ export interface BaseOpts<A extends Acts> {
 	replaceAfter?: Replacer[]
 }
 
-export type Replacer = [RegExp | string, string];
+export type Replacer = [ReplacerMatch, ReplacerValue];
 export type ReplacerMatch = RegExp | string
 export type ReplacerValue = string | {
 	(substr: string, ...args: any[]): string

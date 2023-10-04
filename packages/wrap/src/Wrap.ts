@@ -40,7 +40,7 @@ export class Wrap {
 
 		if (options.replaceAfter) {
 			for (const [m, t] of options.replaceAfter) {
-				script = script.replace(m, t);
+				script = script.replace(m, t as string);
 			}
 		}
 
@@ -81,7 +81,7 @@ export class Wrap {
 				name: "replaceBefore",
 				async transform(source) {
 					for (const [m, t] of opt.replaceBefore!) {
-						source = source.replace(m, t);
+						source = source.replace(m, t as string);
 					}
 					return source;
 				}
