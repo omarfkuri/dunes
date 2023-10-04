@@ -9,6 +9,8 @@ export abstract class View {
 		return (this.constructor as typeof View).stylesRef
 	}
 
+	comp?: Comp<{}>
+
 	abstract content(this: Comp<{}>, {view}: {view: View}, comp: Comp<{}>): JSX.Element
 
 	willShow(type: ViewRevealType): ViewEventRes {}

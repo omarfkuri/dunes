@@ -1,4 +1,4 @@
-import { Elem, type Template } from "@dunes/tag";
+import { type Comp, Elem, type Template } from "@dunes/tag";
 import type { Redirect, RouterConfig, ViewConst, ViewRevealType } from "../types";
 import type { View } from "./View";
 
@@ -97,7 +97,10 @@ export class Router {
 		linkClone.href = view.stylesRef();
 		this.link.replaceWith(linkClone);
 
-		Elem.create(view.content as Template, {view}).replace(this.root);
+		const comp = Elem.create(view.content as Template, {view});
+		view.comp = comp as Comp<any>;
+		
+		comp.replace(this.root);
 		history.pushState("", "", url);
 		this.latestURL = url;
 
