@@ -1,6 +1,6 @@
 {
   "name": "@dunes/wrap",
-  "version": "0.9.57",
+  "version": "0.9.58",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -26,8 +26,8 @@
     "@babel/parser": "^7.23.0",
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.0",
-    "@dunes/sys": "^0.9.57",
-    "@dunes/tools": "^0.9.57",
+    "@dunes/sys": "^0.9.58",
+    "@dunes/tools": "^0.9.58",
     "@rollup/plugin-virtual": "^3.0.1",
     "@types/babel__core": "^7.20.2",
     "rollup": "^3.29.4",
