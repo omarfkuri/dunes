@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "version": "lerna version --conventional-commits --yes",
+    "vers": "lerna version",
     "pub": "lerna publish",
     "create": "node scripts/create-pack.js"
   },
