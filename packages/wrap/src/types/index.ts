@@ -59,6 +59,8 @@ export interface BabelOptions {
 	jsx?: JSXOptions
 	id: string
 	ts?: {[key: string]: any}
+	styles: Map<string, string>
+	keeps: Set<string>
 }
 
 export interface JSXOptions {
