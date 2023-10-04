@@ -1,0 +1,22 @@
+{
+  "name": "@dunes/tools",
+  "version": "0.9.56",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "typings": "./lib/index.d.ts",
+  "scripts": {
+    "build": "rm -rf lib && tsc && npm version patch"
+  },
+  "keywords": [
+    "javascript",
+    "tools",
+    "typescript"
+  ],
+  "author": "Omar <omarfkuri@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/omarfkuri/dunes.git"
+  }
+}

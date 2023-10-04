@@ -1,0 +1,30 @@
+{
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+  },
+  "compilerOptions": {
+
+    "lib": [ "ESNext" ],
+
+    "target": "ES2022", 
+    "module": "ES2022", 
+    "moduleResolution": "node", 
+    "esModuleInterop": true,  
+    "forceConsistentCasingInFileNames": true,  
+    "strict": true,  
+    "noImplicitAny": true,  
+    "strictNullChecks": true,  
+    "strictFunctionTypes": true,  
+    "strictBindCallApply": true,  
+    "strictPropertyInitialization": true,  
+    "noImplicitThis": true,  
+    "useUnknownInCatchVariables": true,  
+    "alwaysStrict": true,  
+    "noImplicitReturns": true,  
+    "noFallthroughCasesInSwitch": true,  
+    "noUncheckedIndexedAccess": true,  
+    "noImplicitOverride": true,  
+    "skipLibCheck": true,
+  }
+}

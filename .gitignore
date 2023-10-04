@@ -1,0 +1,11 @@
+node_modules
+packages/**/lib
+packages/**/rollup.config.js
+
+.DS_Store
+.monitor
+
+**.sublime-workspace
+
+package-lock.json
+yarn.lock
