@@ -5,20 +5,20 @@ import {
 	getFunctions,
 	httpsCallable,
 } from "firebase/functions";
+import { AbstractFire } from "./AbstractFire";
 
-export class FireFunctions {
+export class FireFunctions extends AbstractFire<Functions> {
 
-	readonly functions: Functions;
 	constructor(app: FirebaseApp) {
-		this.functions = getFunctions(app);
+		super(getFunctions(app))
 	}
 
 	getFn<N, R>(name: string): HttpsCallable<N, R> {
-		return httpsCallable<N, R>(this.functions, name);
+		return httpsCallable<N, R>(this.self, name);
 	}
 
 	async function<N, R>(name: string, obj: N): Promise<R> {
-		const { data } = await httpsCallable<N, R>(this.functions, name)(obj);
+		const { data } = await httpsCallable<N, R>(this.self, name)(obj);
 		return data;
 	}
 }

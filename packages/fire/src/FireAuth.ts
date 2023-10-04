@@ -1,35 +1,22 @@
 import { type FirebaseApp } from "firebase/app";
 import {
-	type NextOrObserver,
 	type Auth, 
-	type User, 
-
 	getAuth,
-	onAuthStateChanged,
 	signInWithEmailAndPassword,
-	signOut,
 } from "firebase/auth";
+import { AbstractFire } from "./AbstractFire";
 
-export class FireAuth {
+export class FireAuth extends AbstractFire<Auth> {
 
-	readonly auth: Auth;
 	constructor(app: FirebaseApp) {
-		this.auth = getAuth(app);
-	}
-
-	listen(fn: NextOrObserver<User>) {
-		return onAuthStateChanged(this.auth, fn);
-	}
-
-	logout() {
-		return signOut(this.auth);
+		super(getAuth(app))
 	}
 
 	login(email: string, password: string) {
-		return signInWithEmailAndPassword(this.auth, email, password);
+		return signInWithEmailAndPassword(this.self, email, password);
 	}
 
 	signup(email: string, password: string) {
-		return signInWithEmailAndPassword(this.auth, email, password);
+		return signInWithEmailAndPassword(this.self, email, password);
 	}
 }

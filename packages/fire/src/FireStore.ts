@@ -11,12 +11,12 @@ import {
 	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, 
 } from "firebase/firestore";
 import type { Doc, DocFn } from "./types";
+import { AbstractFire } from "./AbstractFire";
 
-export class FireStore {
+export class FireStore extends AbstractFire<Firestore> {
 
-	readonly store: Firestore;
 	constructor(app: FirebaseApp) {
-		this.store = getFirestore(app);
+		super(getFirestore(app))
 	}
 
 	onDocs<T>(colRef: Query<T> | CollectionReference<T>, docFn: DocFn<T>) {
@@ -31,15 +31,15 @@ export class FireStore {
 	}
 
 	doc<T>(from: string, docID: string): DocumentReference<T> {
-		return doc(this.store, from, docID) as DocumentReference<T>;
+		return doc(this.self, from, docID) as DocumentReference<T>;
 	}
 
 	col<T>(from: string): CollectionReference<T> {
-		return collection(this.store, from) as CollectionReference<T>;
+		return collection(this.self, from) as CollectionReference<T>;
 	}
 
 	colWhere<T>(from: string, ...queries: QueryConstraint[]): Query<T> {
-		return query(collection(this.store, from), ...queries) as Query<T>;
+		return query(collection(this.self, from), ...queries) as Query<T>;
 	}
 
 	async getDoc<T>(docRef: DocumentReference<T>): Promise<Doc<T> | null> {
