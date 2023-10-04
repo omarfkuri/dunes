@@ -8,7 +8,7 @@ import {
 
 	collection, doc, getDoc,
 	getDocs, getFirestore,
-	onSnapshot, query, where, 
+	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, 
 } from "firebase/firestore";
 import type { Doc, DocFn } from "./types";
 
@@ -60,5 +60,13 @@ export class FireStore {
 		}
 
 		return p;
+	}
+
+	setDoc<T>(docRef: DocumentReference<T>, doc: T): Promise<void> {
+		return setDoc(docRef, doc);
+	}
+
+	updateDoc<T>(docRef: DocumentReference<T>, doc: Partial<T>): Promise<void> {
+		return updateDoc(docRef, doc);
 	}
 }
