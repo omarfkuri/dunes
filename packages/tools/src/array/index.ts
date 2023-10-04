@@ -1,4 +1,13 @@
+declare global {
 
+	type Many<T> = T | T[]
+
+	type ArrayFn<T> = {
+		(array: T[]): void
+	}
+
+
+}
 /** Extract item at `n` from `arr`*/
 export function extract<T>(arr: T[], n: number): T | undefined {
 

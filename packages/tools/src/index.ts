@@ -23,8 +23,6 @@ declare global {
 
 	type Prom<T> = T | Promise<T>;
 
-	type Many<T> = T | T[]
-
 }
 
 export {
