@@ -1,8 +1,8 @@
 import { Comp, Elem } from "./class/Base";
 import { Content } from "./class/Content";
-import { Elements } from "./types";
 
-export {Comp, Elem, Elements}
+export {Comp, Elem}
+export * from "./types";
 
 declare global {
 
