@@ -8,7 +8,7 @@ import {
 
 	collection, doc, getDoc,
 	getDocs, getFirestore,
-	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, Timestamp, 
+	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, Timestamp, addDoc, 
 } from "firebase/firestore";
 import type { Doc, DocFn } from "./types";
 import { AbstractFire } from "./AbstractFire";
@@ -68,6 +68,10 @@ export class FireStore extends AbstractFire<Firestore> {
 
 	setDoc<T>(docRef: DocumentReference<T>, doc: Omit<Doc<T>, "id">): Promise<void> {
 		return setDoc(docRef, doc as Doc<T>);
+	}
+
+	addDoc<T>(colRef: CollectionReference<T>, doc: Omit<Doc<T>, "id">): Promise<DocumentReference<T>> {
+		return addDoc(colRef, doc as Doc<T>);
 	}
 
 	updateDoc<T>(docRef: DocumentReference<T>, doc: Omit<Partial<Doc<T>>, "id">): Promise<void> {
