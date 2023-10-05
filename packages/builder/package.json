@@ -1,6 +1,6 @@
 {
   "name": "@dunes/builder",
-  "version": "0.9.62",
+  "version": "0.9.63",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@dunes/sys": "^0.9.58",
-    "@dunes/wrap": "^0.9.63",
+    "@dunes/wrap": "^0.9.67",
     "@types/express": "^4.17.18",
     "express": "^4.18.2"
   }
