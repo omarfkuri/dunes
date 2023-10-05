@@ -5,6 +5,7 @@ import type { View } from "./View";
 export class Router {
 
 	latestURL?: URL
+	latestReq?: URL
 	latestView?: View
 
 	#views = new Map<string, ViewConst>();
@@ -46,10 +47,14 @@ export class Router {
 		if (!this.latestURL) {
 			throw "Cannot reload because no URL"
 		}
-		await this.#reveal(this.latestView, this.latestURL, "reload")
+		if (!this.latestReq) {
+			throw "Cannot reload because no Req URL"
+		}
+		await this.#reveal(this.latestView, this.latestURL, this.latestReq, "reload")
 	}
 
 	async render(href: string) {
+		this.latestReq = new URL(href);
 		const url = new URL(href);
 		await this.config.direct(url);
 
@@ -84,10 +89,10 @@ export class Router {
 		if (desRes) {
 			return await this.go(desRes);
 		}
-		await this.#reveal(view, url, "load");
+		await this.#reveal(view, url, this.latestReq, "load");
 	}
 
-	async #reveal(view: View, url: URL, type: ViewRevealType) {
+	async #reveal(view: View, url: URL, req: URL, type: ViewRevealType) {
 		const willRes = await view.willShow(type);
 		if (willRes) {
 			return await this.go(willRes);
@@ -101,7 +106,7 @@ export class Router {
 		view.comp = comp as Comp<any>;
 		
 		comp.replace(this.root);
-		history.pushState("", "", url);
+		history.pushState("", "", req);
 		this.latestURL = url;
 
 		const hasRes = await view.hasShown(type);
