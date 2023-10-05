@@ -1,0 +1,18 @@
+{
+	"extends": "../../tsconfig.json",
+	"exclude": ["test"],
+
+	"compilerOptions": {
+		"outDir": "lib",
+		"declaration": true,
+
+		"module": "AMD",
+
+		"lib": [
+			"ES2020", "DOM", "DOM.Iterable"
+		],
+
+		"jsx": "react",
+		"jsxFactory": "Elem.create"
+	}
+}

@@ -5,7 +5,7 @@
   },
   "compilerOptions": {
 
-    "lib": [ "ESNext" ],
+    "lib": [ "ES2022" ],
 
     "target": "ES2022", 
     "module": "ES2022", 
