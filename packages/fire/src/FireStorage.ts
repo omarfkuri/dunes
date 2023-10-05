@@ -59,7 +59,7 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 	/**
 	 * Upload multiple files
 	 * */
-	uploadAll(files: File[], path: string, opts: {
+	uploadAll(files: FileList, path: string, opts: {
 		onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}
 		onFileChange?: {(file: File): void}
 	} = {}): Promise<{
