@@ -8,7 +8,7 @@ import {
 
 	collection, doc, getDoc,
 	getDocs, getFirestore,
-	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, 
+	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, Timestamp, 
 } from "firebase/firestore";
 import type { Doc, DocFn } from "./types";
 import { AbstractFire } from "./AbstractFire";
@@ -17,6 +17,10 @@ export class FireStore extends AbstractFire<Firestore> {
 
 	constructor(app: FirebaseApp) {
 		super(getFirestore(app))
+	}
+
+	stamp(): Timestamp {
+		return Timestamp.now();
 	}
 
 	onDocs<T>(colRef: Query<T> | CollectionReference<T>, docFn: DocFn<T>) {
