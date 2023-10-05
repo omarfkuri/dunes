@@ -367,27 +367,29 @@ export class Builder<const A extends Acts> {
 						for (const name in promises) {
 							const [ty, h] = promises[name] as ["single" | "sub-multi", Handler<A>];
 							if (ty === "single") {
-								this.#buildSingle(h as SingleHandler<A>)
+								await this.#buildSingle(h as SingleHandler<A>)
 							}
 							else {
-								this.#buildSubMulti(h as MultiHandler<A>, name)
+								await this.#buildSubMulti(h as MultiHandler<A>, name)
 							}
 						}
+						const took = Date.now() - start;
 						await options.onActionSuccess?.({
 							type: "dependency",
 							parents,
 							filename: fn,
 							style: styleChange,
-							took: Date.now() - start
+							took,
 						});
 					}
 					catch (error) {
+						const took = Date.now() - start;
 						await options.onActionError?.({
 							type: "dependency",
 							parents,
 							filename: fn,
 							style: styleChange,
-							took: Date.now() - start,
+							took,
 							error
 						});
 					}

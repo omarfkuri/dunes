@@ -85,7 +85,7 @@ builder.watch({
 
 	onActionStart(e) {
 	  if (e.type === "dependency") {
-	  	console.log(`Rebuilding ${e.parents}`)
+	  	console.log(`Rebuilding ${e.parents} for ${e.filename}`)
 	  }
 	  else {
 	  	console.log(`Rebuilding ${e.filename}`)
