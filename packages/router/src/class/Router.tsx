@@ -54,9 +54,10 @@ export class Router {
 	}
 
 	async render(href: string) {
-		this.latestReq = new URL(href);
+		const req = new URL(href);
 		const url = new URL(href);
-		await this.config.direct(url);
+		await this.config.direct(url, req);
+		this.latestReq = req;
 
 		if (
 			this.latestURL?.pathname === url.pathname || 
@@ -89,7 +90,7 @@ export class Router {
 		if (desRes) {
 			return await this.go(desRes);
 		}
-		await this.#reveal(view, url, this.latestReq, "load");
+		await this.#reveal(view, url, req, "load");
 	}
 
 	async #reveal(view: View, url: URL, req: URL, type: ViewRevealType) {

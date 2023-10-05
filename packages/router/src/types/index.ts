@@ -4,7 +4,7 @@ import type { View } from "../class/View"
 import type { Comp } from "@dunes/tag"
 
 export interface Director {
-	(url: URL): Prom<void>
+	(url: URL, req: URL): Prom<void>
 }
 
 export interface RouterConfig {
