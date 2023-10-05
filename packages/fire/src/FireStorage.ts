@@ -38,6 +38,9 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 		return ref(this.self, `https://firebasestorage.googleapis.com/b/bucket/o/${encodeURI(path)}`);
 	}
 
+	/**
+	 * Upload a file
+	 * */
 	upload(file: File, stRef: StorageReference, onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}): Promise<UploadTaskSnapshot> {	
 		return new Promise<UploadTaskSnapshot>((res, rej) => {
 			const uploadTask = uploadBytesResumable(stRef, file);
@@ -53,6 +56,10 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 		})
 	}
 
+
+	/**
+	 * Upload multiple files
+	 * */
 	async *uploadAll(files: File[], stRef: StorageReference, onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}): AsyncIterator<UploadTaskSnapshot> {
 		for (const file of files) {
 			yield await this.upload(file, stRef, onChange);
