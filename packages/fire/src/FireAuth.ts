@@ -3,13 +3,14 @@ import {
 	type Auth, 
 	initializeAuth,
 	signInWithEmailAndPassword,
+	indexedDBLocalPersistence
 } from "firebase/auth";
 import { AbstractFire } from "./AbstractFire";
 
 export class FireAuth extends AbstractFire<Auth> {
 
 	constructor(app: FirebaseApp) {
-		super(initializeAuth(app))
+		super(initializeAuth(app, {persistence: indexedDBLocalPersistence}))
 	}
 
 	login(email: string, password: string) {
