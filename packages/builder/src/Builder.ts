@@ -238,7 +238,7 @@ export class Builder<const A extends Acts> {
 		this.#working = false;
 	}
 
-	async watch(options: WatchConfig = {}): Promise<void> {
+	watch(options: WatchConfig = {}): void {
 		watch(this.config.src, {recursive: true},
 			async (ch, fn) => {
 				if (this.#working || ch === "rename" || !fn) {
