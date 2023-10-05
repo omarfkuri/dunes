@@ -697,7 +697,7 @@ declare global {
       minLength?: num
       maxLength?: num
       min?: num
-      multiple?: string
+      multiple?: bool
       name?: string
       pattern?: string
       placeholder?: string
@@ -917,7 +917,7 @@ declare global {
       item?: string
       labels?: string
       length?: string
-      multiple?: string
+      multiple?: bool
       name?: string
       namedItem?: string
       options?: string
