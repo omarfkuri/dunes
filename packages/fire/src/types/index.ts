@@ -1,12 +1,28 @@
-import type { firestore } from "firebase-admin";
 import "@dunes/tools";
 
 /**
- * Adds properties present in every Firebase document
+ * Adds time properties present in every Firebase document
+ * For things with firebase functions
  * */
 export type TimeDoc<T> = T & {
-	createdAt: firestore.Timestamp
-	updatedAt: firestore.Timestamp
+	createdAt: import("firebase/firestore").Timestamp
+	updatedAt: import("firebase/firestore").Timestamp
+}
+
+/**
+ * Adds time properties present in every Firebase document
+ * */
+export type AdminTimeDoc<T> = T & {
+	createdAt: import("firebase-admin").firestore.Timestamp
+	updatedAt: import("firebase-admin").firestore.Timestamp
+}
+
+/**
+ * Adds properties present in every Firebase document with id
+ * For things with firebase functions
+ * */
+export type AdminDoc<T> = AdminTimeDoc<T> & {
+	id: string
 }
 
 /**

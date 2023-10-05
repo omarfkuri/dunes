@@ -62,11 +62,11 @@ export class FireStore extends AbstractFire<Firestore> {
 		return p;
 	}
 
-	setDoc<T>(docRef: DocumentReference<T>, doc: T): Promise<void> {
+	setDoc<T>(docRef: DocumentReference<T>, doc: Doc<T>): Promise<void> {
 		return setDoc(docRef, doc);
 	}
 
-	updateDoc<T>(docRef: DocumentReference<T>, doc: Partial<T>): Promise<void> {
+	updateDoc<T>(docRef: DocumentReference<T>, doc: Partial<Doc<T>>): Promise<void> {
 		return updateDoc(docRef, doc);
 	}
 }
