@@ -6,7 +6,7 @@ import {
 	
 	getStorage,
 	deleteObject,
-	ref, uploadBytesResumable, getDownloadURL, UploadTaskSnapshot, listAll, list, ListOptions,
+	ref, uploadBytesResumable, getDownloadURL, UploadTaskSnapshot, listAll, list, ListOptions, StorageError,
 } from "firebase/storage";
 
 
@@ -60,10 +60,25 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 	/**
 	 * Upload multiple files
 	 * */
-	async *uploadAll(files: File[], stRef: StorageReference, onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}): AsyncIterator<UploadTaskSnapshot> {
-		for (const file of files) {
-			yield await this.upload(file, stRef, onChange);
-		}
+	uploadAll(files: File[], stRef: StorageReference, onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}): Promise<{
+		tasks: UploadTaskSnapshot[]
+		errors: StorageError[]
+	}> {
+		return new Promise(async (res, rej) => {
+			const tasks: UploadTaskSnapshot[] = [];
+			const errors: StorageError[] = [];
+			for (const file of files) {
+				try {
+					const res = await this.upload(file, stRef, onChange);
+					tasks.push(res);
+				}
+				catch(error) {
+					errors.push(error as StorageError);
+				}
+				tasks.push();
+			}
+			res({tasks, errors})
+		})
 	}
 
 	/**
