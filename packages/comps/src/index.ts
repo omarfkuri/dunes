@@ -5,8 +5,8 @@
 
 import "@dunes/tools";
 
-export { Form } from "./comp/Form"
-export { Classed } from "./factory/Classed"
+export * from "./comp/Form"
+export * from "./factory/Classed"
 
 declare global {
 	
