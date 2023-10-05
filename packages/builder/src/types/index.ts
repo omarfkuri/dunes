@@ -2,7 +2,7 @@
 import type { Request, Response } from "express";
 import type { Acts, ActsResult, Opts, Act } from "@dunes/wrap";
 
-export type ModuleType = "single" | "sub-multi"
+export type ModuleType = "single" | "sub-multi" | "string"
 
 export type WrapOpts<A extends Acts> = Omit<Opts<A>, "script" | "source">;
 export type HanlderWrapOpts<A extends Acts> = Omit<WrapOpts<A>, "plugs">;
@@ -10,7 +10,6 @@ export type HanlderWrapOpts<A extends Acts> = Omit<WrapOpts<A>, "plugs">;
 export interface BuilderModule {
 	type: ModuleType
 	globalCSS: string | null
-	source: string
 	watch: string[]
 }
 
@@ -29,6 +28,7 @@ export interface Config<A extends Acts> {
 
 export interface CssTrf {
 	match: RegExp
+	ext: string
 	transform(source: string): Promise<string>
 }
 
@@ -39,32 +39,51 @@ export interface ServerConfig {
 }
 
 export interface BuildConfig {
-	clean?: number
+	clean?: boolean
+
+	onBuildStart?: {
+		(): Prom<void>
+	}
+
+	onBuildFinish?: {
+		(took: number): Prom<void>
+	}
 }
 
 export interface WatchConfig {
 	onActionStart?: {
-		(event: WatchEvent): Prom<any>
+		(event: WatchEvent): Prom<void>
 	}
 	onActionSuccess?: {
-		(event: TimedWatchEvent): Prom<any>
+		(event: TimedWatchEvent): Prom<void>
 	}
 	onActionError?: {
-		(event: WatchEventError): Prom<any>
+		(event: WatchEventError): Prom<void>
 	}
 }
 
-export interface WatchEvent {
+export type WatchEvent = OtherWatchEvent | DependencyEvent;
+
+export interface BaseWatchEvent {
 	filename: string
 	style: boolean
+	type: ModuleType | "dependency"
+}
+
+export interface OtherWatchEvent extends BaseWatchEvent {
 	type: ModuleType
 }
 
-export interface TimedWatchEvent extends WatchEvent {
+export interface DependencyEvent extends BaseWatchEvent {
+	parents: string[]
+	type: "dependency"
+}
+
+export type TimedWatchEvent = WatchEvent & {
 	took: number
 }
 
-export interface WatchEventError extends TimedWatchEvent {
+export type WatchEventError = TimedWatchEvent & {
 	error: unknown
 }
 
@@ -100,7 +119,7 @@ export interface ReadHandler<A extends Acts> extends BaseHandler<A> {
 }
 
 export type MultiHandler<A extends Acts> = BaseHandler<A> & {
-	match: RegExp | string
+	match: RegExp
 	subDir: string
 } & (
 	| {outDir: string}

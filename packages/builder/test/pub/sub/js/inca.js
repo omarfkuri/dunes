@@ -9,5 +9,9 @@ function extract(arr, n) {
   return el;
 }
 
+var styles = {
+  "name": "subdir_96_name"
+};
+
 const div = extract([1, 2, 3], 1);
-console.log(div);
+console.log(div, styles);
