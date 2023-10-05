@@ -1,6 +1,8 @@
 import { Comp, Elem } from "./class/Base";
 import { Content } from "./class/Content";
 
+export { Component } from "./api/Component";
+
 export {Comp, Elem}
 export * from "./types";
 
@@ -8,9 +10,6 @@ declare global {
 
 	type TagName = keyof JSX.IntrinsicElements;
 
-	type Component<T extends {[key: string]: any} = {}> = {
-		(this: Comp<T>, props: T, comp: Comp<T>): JSX.Element
-	}
 
 	type Child = JSX.Element | Content
 
