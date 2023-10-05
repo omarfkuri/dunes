@@ -59,16 +59,20 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 	/**
 	 * Upload multiple files
 	 * */
-	uploadAll(files: File[], path: string, onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}): Promise<{
+	uploadAll(files: File[], path: string, opts: {
+		onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}
+		onFileChange?: {(file: File): void}
+	} = {}): Promise<{
 		tasks: UploadTaskSnapshot[]
 		errors: StorageError[]
 	}> {
-		return new Promise(async (res, rej) => {
+		return new Promise(async res => {
 			const tasks: UploadTaskSnapshot[] = [];
 			const errors: StorageError[] = [];
 			for (const file of files) {
+				opts.onFileChange?.(file);
 				try {
-					const res = await this.upload(file, this.path(`${path}/${Date.now()}`), onChange);
+					const res = await this.upload(file, this.path(`${path}/${Date.now()}`), opts.onChange);
 					tasks.push(res);
 				}
 				catch(error) {
