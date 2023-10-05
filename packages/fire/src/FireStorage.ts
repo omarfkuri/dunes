@@ -56,7 +56,6 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 		})
 	}
 
-
 	/**
 	 * Upload multiple files
 	 * */
