@@ -1,7 +1,7 @@
 import { type FirebaseApp } from "firebase/app";
 import {
 	type Auth, 
-	getAuth,
+	initializeAuth,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
 import { AbstractFire } from "./AbstractFire";
@@ -9,7 +9,7 @@ import { AbstractFire } from "./AbstractFire";
 export class FireAuth extends AbstractFire<Auth> {
 
 	constructor(app: FirebaseApp) {
-		super(getAuth(app))
+		super(initializeAuth(app))
 	}
 
 	login(email: string, password: string) {
