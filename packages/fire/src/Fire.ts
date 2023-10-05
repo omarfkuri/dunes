@@ -6,24 +6,25 @@ declare const FireAuth: typeof import("./FireAuth").FireAuth | undefined
 type FireStore = import("./FireStore").FireStore
 declare const FireStore: typeof import("./FireStore").FireStore | undefined
 
+type FireStorage = import("./FireStorage").FireStorage
+declare const FireStorage: typeof import("./FireStorage").FireStorage | undefined
+
 type FireFunctions = import("./FireFunctions").FireFunctions
 declare const FireFunctions: typeof import("./FireFunctions").FireFunctions | undefined
 
 export class Fire {
 	
-	static #app: FirebaseApp | null = null;
-	static #auth: FireAuth | null = null; 
-	static #store: FireStore | null = null; 
-	static #fns: FireFunctions | null = null;
+	static #app: FirebaseApp;
+	static #auth: FireAuth; 
+	static #store: FireStore; 
+	static #storage: FireStorage; 
+	static #functions: FireFunctions | null = null;
 
 	static init(firebaseConfig: FirebaseOptions) {
 		this.#app = initializeApp(firebaseConfig)
 	}
 
-	static get auth() {
-		if (this.#auth) {
-			return this.#auth;
-		}
+	static useAuth(): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
@@ -31,13 +32,13 @@ export class Fire {
 			throw `FireAuth is not imported`
 		}
 		this.#auth = new FireAuth(this.#app)
+	}
+
+	static get auth() {
 		return this.#auth;
 	}
 
-	static get store() {
-		if (this.#store) {
-			return this.#store;
-		}
+	static useStore(): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
@@ -45,21 +46,38 @@ export class Fire {
 			throw `FireStore is not imported`
 		}
 		this.#store = new FireStore(this.#app)
+	}
+
+	static get store() {
 		return this.#store;
 	}
 
-	static get functions() {
-		if (this.#fns) {
-			return this.#fns;
+	static useStorage(): void {
+		if (!this.#app) {
+			throw `App is not initialized`
 		}
+		if (!FireStorage) {
+			throw `FireStore is not imported`
+		}
+		this.#storage = new FireStorage(this.#app)
+	}
+
+	static get storage() {
+		return this.#storage;
+	}
+
+	static useFunctions(): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
 		if (!FireFunctions) {
 			throw `FireFunctions is not imported`
 		}
-		this.#fns = new FireFunctions(this.#app)
-		return this.#fns;
+		this.#functions = new FireFunctions(this.#app)
+	}
+
+	static get functions() {
+		return this.#functions;
 	}
 }
 
