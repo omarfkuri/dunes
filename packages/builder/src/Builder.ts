@@ -4,11 +4,11 @@ import { rm } from "fs/promises";
 import express from "express";
 import { Acts, ActsResult, Wrap } from "@dunes/wrap";
 import { watch } from "fs";
-import type { 
+import type {
 	MultiHandler, SingleHandler, BuilderModule, 
 	Config, Handler, ServerConfig, BuildConfig, 
 	WatchConfig, ReadHandler, InternalBuildResult, 
-	CSSResult, CSSAnalysis, HanlderHandler, NamedHandlerHandler, CSSAct, ModuleType 
+	CSSResult, CSSAnalysis, ModuleType 
 } from "./types";
 import { Server } from "http";
 
