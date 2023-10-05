@@ -53,6 +53,12 @@ export class FireStorage extends AbstractFire<FirebaseStorage> {
 		})
 	}
 
+	async *uploadAll(files: File[], stRef: StorageReference, onChange?: {(progress: number, snapshot: UploadTaskSnapshot): void}): AsyncIterator<UploadTaskSnapshot> {
+		for (const file of files) {
+			yield await this.upload(file, stRef, onChange);
+		}
+	}
+
 	/**
 	 * Get URL of object */
 	url(stRef: StorageReference) {
