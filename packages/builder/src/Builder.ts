@@ -265,23 +265,27 @@ export class Builder<const A extends Acts> {
 										style: styleChange
 									});
 									await this.#buildSingle(handler);
+									const took = Date.now() - start;
 									await options.onActionSuccess?.({
 										type: "single", 
 										filename: fn,
 										style: styleChange,
-										took: Date.now() - start
+										took,
 									});
 								}
 								catch (error) {
+									const took = Date.now() - start;
 									await options.onActionError?.({
 										type: "single", 
 										filename: fn,
 										style: styleChange,
-										took: Date.now() - start,
+										took,
 										error
 									});
 								}
-								break;
+								finally {
+									break;
+								}
 							}
 						}
 						else if (fn.startsWith(handler.subDir) && handler.match.test(fn)) {
@@ -293,23 +297,27 @@ export class Builder<const A extends Acts> {
 									style: styleChange
 								});
 								await this.#buildSubMulti(handler, fn);
+								const took = Date.now() - start;
 								await options.onActionSuccess?.({
 									type: "sub-multi", 
 									filename: fn,
 									style: styleChange,
-									took: Date.now() - start
+									took,
 								});
 							}
 							catch (error) {
+								const took = Date.now() - start;
 								await options.onActionError?.({
 									type: "sub-multi", 
 									filename: fn,
 									style: styleChange,
-									took: Date.now() - start,
+									took,
 									error
 								});
 							}
-							break;
+							finally {
+								break;
+							}
 						}
 					}
 				}
