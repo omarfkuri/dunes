@@ -1,17 +1,17 @@
 declare const Elem: typeof import("@dunes/tag").Elem
 
-type FormInput = {
+export type FormInput = {
 	title: string
 	input: JSX.Element
 }
 
-type FormProps = Elements.Form & {
+export type FormProps = Elements.Form & {
 	titleText: string
 	submitText: string
 	inputs: FormInput[]
 }
 
-type FormStyles = {
+export type FormStyles = {
 	form_wrapper: string
 	form_title: string
 	input_wrapper: string
