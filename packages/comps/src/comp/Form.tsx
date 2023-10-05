@@ -40,9 +40,3 @@ export const Form: Styled<FormProps, FormStyles> = (
 		</form>
 	)
 )
-
-
-/* 
-	Typescript plugin that check css files 
-	and what classes they have 
-*/
