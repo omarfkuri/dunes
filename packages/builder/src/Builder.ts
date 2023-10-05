@@ -220,20 +220,18 @@ export class Builder<const A extends Acts> {
 			await rm(this.config.public, {recursive: true});
 		}
 
-		const promises: Promise<any>[] = []
 		for (const handler of this.config.handlers) {
 			if ("string" in handler) {
-				promises.push(this.#buildRead(handler))
+				await this.#buildRead(handler)
 			}
 			else if ("entry" in handler) {
-				promises.push(this.#buildSingle(handler))
+				await this.#buildSingle(handler)
 			}
 			else {
-				promises.push(this.#buildMulti(handler))
+				await this.#buildMulti(handler)
 			}
 		}
 
-		await Promise.all(promises);
 		await writeStr(this.#out(this.config.globalCSSFile), this.#globalStyles());
 		await options.onBuildFinish?.(Date.now() - start);
 
@@ -327,7 +325,7 @@ export class Builder<const A extends Acts> {
 						}
 					}
 
-					const promises: {[key: string]: Promise<any>} = {}
+					const promises: {[key: string]: ["single" | "sub-multi", Handler<A>]} = {}
 					for (const [ty, nm] of modArrs) {
 						sub:
 						for (const handler of this.config.handlers) {
@@ -337,13 +335,13 @@ export class Builder<const A extends Acts> {
 							else if ("entry" in handler) {
 								if (ty !== "single") continue;
 
-								promises[nm] = this.#buildSingle(handler);
+								promises[nm] = ["single", handler];
 								break sub;
 							}
 							else if (nm.startsWith(handler.subDir) && handler.match.test(nm)) {
 								if (ty !== "sub-multi") continue;
 
-								promises[nm] = this.#buildMulti(handler);
+								promises[nm] = ["sub-multi", handler];
 								break sub;
 							}
 						}
@@ -358,7 +356,15 @@ export class Builder<const A extends Acts> {
 							filename: fn,
 							style: styleChange
 						});
-						await Promise.all(Object.values(promises));
+						for (const name in promises) {
+							const [ty, h] = promises[name] as ["single" | "sub-multi", Handler<A>];
+							if (ty === "single") {
+								this.#buildSingle(h as SingleHandler<A>)
+							}
+							else {
+								this.#buildSubMulti(h as MultiHandler<A>, name)
+							}
+						}
 						await options.onActionSuccess?.({
 							type: "dependency",
 							parents,

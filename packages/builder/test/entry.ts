@@ -36,6 +36,9 @@ const builder = new Builder({
 			entry: "index.tsx",
 			outFile: "index.js",
 			defer: 2,
+			process(str) {
+				return str;
+			},
 			opt: {
 				transform: [
 					{
@@ -52,7 +55,10 @@ const builder = new Builder({
 			match: /\.tsx?$/,
 			subDir: "subdir",
 			outDir: "sub/js",
-			defer: 2,
+			defer: 1,
+			process(str) {
+				return str;
+			},
 			outStylesDir: "sub/css",
 		}),
 		handler({
