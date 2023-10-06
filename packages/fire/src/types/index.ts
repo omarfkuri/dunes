@@ -74,3 +74,10 @@ export type ResData<T = unknown> = (
 export type SetDoc<T> = {
 	[key in keyof Omit<Doc<T>, "id">]: Doc<T>[key] | FieldValue;
 }
+
+/**
+ * Defines an object to be passed to update an item in a database
+ * */
+export type UpdateDoc<T> = {
+	[key in keyof Omit<Doc<T>, "id">]?: Doc<T>[key] | FieldValue;
+}

@@ -11,8 +11,9 @@ import {
 	arrayUnion, arrayRemove, increment,
 	onSnapshot, query, where, setDoc, updateDoc, Timestamp, addDoc
 } from "firebase/firestore";
-import type { Doc, DocFn, SetDoc } from "./types";
+import type { Doc, DocFn, SetDoc, UpdateDoc } from "./types";
 import { AbstractFire } from "./AbstractFire";
+import { Fire } from "./Fire";
 
 export class FireStore extends AbstractFire<Firestore> {
 
@@ -81,7 +82,7 @@ export class FireStore extends AbstractFire<Firestore> {
 		return addDoc(colRef, doc as Doc<T>);
 	}
 
-	updateDoc<T>(docRef: DocumentReference<T>, doc: SetDoc<Partial<T>>): Promise<void> {
+	updateDoc<T>(docRef: DocumentReference<T>, doc: UpdateDoc<T>): Promise<void> {
 		return updateDoc(docRef, doc);
 	}
 }
