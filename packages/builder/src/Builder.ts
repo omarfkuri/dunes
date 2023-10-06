@@ -246,7 +246,6 @@ export class Builder<const A extends Acts> {
 				}
 				this.#working = true;
 
-				let didSomething = false;
 				const mod = this.#modules.get(fn);
 				const styleChange = this.config.css.match.test(fn);
 
@@ -259,7 +258,6 @@ export class Builder<const A extends Acts> {
 						else if ("entry" in handler) {
 							if (fn === handler.entry) {
 								const start = Date.now();
-								didSomething = true;
 								try {
 									await options.onActionStart?.({
 										type: "single", 
@@ -292,7 +290,6 @@ export class Builder<const A extends Acts> {
 						}
 						else if (fn.startsWith(handler.subDir) && handler.match.test(fn)) {
 							const start = Date.now();
-							didSomething = true;
 							try {
 								await options.onActionStart?.({
 									type: "sub-multi", 
@@ -360,7 +357,6 @@ export class Builder<const A extends Acts> {
 					const parents = Object.keys(promises);
 
 					const start = Date.now();
-					didSomething = true;
 					try {
 						await options.onActionStart?.({
 							type: "dependency",
@@ -398,7 +394,7 @@ export class Builder<const A extends Acts> {
 						});
 					}
 				}
-				didSomething && await this.#globalStyles();
+				await this.#globalStyles();
 				this.#working = false;
 			}
 		)
