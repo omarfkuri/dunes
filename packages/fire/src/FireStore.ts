@@ -13,7 +13,6 @@ import {
 } from "firebase/firestore";
 import type { Doc, DocFn, SetDoc, UpdateDoc } from "./types";
 import { AbstractFire } from "./AbstractFire";
-import { Fire } from "./Fire";
 
 export class FireStore extends AbstractFire<Firestore> {
 
