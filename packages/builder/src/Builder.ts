@@ -356,42 +356,44 @@ export class Builder<const A extends Acts> {
 					}
 					const parents = Object.keys(promises);
 
-					const start = Date.now();
-					try {
-						await options.onActionStart?.({
-							type: "dependency",
-							parents,
-							filename: fn,
-							style: styleChange
-						});
-						for (const name in promises) {
-							const [ty, h] = promises[name] as ["single" | "sub-multi", Handler<A>];
-							if (ty === "single") {
-								await this.#buildSingle(h as SingleHandler<A>)
+					if (parents.length) {
+						const start = Date.now();
+						try {
+							await options.onActionStart?.({
+								type: "dependency",
+								parents,
+								filename: fn,
+								style: styleChange
+							});
+							for (const name in promises) {
+								const [ty, h] = promises[name] as ["single" | "sub-multi", Handler<A>];
+								if (ty === "single") {
+									await this.#buildSingle(h as SingleHandler<A>)
+								}
+								else {
+									await this.#buildSubMulti(h as MultiHandler<A>, name)
+								}
 							}
-							else {
-								await this.#buildSubMulti(h as MultiHandler<A>, name)
-							}
+							const took = Date.now() - start;
+							await options.onActionSuccess?.({
+								type: "dependency",
+								parents,
+								filename: fn,
+								style: styleChange,
+								took,
+							});
 						}
-						const took = Date.now() - start;
-						await options.onActionSuccess?.({
-							type: "dependency",
-							parents,
-							filename: fn,
-							style: styleChange,
-							took,
-						});
-					}
-					catch (error) {
-						const took = Date.now() - start;
-						await options.onActionError?.({
-							type: "dependency",
-							parents,
-							filename: fn,
-							style: styleChange,
-							took,
-							error
-						});
+						catch (error) {
+							const took = Date.now() - start;
+							await options.onActionError?.({
+								type: "dependency",
+								parents,
+								filename: fn,
+								style: styleChange,
+								took,
+								error
+							});
+						}
 					}
 				}
 				await this.#globalStyles();
