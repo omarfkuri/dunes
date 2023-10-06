@@ -85,7 +85,7 @@ abstract class Base<P extends {[key: string]: any}> implements Thing {
 				child.#parent = this as unknown as JSX.Element;
 				this.#children.push(child)
 			}
-			else {
+			else if (!isNone(child)) {
 				this.#children.push(new Content(child))
 			}
 		}
