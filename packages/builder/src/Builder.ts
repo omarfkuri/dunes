@@ -64,7 +64,7 @@ export class Builder<const A extends Acts> {
 		}
 	}
 
-	#globalStyles(): string {
+	#globalStyles(): Promise<void> {
 		let style = "";
 
 		for (const {globalCSS} of this.#modules.values()) {
@@ -72,7 +72,7 @@ export class Builder<const A extends Acts> {
 			style += "\n" + globalCSS;
 		}
 
-		return style;
+		return writeStr(this.#out(this.config.globalCSSFile), style);
 	}
 
 	async #writeSingle(handler: ReadHandler<A> | SingleHandler<A>, result: InternalBuildResult): Promise<string | null> {
@@ -232,7 +232,7 @@ export class Builder<const A extends Acts> {
 			}
 		}
 
-		await writeStr(this.#out(this.config.globalCSSFile), this.#globalStyles());
+		await this.#globalStyles();
 		await options.onBuildFinish?.(Date.now() - start);
 
 		this.#working = false;
@@ -246,6 +246,7 @@ export class Builder<const A extends Acts> {
 				}
 				this.#working = true;
 
+				let didSomething = false;
 				const mod = this.#modules.get(fn);
 				const styleChange = this.config.css.match.test(fn);
 
@@ -258,6 +259,7 @@ export class Builder<const A extends Acts> {
 						else if ("entry" in handler) {
 							if (fn === handler.entry) {
 								const start = Date.now();
+								didSomething = true;
 								try {
 									await options.onActionStart?.({
 										type: "single", 
@@ -290,6 +292,7 @@ export class Builder<const A extends Acts> {
 						}
 						else if (fn.startsWith(handler.subDir) && handler.match.test(fn)) {
 							const start = Date.now();
+							didSomething = true;
 							try {
 								await options.onActionStart?.({
 									type: "sub-multi", 
@@ -357,6 +360,7 @@ export class Builder<const A extends Acts> {
 					const parents = Object.keys(promises);
 
 					const start = Date.now();
+					didSomething = true;
 					try {
 						await options.onActionStart?.({
 							type: "dependency",
@@ -394,7 +398,7 @@ export class Builder<const A extends Acts> {
 						});
 					}
 				}
-
+				didSomething && await this.#globalStyles();
 				this.#working = false;
 			}
 		)
