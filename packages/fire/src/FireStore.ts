@@ -8,6 +8,7 @@ import {
 
 	collection, doc, getDoc,
 	getDocs, getFirestore,
+	arrayUnion, arrayRemove, increment,
 	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, Timestamp, addDoc, 
 } from "firebase/firestore";
 import type { Doc, DocFn } from "./types";
@@ -17,6 +18,12 @@ export class FireStore extends AbstractFire<Firestore> {
 
 	constructor(app: FirebaseApp) {
 		super(getFirestore(app))
+	}
+
+	readonly field = {
+		arrayUnion,
+		arrayRemove,
+		increment
 	}
 
 	stamp(): Timestamp {
