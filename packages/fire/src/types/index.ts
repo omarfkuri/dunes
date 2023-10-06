@@ -1,4 +1,5 @@
 import "@dunes/tools";
+import { FieldValue } from "firebase/firestore";
 
 /**
  * Adds time properties present in every Firebase document
@@ -66,3 +67,10 @@ export type ResData<T = unknown> = (
 		error: unknown
 	}
 )
+
+/**
+ * Defines an object to be passed to set an item in a database
+ * */
+export type SetDoc<T> = {
+	[key in keyof Omit<Doc<T>, "id">]: Doc<T>[key] | FieldValue;
+}
