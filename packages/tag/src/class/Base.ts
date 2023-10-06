@@ -90,17 +90,6 @@ abstract class Base<P extends {[key: string]: any}> implements Thing {
 			}
 		}
 	}
-
-	re(props?: Partial<P>) {
-		if (!this.root) throw "Not rooted";
-
-		if (props) for (const key in props) {
-			// @ts-expect-error
-			this.props[key] = props[key];
-		}
-
-		this.replace(this.root);
-	}
 }
 export class Elem<T extends TagName = "div"> extends Base<JSX.IntrinsicElements[T]> {
 	static override readonly type = "elem";
@@ -240,16 +229,36 @@ export class Comp<P extends { [key: string]: any; } = any> extends Base<P> {
 		return elem;
 	}
 
+	willRender() {}
+	hasRendered() {}
+	willDestroy() {}
+
+	re(props?: Partial<P>) {
+		if (!this.root) throw "Not rooted";
+		this.willDestroy()
+
+		if (props) for (const key in props) {
+			// @ts-expect-error
+			this.props[key] = props[key];
+		}
+
+		this.replace(this.root);
+	}
+
 	override appendTo(elem: HTMLElement): HTMLElement {
+		this.willRender()
 		const node = this.template().appendTo(elem);
 		this.root = node;
+		this.hasRendered()
 		return node;
 
 	}
 
 	override replace(elem: HTMLElement): HTMLElement {
+		this.willRender()
 		const node = this.template().replace(elem);
 		this.root = node;
+		this.hasRendered()
 		return node;
 	}
 }
