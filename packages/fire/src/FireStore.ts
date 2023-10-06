@@ -9,7 +9,7 @@ import {
 	collection, doc, getDoc,
 	getDocs, getFirestore,
 	arrayUnion, arrayRemove, increment,
-	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, Timestamp, addDoc, 
+	onSnapshot, query, where, setDoc, updateDoc, AddPrefixToKeys, Timestamp, addDoc, FieldValue, 
 } from "firebase/firestore";
 import type { Doc, DocFn } from "./types";
 import { AbstractFire } from "./AbstractFire";
@@ -73,15 +73,19 @@ export class FireStore extends AbstractFire<Firestore> {
 		return p;
 	}
 
-	setDoc<T>(docRef: DocumentReference<T>, doc: Omit<Doc<T>, "id">): Promise<void> {
+	setDoc<T>(docRef: DocumentReference<T>, doc: SetDoc<T>): Promise<void> {
 		return setDoc(docRef, doc as Doc<T>);
 	}
 
-	addDoc<T>(colRef: CollectionReference<T>, doc: Omit<Doc<T>, "id">): Promise<DocumentReference<T>> {
+	addDoc<T>(colRef: CollectionReference<T>, doc: SetDoc<T>): Promise<DocumentReference<T>> {
 		return addDoc(colRef, doc as Doc<T>);
 	}
 
-	updateDoc<T>(docRef: DocumentReference<T>, doc: Omit<Partial<Doc<T>>, "id">): Promise<void> {
+	updateDoc<T>(docRef: DocumentReference<T>, doc: SetDoc<Partial<T>>): Promise<void> {
 		return updateDoc(docRef, doc);
 	}
+}
+
+type SetDoc<T> = {
+	[key in keyof Omit<Doc<T>, "id">]: Doc<T>[key] | FieldValue;
 }
