@@ -1,5 +1,5 @@
-import { Char, Parser, Tokenizer, Node, TType } from "../src";
-import { JSTokenizer, TokenType } from "./tokenizer";
+import { parser } from "../../src";
+import { JSLexer, TokenType } from "./lexer";
 
 
 type NodeType = (
@@ -13,7 +13,7 @@ type NodeType = (
   | "VariableDeclaration"
 )
 
-interface Expression extends Node<NodeType> {}
+interface Expression extends parser.Node<NodeType> {}
 
 interface Statement extends Expression {}
 
@@ -66,7 +66,7 @@ interface ArrayLiteral extends Expression {
 }
 
 
-export class JSParser extends Parser<TokenType, {
+export class JSParser extends parser.Parser<TokenType, {
 	AdditiveExpression: AdditiveExpression
 	MultiplicativeExpression: MultiplicativeExpression
 	GroupExpression: GroupExpression
@@ -79,7 +79,7 @@ export class JSParser extends Parser<TokenType, {
 {
 
 	constructor() {
-		super(new JSTokenizer());
+		super(new JSLexer());
 	}
 
 	protected parse(): Expression {

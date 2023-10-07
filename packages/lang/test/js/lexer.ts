@@ -1,6 +1,6 @@
-import { Char, Tokenizer, TType } from "../src";
+import { lexer } from "../../src";
 
-export type TokenType = TType<(
+export type TokenType = lexer.TType<(
 	
 	| "Let"
 	| "Var"
@@ -31,7 +31,7 @@ export type TokenType = TType<(
 	| "CloseSquare"
 )>
 
-export class JSTokenizer extends Tokenizer<TokenType> {
+export class JSLexer extends lexer.Lexer<TokenType> {
 
 	protected override read() {
 
@@ -41,7 +41,7 @@ export class JSTokenizer extends Tokenizer<TokenType> {
 		}
 
 		if (this.isLetter()) {
-			const chars: Char[] = [this.eat()];
+			const chars: lexer.Char[] = [this.eat()];
 			while (!this.finished() && (this.isLetter() || this.match(/[0-9]|_/))) {
 				chars.push(this.eat());
 			}
@@ -58,7 +58,7 @@ export class JSTokenizer extends Tokenizer<TokenType> {
 		}
 
 		if (this.match(/[0-9]/)) {
-			const chars: Char[] = [this.eat()];
+			const chars: lexer.Char[] = [this.eat()];
 			while (!this.finished() && this.match(/[0-9]/)) {
 				chars.push(this.eat());
 			}
