@@ -1,3 +1,3 @@
 
-export * from "./tokenizer"
+export * from "./lexer"
 export * from "./parser"

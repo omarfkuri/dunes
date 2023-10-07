@@ -1,4 +1,4 @@
-import { TType, Token, TokenList, Tokenizer } from "../tokenizer";
+import { TType, Token, TokenList, Lexer } from "../lexer";
 import { AST } from "./AST";
 import { NodesObj, Node } from "./types";
 
@@ -8,14 +8,17 @@ export abstract class Parser<
 	const Nodes extends NodesObj = {}
 > {
 
-	constructor(protected tokenizer: Tokenizer<T>) {}
+	#lexer: Lexer<T>
+	constructor(lexer: Lexer<T>) {
+		this.#lexer = lexer;
+	}
 
 	#tokens!: TokenList<T>
 
 	produce(source: string): AST<Nodes> {
 
 		const ast = new AST<Nodes>();
-		this.#tokens = this.tokenizer.convert(source);
+		this.#tokens = this.#lexer.convert(source);
 
 		while (this.willContinue()) {
 			ast.program.body.push(this.parse() as unknown as Nodes[keyof Nodes])

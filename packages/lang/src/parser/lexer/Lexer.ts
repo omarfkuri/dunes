@@ -87,7 +87,7 @@ export class TokenList<T extends string> extends Array<Token<TType<T>>> {
 }
 
 
-export abstract class Tokenizer<T extends string> {
+export abstract class Lexer<T extends string> {
 
 	#chars!: CharList
 
