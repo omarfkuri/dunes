@@ -1,0 +1,23 @@
+{
+  "name": "@dunes/parser",
+  "version": "0.9.2",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/omarfkuri/dunes.git"
+  },
+  "keywords": [
+    "javascript",
+    "random",
+    "tools",
+    "typescript"
+  ],
+  "author": "Omar <omarfkuri@gmail.com>",
+  "scripts": {
+    "build": "rm -rf lib && tsc && npm version patch",
+    "test": "ts-node test"
+  }
+}
