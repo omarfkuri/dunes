@@ -99,7 +99,7 @@ export class line {
         boolean: ({value}) => value
         ? this.green.text("true")
         : this.red.text("false"),
-        number: num => this.cyanLi.text(String(num)),
+        number: ({value}) => this.cyanLi.text(String(value)),
         function({value}) {
           return String(value)
           .replace(/^[^(]*/g, "")
