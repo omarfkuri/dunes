@@ -87,7 +87,7 @@ export class line {
 
     style: {
       key: {
-        number: num => this.gray.text(String(num)),
+        number: num => this.cyanLi.text(String(num)),
         string: str => this.gray.text(str),
         symbol: sym => 
           this.gray.text(`[${sym.description || String(sym)}]`),
@@ -99,6 +99,7 @@ export class line {
         boolean: ({value}) => value
         ? this.green.text("true")
         : this.red.text("false"),
+        number: num => this.cyanLi.text(String(num)),
         function({value}) {
           return String(value)
           .replace(/^[^(]*/g, "")
