@@ -10,6 +10,14 @@ export class Token<T extends string> {
 	get value(): string {
 		return String(this.#value);
 	}
+
+	first(): Char {
+		return this.#value.chars[0]!
+	}
+
+	last(): Char {
+		return this.#value.chars[this.#value.chars.length - 1]!
+	}
 }
 
 /*->
@@ -30,9 +38,7 @@ const last = myArray[myArray.length - 1]
 
 
 class TokenValue extends String {
-
-	#chars: Char[]
-
+	readonly chars: Char[]
 	constructor(chars: Char[]) {
 		if (!chars.length) 
 			throw "Empty chars in TokenValue";
@@ -40,16 +46,7 @@ class TokenValue extends String {
 			super();
 		else 
 			super(chars.map(({value}) => value).join(""));
-
-		this.#chars = chars;
-	}
-
-	first(): Char {
-		return this.#chars[0]!
-	}
-
-	last(): Char {
-		return this.#chars[this.#chars.length - 1]!
+		this.chars = chars;
 	}
 
 }

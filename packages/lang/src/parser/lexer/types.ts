@@ -5,4 +5,4 @@ export interface Position {
 }
 
 
-export type TType<T extends string> = T | "Undefined" | "EOF"
+export type TType<T extends string> = T | "EOF"

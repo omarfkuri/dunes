@@ -32,12 +32,16 @@ export abstract class Lexer<T extends string> {
 		return this.#chars.shift()!;
 	}
 
-	protected value(): string {
-		return this.#chars[0]!.value;
+	protected is(str: string, n = 0): boolean {
+		return this.#chars[n]!.value === str;
 	}
 
-	protected match(reg: RegExp): boolean {
-		return reg.test(this.#chars[0]!.value);
+	protected value(n = 0): string {
+		return this.#chars[n]!.value;
+	}
+
+	protected match(reg: RegExp, n = 0): boolean {
+		return reg.test(this.#chars[n]!.value);
 	}
 
 	protected equal(str: string): boolean {
