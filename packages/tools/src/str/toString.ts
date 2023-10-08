@@ -180,36 +180,38 @@ export class Stringify {
 
 }
 
-export const json = new Stringify({
-  
-  symbol: {
-    space: " ",
-    break: "\n",
-    tab: "\t",
-    colon: ":",
-    comma: ",",
-    openSquare: "[",
-    closeSquare: "]",
-    openBracket: "{",
-    closeBracket: "}",
-  },
+export const json = (value: unknown, depth = 2) => {
+  return new Stringify({
 
-  style: {
-    key: {
-      string: JSON.stringify,
-      number: JSON.stringify,
-      symbol(){ return null }
+    symbol: {
+      space: " ",
+      break: "\n",
+      tab: " ".repeat(depth),
+      colon: ":",
+      comma: ",",
+      openSquare: "[",
+      closeSquare: "]",
+      openBracket: "{",
+      closeBracket: "}",
     },
-    value: {
-      string({value}) {
-        return JSON.stringify(value);
+
+    style: {
+      key: {
+        string: JSON.stringify,
+        number: JSON.stringify,
+        symbol(){ return null }
       },
-      null() {return '"null"'},
-      undefined() {return '"undefined"'},
-      bigint({value}) {return `"${value}"`},
-      function({value}) {
-        return `[${value.constructor.name} ${value.name}]`;
-      },
+      value: {
+        string({value}) {
+          return JSON.stringify(value);
+        },
+        null() {return '"null"'},
+        undefined() {return '"undefined"'},
+        bigint({value}) {return `"${value}"`},
+        function({value}) {
+          return `[${value.constructor.name} ${value.name}]`;
+        },
+      }
     }
-  }
-})
+  }).this(value)
+}
