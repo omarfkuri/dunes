@@ -56,21 +56,24 @@ export const js = (value: unknown, depth = 2) => {
       closeBracket: "}",
     },
 
+    options: {
+      excludeColon: "function"
+    },
+
     style: {
       key: {
-        string: JSON.stringify,
-        number: JSON.stringify,
-        symbol(){ return null }
+        symbol(sym) {
+          return `[${sym.description || String(sym)}]`
+        },
       },
       value: {
         string({value}) {
           return JSON.stringify(value);
         },
-        null() {return '"null"'},
-        undefined() {return '"undefined"'},
-        bigint({value}) {return `"${value}"`},
         function({value}) {
-          return `"[${value.constructor.name} ${value.name}]"`;
+          return String(value)
+          .replace(/^[^(]*/g, "")
+          .replace(/  /g, " ")
         },
       }
     }

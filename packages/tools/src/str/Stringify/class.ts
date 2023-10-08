@@ -92,19 +92,29 @@ export class Stringify {
     let i = 0;
     const descriptors = Object.getOwnPropertyDescriptors(obj);
     const keys = allKeys
-    .map(key => ({key, styled: this.#key(key)}))
+    .map(key => ({
+      styled: this.#key(key), 
+      descriptor: descriptors[key as keyof typeof descriptors]!
+    }))
     .filter((e: {
-      key: PropertyKey, 
       styled: string | null
-    }): e is {key: PropertyKey, styled: string} => !!e.styled);
-    for (const {key, styled} of keys) {
-      const descriptor = descriptors[key as keyof typeof descriptors]!;
+      descriptor: PropertyDescriptor
+    }): e is {
+      styled: string
+      descriptor: PropertyDescriptor
+    } => !!e.styled);
+    for (const {styled, descriptor} of keys) {
       i++;
+      const colon = this.config.options?.excludeColon && typeof descriptor.value === "function"
+      ? ""
+      : (
+        this.config.symbol.colon
+        + this.config.symbol.space
+      )
       str += (
         this.config.symbol.tab.repeat(depth + 1)
         + styled
-        + this.config.symbol.colon
-        + this.config.symbol.space
+        + colon
         + this.#value(descriptor, depth + 1)
         + (i === keys.length? "": this.config.symbol.comma)
         + this.config.symbol.break

@@ -19,6 +19,7 @@ export interface StringifyConfig {
 
   options?: {
     displayClassName?: boolean
+    excludeColon?: "never" | "function"
   }
 
   style?: {

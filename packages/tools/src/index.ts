@@ -42,6 +42,7 @@ export {
 export {
 
   Stringify,
-  json
+  json,
+  js
 
 } from "./str"

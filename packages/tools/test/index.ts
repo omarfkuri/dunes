@@ -1,6 +1,6 @@
 
 
-import { json } from "../src/";
+import { js } from "../src/";
 
 const obj = {
   name: "Bruce",
@@ -39,5 +39,5 @@ const obj = {
 
 // console.log(Object.getOwnPropertySymbols(obj.info))
 
-console.log(json(obj));
+console.log(js(obj));
 // console.log(2, JSON.stringify(obj, null, 2));
