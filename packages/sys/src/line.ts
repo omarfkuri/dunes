@@ -1,11 +1,15 @@
+import { Stringify } from "@dunes/tools";
 
 type Ret = (
 	((text: string) => void)
 	&
-	{text(text: string): string}
+	{
+    text(text: string): string
+    warn(text: string): string
+  }
 )
 
-function Colorizer(c1: number, c2: number): Ret {
+function LineColor(c1: number, c2: number): Ret {
 	const ret = (text => console.log(
 		"\x1B[" + String(c1) + "m" + text + "\x1B[" + String(c2) + "m"
 	)) as Ret;
@@ -15,51 +19,96 @@ function Colorizer(c1: number, c2: number): Ret {
 	return ret;
 }
 
-export const line = new class Line {
-	readonly reset = Colorizer(0, 0);
-	readonly bold = Colorizer(1, 22);
-	readonly dim = Colorizer(2, 22);
-	readonly italic = Colorizer(3, 23);
-	readonly underline = Colorizer(4, 24);
-	readonly inverse = Colorizer(7, 27);
-	readonly hidden = Colorizer(8, 28);
-	readonly strikethrough = Colorizer(9, 29);
+export class line {
+	static readonly reset = LineColor(0, 0);
+	static readonly bold = LineColor(1, 22);
+	static readonly dim = LineColor(2, 22);
+	static readonly italic = LineColor(3, 23);
+	static readonly underline = LineColor(4, 24);
+	static readonly inverse = LineColor(7, 27);
+	static readonly hidden = LineColor(8, 28);
+	static readonly strikethrough = LineColor(9, 29);
 
-	readonly black = Colorizer(30, 39);
-	readonly red = Colorizer(31, 39);
-	readonly green = Colorizer(32, 39);
-	readonly yellow = Colorizer(33, 39);
-	readonly blue = Colorizer(34, 39);
-	readonly magenta = Colorizer(35, 39);
-	readonly cyan = Colorizer(36, 39);
-	readonly white = Colorizer(37, 39);
-	readonly gray = Colorizer(90, 39);
+	static readonly black = LineColor(30, 39);
+	static readonly red = LineColor(31, 39);
+	static readonly green = LineColor(32, 39);
+	static readonly yellow = LineColor(33, 39);
+	static readonly blue = LineColor(34, 39);
+	static readonly magenta = LineColor(35, 39);
+	static readonly cyan = LineColor(36, 39);
+	static readonly white = LineColor(37, 39);
+	static readonly gray = LineColor(90, 39);
 
-	readonly blackBg = Colorizer(40, 49);
-	readonly redBg = Colorizer(41, 49);
-	readonly greenBg = Colorizer(42, 49);
-	readonly yellowBg = Colorizer(43, 49);
-	readonly blueBg = Colorizer(44, 49);
-	readonly magentaBg = Colorizer(45, 49);
-	readonly cyanBg = Colorizer(46, 49);
-	readonly whiteBg = Colorizer(47, 49);
-	readonly grayBg = Colorizer(100, 49);
+	static readonly blackBg = LineColor(40, 49);
+	static readonly redBg = LineColor(41, 49);
+	static readonly greenBg = LineColor(42, 49);
+	static readonly yellowBg = LineColor(43, 49);
+	static readonly blueBg = LineColor(44, 49);
+	static readonly magentaBg = LineColor(45, 49);
+	static readonly cyanBg = LineColor(46, 49);
+	static readonly whiteBg = LineColor(47, 49);
+	static readonly grayBg = LineColor(100, 49);
 
-	readonly blackLi = Colorizer(90, 39);
-	readonly redLi = Colorizer(91, 39);
-	readonly greenLi = Colorizer(92, 39);
-	readonly yellowLi = Colorizer(93, 39);
-	readonly blueLi = Colorizer(94, 39);
-	readonly magentaLi = Colorizer(95, 39);
-	readonly cyanLi = Colorizer(96, 39);
-	readonly whiteLi = Colorizer(97, 39);
+	static readonly blackLi = LineColor(90, 39);
+	static readonly redLi = LineColor(91, 39);
+	static readonly greenLi = LineColor(92, 39);
+	static readonly yellowLi = LineColor(93, 39);
+	static readonly blueLi = LineColor(94, 39);
+	static readonly magentaLi = LineColor(95, 39);
+	static readonly cyanLi = LineColor(96, 39);
+	static readonly whiteLi = LineColor(97, 39);
 
-	readonly blackLiBg = Colorizer(100, 49);
-	readonly redLiBg = Colorizer(101, 49);
-	readonly greenLiBg = Colorizer(102, 49);
-	readonly yellowLiBg = Colorizer(103, 49);
-	readonly blueLiBg = Colorizer(104, 49);
-	readonly magentaLiBg = Colorizer(105, 49);
-	readonly cyanLiBg = Colorizer(106, 49);
-	readonly whiteLiBg = Colorizer(107, 49);
+	static readonly blackLiBg = LineColor(100, 49);
+	static readonly redLiBg = LineColor(101, 49);
+	static readonly greenLiBg = LineColor(102, 49);
+	static readonly yellowLiBg = LineColor(103, 49);
+	static readonly blueLiBg = LineColor(104, 49);
+	static readonly magentaLiBg = LineColor(105, 49);
+	static readonly cyanLiBg = LineColor(106, 49);
+	static readonly whiteLiBg = LineColor(107, 49);
+
+  static #str = new Stringify({
+
+    symbol: {
+      space: this.gray.text(" "),
+      break: this.gray.text("\n"),
+      tab: this.gray.text(" "),
+      colon: this.gray.text(":"),
+      comma: this.gray.text(","),
+      openSquare: this.gray.text("["),
+      closeSquare: this.gray.text("]"),
+      openBracket: this.gray.text("{"),
+      closeBracket: this.gray.text("}"),
+    },
+
+    options: {
+      excludeColon: "function"
+    },
+
+    style: {
+      key: {
+        number: num => this.gray.text(String(num)),
+        string: str => this.gray.text(str),
+        symbol: sym => 
+          this.gray.text(`[${sym.description || String(sym)}]`),
+      },
+      value: {
+        string({value}) {
+          return JSON.stringify(value);
+        },
+        boolean: ({value}) => value
+        ? this.green.text("true")
+        : this.red.text("false"),
+        function({value}) {
+          return String(value)
+          .replace(/^[^(]*/g, "")
+          .replace(/  /g, " ")
+        },
+      }
+    }
+  })
+
+  static obj(x: unknown) {
+    console.log(this.#str.this(x))
+  }
 }
