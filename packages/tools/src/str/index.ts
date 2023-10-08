@@ -1,2 +1,2 @@
 
-export * from "./toString"
+export * from "./Stringify"

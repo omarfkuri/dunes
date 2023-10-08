@@ -1,43 +1,5 @@
+import { Descriptor, StringifyConfig } from "./types";
 
-
-type Descriptor<T> = Omit<PropertyDescriptor, "value"> & {value: T}
-
-export interface StringifyConfig {
-
-  symbol: {
-    space: string
-    break: string
-    tab: string
-    colon: string
-    comma: string
-
-    openSquare: string
-    closeSquare: string
-
-    openBracket: string
-    closeBracket: string
-  }
-
-  style?: {
-
-    key?: {
-      string?(str: string): string | null
-      number?(num: number): string | null
-      symbol?(sym: symbol): string | null
-    }
-
-    value?: {
-      string?(str: Descriptor<string>): string
-      number?(num: Descriptor<number>): string
-      symbol?(sym: Descriptor<symbol>): string
-      bigint?(sym: Descriptor<bigint>): string
-      null?(nul: Descriptor<null>): string
-      boolean?(boo: Descriptor<boolean>): string
-      undefined?(und: Descriptor<undefined>): string
-      function?(fun: Descriptor<Function>): string
-    }
-  }
-}
 
 export class Stringify {
   constructor(private config: StringifyConfig) {}
@@ -109,30 +71,42 @@ export class Stringify {
   }
 
   #obj(obj: object, depth: number): string {
-    let str = (
-      this.config.symbol.openBracket
-      + this.config.symbol.break
-    );
+
+    let str = "";
+
+    if (this.config.options?.displayClassName !== false && obj.constructor.name !== "Object") {
+      str += obj.constructor.name + this.config.symbol.space
+    }
+
+    str += this.config.symbol.openBracket;
+
+    const allKeys = [
+      ...Object.getOwnPropertyNames(obj), 
+      ...Object.getOwnPropertySymbols(obj)
+    ]
+    if (!allKeys.length) {
+      return str + this.config.symbol.closeBracket
+    }
+    str += this.config.symbol.break;
 
     let i = 0;
     const descriptors = Object.getOwnPropertyDescriptors(obj);
-    const keys = [
-      ...Object.getOwnPropertyNames(obj), 
-      ...Object.getOwnPropertySymbols(obj)
-    ];
-    for (const key of keys) {
+    const keys = allKeys
+    .map(key => ({key, styled: this.#key(key)}))
+    .filter((e: {
+      key: PropertyKey, 
+      styled: string | null
+    }): e is {key: PropertyKey, styled: string} => !!e.styled);
+    for (const {key, styled} of keys) {
       const descriptor = descriptors[key as keyof typeof descriptors]!;
-      const styledKey = this.#key(key);
-      if (!styledKey) 
-        continue;
       i++;
       str += (
         this.config.symbol.tab.repeat(depth + 1)
-        + styledKey
+        + styled
         + this.config.symbol.colon
         + this.config.symbol.space
         + this.#value(descriptor, depth + 1)
-        + (i === descriptors.length? "": this.config.symbol.comma)
+        + (i === keys.length? "": this.config.symbol.comma)
         + this.config.symbol.break
       );
     }
@@ -147,10 +121,20 @@ export class Stringify {
   }
 
   #arr(arr: unknown[], depth: number): string {
-    let str = (
-      this.config.symbol.openSquare
-      + this.config.symbol.break
-    );
+
+    let str = "";
+
+    if (this.config.options?.displayClassName !== false &&arr.constructor.name !== "Array") {
+      str += arr.constructor.name + this.config.symbol.space
+    }
+
+    str += this.config.symbol.openSquare;
+
+    if (!arr.length) {
+      return str + this.config.symbol.closeSquare
+    }
+
+    str += this.config.symbol.break;
 
     let i = 0;
     const descriptors = Object.getOwnPropertyDescriptors(arr);
@@ -163,7 +147,7 @@ export class Stringify {
       str += (
         this.config.symbol.tab.repeat(depth + 1)
         + this.#value(descriptor, depth + 1)
-        + (i === descriptors.length? "": this.config.symbol.comma)
+        + (i === arr.length? "": this.config.symbol.comma)
         + this.config.symbol.break
       );
     }
@@ -178,40 +162,4 @@ export class Stringify {
   }
 
 
-}
-
-export const json = (value: unknown, depth = 2) => {
-  return new Stringify({
-
-    symbol: {
-      space: " ",
-      break: "\n",
-      tab: " ".repeat(depth),
-      colon: ":",
-      comma: ",",
-      openSquare: "[",
-      closeSquare: "]",
-      openBracket: "{",
-      closeBracket: "}",
-    },
-
-    style: {
-      key: {
-        string: JSON.stringify,
-        number: JSON.stringify,
-        symbol(){ return null }
-      },
-      value: {
-        string({value}) {
-          return JSON.stringify(value);
-        },
-        null() {return '"null"'},
-        undefined() {return '"undefined"'},
-        bigint({value}) {return `"${value}"`},
-        function({value}) {
-          return `[${value.constructor.name} ${value.name}]`;
-        },
-      }
-    }
-  }).this(value)
 }

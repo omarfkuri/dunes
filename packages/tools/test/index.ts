@@ -12,7 +12,11 @@ const obj = {
     },
     {
       name: "Painter",
-      type: "hobby"
+      type: "hobby",
+      func() {
+        console.log("Hi there!")
+      },
+      cl: new Date()
     },
   ],
   info: {
@@ -35,5 +39,5 @@ const obj = {
 
 // console.log(Object.getOwnPropertySymbols(obj.info))
 
-console.log(1, json.this(obj));
+console.log(json(obj));
 // console.log(2, JSON.stringify(obj, null, 2));
