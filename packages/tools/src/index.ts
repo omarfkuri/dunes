@@ -39,3 +39,9 @@ export {
 	isNone,
 
 } from "./bool"
+export {
+
+  Stringify,
+  json
+
+} from "./str"
