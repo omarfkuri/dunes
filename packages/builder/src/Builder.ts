@@ -202,7 +202,8 @@ export class Builder<const A extends Acts> {
 				? await handler.process(build.code, {
 						modules: [...this.#modules.keys()],
 						hash: this.config.hash || null,
-						results: build.result as ActsResult<A>
+						results: build.result as ActsResult<A>,
+            id
 					})
 				: build.code
 			),

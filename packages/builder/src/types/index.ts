@@ -89,14 +89,15 @@ export type WatchEventError = TimedWatchEvent & {
 
 export type Handlers<A extends Acts> = readonly Handler<A>[]
 
-export interface Info<A extends Acts> {
+export interface ProcessInfo<A extends Acts> {
 	modules: string[]
 	hash: null | string
 	results: ActsResult<A>
+  id: string
 }
 
 export interface Processor<A extends Acts> {
-	(script: string, info: Info<A>): Prom<string>
+	(script: string, info: ProcessInfo<A>): Prom<string>
 }
 
 export interface BaseHandler<A extends Acts> {
