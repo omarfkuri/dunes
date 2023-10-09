@@ -1,3 +1,4 @@
+import { getKeys } from "../../obj";
 import { Descriptor, StringifyConfig } from "./types";
 
 
@@ -80,10 +81,7 @@ export class Stringify {
 
     str += this.config.symbol.openBracket;
 
-    const allKeys = [
-      ...Object.getOwnPropertyNames(obj), 
-      ...Object.getOwnPropertySymbols(obj)
-    ]
+    const allKeys = getKeys(obj)
     if (!allKeys.length) {
       return str + this.config.symbol.closeBracket
     }

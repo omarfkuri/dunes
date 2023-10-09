@@ -8,3 +8,4 @@ export function isNone(x: unknown): x is none {
 export function isConstructor<C extends constructor>(fn: Function): fn is C {
 	return String(fn).startsWith("class");
 }
+
