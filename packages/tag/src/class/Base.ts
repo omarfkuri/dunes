@@ -103,9 +103,23 @@ export class Elem<T extends TagName = "div"> extends Base<JSX.IntrinsicElements[
 		return this.temp as TagName === name;
 	}
 
+  static readonly SELF = [
+    "area",
+    "base",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input", 
+    "link",
+    "meta",
+    "param",
+    "source",
+  ]
+
 	override toString(n = 0): string {
 	  
-		const self = ["input", "meta"].includes(this.temp);
+		const self = Elem.SELF.includes(this.temp);
 
 		let str = `<${this.temp}`;
 
