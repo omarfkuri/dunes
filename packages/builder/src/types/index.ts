@@ -94,6 +94,7 @@ export interface ProcessInfo<A extends Acts> {
 	hash: null | string
 	results: ActsResult<A>
   id: string
+  source: string
 }
 
 export interface Processor<A extends Acts> {

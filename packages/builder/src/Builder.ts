@@ -203,7 +203,8 @@ export class Builder<const A extends Acts> {
 						modules: [...this.#modules.keys()],
 						hash: this.config.hash || null,
 						results: build.result as ActsResult<A>,
-            id
+            id,
+            source
 					})
 				: build.code
 			),
