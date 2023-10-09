@@ -31,6 +31,7 @@ export class JSLexer extends lexer.Lexer<TokenType> {
 				case "void": return this.new("Void", ...chars);
 				case "async": return this.new("Async", ...chars);
 				case "return": return this.new("Return", ...chars);
+        case "throw": return this.new("Throw", ...chars);
 				case "instanceof": return this.new("InstanceOf", ...chars);
 				case "typeof": return this.new("TypeOf", ...chars);
 				

@@ -6,14 +6,13 @@ export type NodeType = (
   | "ClassDeclaration"
   | "FunctionDeclaration"
   | "VariableDeclaration"
+  | "VariableDeclarator"
   | "BlockStatement"
   | "IfStatement"
   | "ElseIfStatement"
   | "ElseStatement"
 
-	| "AdditiveExpression"
-  | "MultiplicativeExpression"
-  | "ComparativeExpression"
+	| "BinaryExpression"
   | "CallExpression"
   | "AssignmentExpression"
   | "MemberExpression"
@@ -23,8 +22,12 @@ export type NodeType = (
   | "LineComment"
   | "DocComment"
 
-  | "ArrayLiteral"
-  | "ObjectLiteral"
+  | "ObjectExpression"
+  | "ObjectPattern"
+  
+  | "ArrayExpression"
+  | "ArrayPattern"
+
 	| "NumericLiteral"
 	| "Property"
 	| "Parameter"
@@ -36,14 +39,73 @@ export type NodeType = (
 	| "ClassProperty"
 
 	| "ReturnExpression"
+  | "ThrowExpression"
 	| "NewExpression"
 	| "TypeOfExpression"
 	| "InstanceOfExpression"
 	| "VoidExpression"
 )
 
+export type AnyNode = (
+  | FunctionDeclaration
+  | ClassDeclaration
+  | FunctionDeclaration
+  | VariableDeclaration
+  | BlockStatement
+  | IfStatement
+  | ElseIfStatement
+  | ElseStatement
+
+  | BinaryExpression
+  | CallExpression
+  | AssignmentExpression
+  | MemberExpression
+  | GroupExpression
+  
+  | BlockComment
+  | LineComment
+  | DocComment
+
+  | ArrayExpression
+  | ArrayPattern
+  | ObjectExpression
+  | NumericLiteral
+  | Property
+  | Parameter
+  | StringLiteral
+  | Identifier
+  
+  | ClassBody
+  | ClassMethod
+  | ClassProperty
+
+  | ReturnExpression
+  | ThrowExpression
+  | NewExpression
+  | TypeOfExpression
+  | InstanceOfExpression
+  | VoidExpression
+)
+
+export type Assignee = (
+  | Identifier
+  | ObjectPattern
+  | ArrayPattern
+)
+
+export type Init = (
+  | Expression
+  | null
+)
+
+export type ClassProps = (
+  | ClassMethod 
+  | ClassProperty
+)
+
 export interface NodeTypes extends parser.NodesObj {
 	VariableDeclaration: VariableDeclaration
+  VariableDeclarator: VariableDeclarator
 	FunctionDeclaration: FunctionDeclaration
 	ClassDeclaration: ClassDeclaration
 	BlockStatement: BlockStatement
@@ -51,9 +113,7 @@ export interface NodeTypes extends parser.NodesObj {
 	ElseIfStatement: ElseIfStatement
 	ElseStatement: ElseStatement
 
-	AdditiveExpression: AdditiveExpression
-	MultiplicativeExpression: MultiplicativeExpression
-  ComparativeExpression: ComparativeExpression
+  BinaryExpression: BinaryExpression
 	GroupExpression: GroupExpression
   CallExpression: CallExpression
   AssignmentExpression: AssignmentExpression
@@ -62,8 +122,10 @@ export interface NodeTypes extends parser.NodesObj {
 	NumericLiteral: NumericLiteral
 	Identifier: Identifier
 	StringLiteral: StringLiteral
-	ArrayLiteral: ArrayLiteral
-	ObjectLiteral: ObjectLiteral
+	ArrayPattern: ArrayPattern
+  ArrayExpression: ArrayExpression
+	ObjectExpression: ObjectExpression
+  ObjectPattern: ObjectPattern
 	Property: Property
 	Parameter: Parameter
   
@@ -76,6 +138,7 @@ export interface NodeTypes extends parser.NodesObj {
 	DocComment: DocComment
 
 	ReturnExpression: ReturnExpression
+  ThrowExpression: ThrowExpression
 	NewExpression: NewExpression
 	TypeOfExpression: TypeOfExpression
 	InstanceOfExpression: InstanceOfExpression
@@ -111,8 +174,13 @@ export interface ElseStatement extends Statement {
 export interface VariableDeclaration extends Statement {
 	type: "VariableDeclaration"
 	kind: "Var" | "Let" | "Const"
-	identifier: Identifier
-	value: Expression | null
+	declarators: VariableDeclarator[]
+}
+
+export interface VariableDeclarator extends Statement {
+  type: "VariableDeclarator"
+  id: Assignee
+  init: Init
 }
 
 export interface FunctionDeclaration extends Statement {
@@ -127,14 +195,14 @@ export interface FunctionDeclaration extends Statement {
 export interface ClassDeclaration extends Statement {
 	type: "ClassDeclaration"
 	identifier: Identifier
-	extend: Expression | null
+	extend: Init
 	body: ClassBody
 }
 
 
 export interface ClassBody extends Expression {
 	type: "ClassBody"
-	props: (ClassMethod | ClassProperty)[]
+	props: ClassProps[]
 }
 
 export interface LineComment extends Expression {
@@ -167,7 +235,7 @@ export interface ClassMethod extends ClassVar {
 
 export interface ClassProperty extends ClassVar {
 	type: "ClassProperty"
-	value: Expression | null
+	init: Init
 }
 
 export interface CallExpression extends Expression {
@@ -190,27 +258,12 @@ export interface MemberExpression extends Expression {
   computed: boolean
 }
 
-export interface GroupExpression extends Expression {
-	type: "GroupExpression"
-	expr: Expression
-}
-
-interface BinaryExpression extends Expression {
-	left: Expression
+export interface BinaryExpression extends Expression {
+  type: "BinaryExpression"
+  kind: "add" | "mul" | "com"
 	operator: TokenType
+	left: Expression
 	right: Expression
-}
-
-export interface AdditiveExpression extends BinaryExpression {
-	type: "AdditiveExpression"
-}
-
-export interface MultiplicativeExpression extends BinaryExpression {
-	type: "MultiplicativeExpression"
-}
-
-export interface ComparativeExpression extends BinaryExpression {
-  type: "ComparativeExpression"
 }
 
 export interface NumericLiteral extends Expression {
@@ -231,32 +284,48 @@ export interface Identifier extends Expression {
 	symbol: string
 }
 
-export interface ArrayLiteral extends Expression {
-	type: "ArrayLiteral"
+export interface ArrayExpression extends Expression {
+	type: "ArrayExpression"
 	items: Expression[]
 }
 
-export interface ObjectLiteral extends Expression {
-	type: "ObjectLiteral"
+export interface ArrayPattern extends Expression {
+  type: "ArrayPattern"
+  items: Expression[]
+}
+
+export interface ObjectExpression extends Expression {
+	type: "ObjectExpression"
 	props: Property[]
+}
+
+
+export interface ObjectPattern extends Expression {
+  type: "ObjectPattern"
+  props: Property[]
 }
 
 export interface Property extends Expression {
 	type: "Property"
 	key: PropertyKey
-	value: Expression | null
+	init: Init
 }
 
 export interface Parameter extends Expression {
 	type: "Parameter"
 	spread: boolean
-	identifier: Identifier
-	default: Expression | null
+	id: Assignee
+	init: Init
 }
 
 export interface ReturnExpression extends Expression {
 	type: "ReturnExpression"
 	node: Expression
+}
+
+export interface ThrowExpression extends Expression {
+  type: "ThrowExpression"
+  node: Expression
 }
 
 export interface NewExpression extends Expression {
@@ -277,4 +346,9 @@ export interface InstanceOfExpression extends Expression {
 export interface VoidExpression extends Expression {
 	type: "VoidExpression"
 	node: Expression
+}
+
+export interface GroupExpression extends Expression {
+  type: "GroupExpression"
+  node: Expression
 }

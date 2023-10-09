@@ -1,3 +1,4 @@
+import { js } from "@dunes/tools";
 import { JSParser } from "../src/langs/js";
 import { line } from "@dunes/sys"
 
@@ -6,27 +7,19 @@ const jsParser = new JSParser();
 
 try {
 	const result = jsParser.produce(`
-		
-		async function *myGen(n = 1) {
 
-      if (myName === 22 || yourAge == "Jeremiah") {
-        return "Hey bro!";
-      }
-
-      return 33;
-
-    };
-
-		console.log("My name is", yourName);
-
-		const myGen = new Date()[2];
+    const n = 88, [myVar, {user = 22}] = 22;
 
 	 `);
-	line.obj(result.program)
+
+  line.obj(result.program)
 }
 catch(err) {
 	line.red("ERROR")
-	line.gray(err + " " + jsParser.body);
+	line.gray(err + " " + js(jsParser.body));
 }
+
+/* Cannot use keyword as member expression */
+/* Destructuring */
 
 process.exit(0);
