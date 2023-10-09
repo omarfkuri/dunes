@@ -424,6 +424,7 @@ export class Builder<const A extends Acts> {
 				}
 			})
       if (options.api?.post) {
+        app.use(express.json());
         app.post("/*", (req, res) => options.api!.post!(req, res, app))
       }
 		}
