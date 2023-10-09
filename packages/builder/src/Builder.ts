@@ -413,7 +413,7 @@ export class Builder<const A extends Acts> {
 		else {
 			app.get("/*", async (req, res) => {
 				if (options.api?.get) {
-					const {stop} = await options.api.get(req, res);
+					const {stop} = await options.api.get(req, res, app);
 					if (stop) return;
 				}
 				if (req.url.match(/\.\w+$/)) {
@@ -424,7 +424,7 @@ export class Builder<const A extends Acts> {
 				}
 			})
       if (options.api?.post) {
-        app.post("/*", options.api.post);
+        app.post("/*", (req, res) => options.api!.post!(req, res, app))
       }
 		}
 		

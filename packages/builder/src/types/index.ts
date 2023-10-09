@@ -1,5 +1,5 @@
 
-import type { Request, Response } from "express";
+import type { Express, Request, Response } from "express";
 import type { Acts, ActsResult, Opts, Act } from "@dunes/wrap";
 
 export type ModuleType = "single" | "sub-multi" | "string"
@@ -36,8 +36,8 @@ export interface ServerConfig {
 	port: number
 	static?: boolean
 	api?: {
-    get?(req: Request, res: Response): Prom<{stop: boolean}>
-    post?(req: Request, res: Response): Prom<{stop: boolean}>
+    get?(req: Request, res: Response, app: Express): Prom<{stop: boolean}>
+    post?(req: Request, res: Response, app: Express): Prom<{stop: boolean}>
   };
 }
 
