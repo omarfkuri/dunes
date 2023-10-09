@@ -24,11 +24,11 @@ export class Builder<const A extends Acts> {
 		)
 	}
 
-	#src(name: string, ...names: string[]): string {
+	src(name: string, ...names: string[]): string {
 		return join(this.config.src, name, ...names)
 	}
 
-	#out(name: string, ...names: string[]): string {
+	out(name: string, ...names: string[]): string {
 		return join(this.config.public, name, ...names)
 	}
 
@@ -72,14 +72,14 @@ export class Builder<const A extends Acts> {
 			style += "\n" + globalCSS;
 		}
 
-		return writeStr(this.#out(this.config.globalCSSFile), style);
+		return writeStr(this.out(this.config.globalCSSFile), style);
 	}
 
 	async #writeSingle(handler: ReadHandler<A> | SingleHandler<A>, result: InternalBuildResult): Promise<string | null> {
-		await writeStr(this.#out(handler.outFile), result.string);
+		await writeStr(this.out(handler.outFile), result.string);
 
 		if (handler.outStylesFile) {
-			await writeStr(this.#out(handler.outStylesFile), this.#resultCSS(result.result as CSSResult))
+			await writeStr(this.out(handler.outStylesFile), this.#resultCSS(result.result as CSSResult))
 			return null;
 		}
 		else {
@@ -88,9 +88,9 @@ export class Builder<const A extends Acts> {
 	}
 
 	async #buildSingle(handler: SingleHandler<A>): Promise<void> {
-		const id = this.#src(handler.entry);
+		const id = this.src(handler.entry);
 		const source = await readString(id);
-		const result = await this.#compile(id, source, handler);
+		const result = await this.compile(id, source, handler);
 		const globalCSS = await this.#writeSingle(handler, result);
 		
 		this.#modules.set(handler.entry, {
@@ -101,7 +101,7 @@ export class Builder<const A extends Acts> {
 	}
 
 	async #buildRead(handler: ReadHandler<A>): Promise<void> {
-		const result = await this.#compile(handler.fakeName, handler.string, handler);
+		const result = await this.compile(handler.fakeName, handler.string, handler);
 		const globalCSS = await this.#writeSingle(handler, result);
 		
 		this.#modules.set(handler.fakeName, {
@@ -117,9 +117,9 @@ export class Builder<const A extends Acts> {
 		}
 
 		let globalStyles: string | null = null;
-		const id = this.#src(fullName);
+		const id = this.src(fullName);
 		const script = await readString(id);
-		const result = await this.#compile(id, script, handler);
+		const result = await this.compile(id, script, handler);
 
 		let filename;
 
@@ -132,16 +132,16 @@ export class Builder<const A extends Acts> {
 
 		let styleFilename: string | null = null;
 		if ("outStylesDir" in handler && handler.outStylesDir) {
-			styleFilename = this.#out(handler.outStylesDir, `${fullName.replace(new RegExp(`^${handler.subDir}`), "").replace(handler.match, "")}.css`);
+			styleFilename = this.out(handler.outStylesDir, `${fullName.replace(new RegExp(`^${handler.subDir}`), "").replace(handler.match, "")}.css`);
 		}
 		else if ("outStylesFile" in handler && handler.outStylesFile) {
-			styleFilename = this.#out(handler.outStylesFile);
+			styleFilename = this.out(handler.outStylesFile);
 		}
 		else {
 			globalStyles = this.#resultCSS(result.result as CSSResult);
 		}
 
-		await writeStr(this.#out(filename), result.string);
+		await writeStr(this.out(filename), result.string);
 		styleFilename && await writeStr(styleFilename, this.#resultCSS(result.result as CSSResult));
 		
 		this.#modules.set(fullName, {
@@ -152,7 +152,7 @@ export class Builder<const A extends Acts> {
 	}
 
 	async #buildMulti(handler: MultiHandler<A>): Promise<void> {
-		await trav(this.#src(handler.subDir), {
+		await trav(this.src(handler.subDir), {
 			onFile: (parent, {name}) => this.#buildSubMulti(
 				handler, 
 				join(handler.subDir, parent, name), 
@@ -161,7 +161,7 @@ export class Builder<const A extends Acts> {
 	}
 
 
-	async #compile(id: string, source: string, handler: Handler<A> | undefined): Promise<InternalBuildResult> {
+	async compile(id: string, source: string, handler: Handler<A> | undefined): Promise<InternalBuildResult> {
 		let order = 0;
 		const config = this.config.wrap?.(id);
 		delete config?.transform;
