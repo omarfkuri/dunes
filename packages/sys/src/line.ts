@@ -72,7 +72,7 @@ export class line {
     symbol: {
       space: this.gray.text(" "),
       break: this.gray.text("\n"),
-      tab: this.gray.text(" "),
+      tab: this.gray.text("  "),
       colon: this.gray.text(":"),
       comma: this.gray.text(","),
       openSquare: this.gray.text("["),
