@@ -143,7 +143,7 @@ export class Router {
     const pages: {[key: string]: string} = {}
 
     for (const page of this.config.pages) {
-      await this.go({to: page});
+      await this.go({to: location.origin + page});
       pages[page] = document.documentElement.outerHTML;
     }
 
