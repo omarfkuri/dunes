@@ -137,4 +137,16 @@ export class Router {
 		Vc.stylesRef = `${this.config.views.folder}/css${pathname}.css`;
 		return Vc;
 	}
+
+  async print() {
+
+    const pages: {[key: string]: string} = {}
+
+    for (const page of this.config.pages) {
+      await this.go({to: page});
+      pages[page] = document.documentElement.outerHTML;
+    }
+
+    return pages;
+  }
 }
