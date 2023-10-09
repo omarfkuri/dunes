@@ -37,7 +37,11 @@ export interface ServerConfig {
 	static?: boolean
 	api?: {
     get?(req: Request, res: Response, app: Express): Prom<{stop: boolean}>
-    post?(req: Request, res: Response, app: Express): Prom<{stop: boolean}>
+    post?: {
+      act(req: Request, res: Response, app: Express): Prom<{stop: boolean}>
+      encode?: boolean
+      json?: boolean
+    }
   };
 }
 

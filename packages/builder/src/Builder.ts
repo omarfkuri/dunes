@@ -424,8 +424,10 @@ export class Builder<const A extends Acts> {
 				}
 			})
       if (options.api?.post) {
-        app.use(express.json());
-        app.post("/*", (req, res) => options.api!.post!(req, res, app))
+        const {act, encode, json} = options.api.post;
+        if (json) app.use(express.json());
+        if (encode) app.use(express.urlencoded());
+        app.post("/*", (req, res) => act(req, res, app))
       }
 		}
 		
