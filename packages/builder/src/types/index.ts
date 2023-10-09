@@ -35,7 +35,10 @@ export interface CssTrf {
 export interface ServerConfig {
 	port: number
 	static?: boolean
-	api?: (req: Request, res: Response) => Prom<{stop: boolean}>;
+	api?: {
+    get?(req: Request, res: Response): Prom<{stop: boolean}>
+    post?(req: Request, res: Response): Prom<{stop: boolean}>
+  };
 }
 
 export interface BuildConfig {

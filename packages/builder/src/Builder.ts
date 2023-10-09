@@ -412,8 +412,8 @@ export class Builder<const A extends Acts> {
 		}
 		else {
 			app.get("/*", async (req, res) => {
-				if (options.api) {
-					const {stop} = await options.api(req, res);
+				if (options.api?.get) {
+					const {stop} = await options.api.get(req, res);
 					if (stop) return;
 				}
 				if (req.url.match(/\.\w+$/)) {
@@ -423,6 +423,9 @@ export class Builder<const A extends Acts> {
 					res.sendFile(resolve(join(this.config.public, "index.html")))	
 				}
 			})
+      if (options.api?.post) {
+        app.post("/*", options.api.post);
+      }
 		}
 		
 		return await new Promise(res => {
