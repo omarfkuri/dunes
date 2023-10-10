@@ -173,7 +173,10 @@ export class SiteBuilder {
   async #libs() {
     try {
       const result = await this.#compile(this.src(this.config.lib), {
-        treeshake: true
+        treeshake: true,
+        replaceAfter: [
+          [/export *{ .+ };? *\n*/, ""],
+        ]
       });
       this.#map.set(this.config.lib, result);
       await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
@@ -188,7 +191,10 @@ export class SiteBuilder {
   async #main() {
     try {
       const result = await this.#compile(this.src(this.config.main), {
-        treeshake: false
+        treeshake: false,
+        replaceAfter: [
+          [/export *{ .+ };? *\n*/, ""],
+        ]
       });
       this.#map.set(this.config.main, result);
       await writeStr(this.out(this.config.main.replace(/(\.\w+)+$/, ".js")),
@@ -238,7 +244,11 @@ export class SiteBuilder {
 
   async #html(script: string): Promise<string> {
     try {
-      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {});
+      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {
+        replaceAfter: [
+          [/export *{ .+ };? *\n*/, ""],
+        ]
+      });
       // let lib = this.#map.get(this.config.lib);
       // if (!lib) {
       //   throw "lib has not been written for html to create"
@@ -271,6 +281,10 @@ export class SiteBuilder {
     return await Wrap.build({
       ...this.config.wrap,
       ...opts,
+      replaceAfter: [
+        ...(this.config.wrap.replaceAfter || []),
+        ...(opts?.replaceAfter || []),
+      ],
       script,
       transform: [{
         name: "css",
