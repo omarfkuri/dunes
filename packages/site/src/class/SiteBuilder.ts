@@ -171,28 +171,45 @@ export class SiteBuilder {
   }
 
   async #libs() {
-    const result = await this.#compile(this.src(this.config.lib), {
-      treeshake: true
-    });
-    this.#map.set(this.config.lib, result);
-    await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
-      result.code
-    )
+    try {
+      const result = await this.#compile(this.src(this.config.lib), {
+        treeshake: true
+      });
+      this.#map.set(this.config.lib, result);
+      await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
+        result.code
+      )
+    }
+    catch(err) {
+      throw [this.config.lib, err]
+    }
   }
 
   async #main() {
-    const result = await this.#compile(this.src(this.config.main), {
-      treeshake: false
-    });
-    this.#map.set(this.config.main, result);
-    await writeStr(this.out(this.config.main.replace(/(\.\w+)+$/, ".js")),
-      result.code
-    )
+    try {
+      const result = await this.#compile(this.src(this.config.main), {
+        treeshake: false
+      });
+      this.#map.set(this.config.main, result);
+      await writeStr(this.out(this.config.main.replace(/(\.\w+)+$/, ".js")),
+        result.code
+      )
+    }
+    catch(err) {
+      throw [this.config.main, err]
+    }
   }
 
   async #views() {
     await trav(this.src(this.config.views.folder), {
-      onFile: (parent, file) => this.#view(join(this.config.views.folder, parent, file.name))
+      onFile: async (parent, file) => {
+        try {
+          await this.#view(join(this.config.views.folder, parent, file.name));
+        }
+        catch(err) {
+          throw [join(parent, file.name), err]
+        }
+      }
     })
   }
 
@@ -219,22 +236,27 @@ export class SiteBuilder {
   }
 
   async #html(script: string): Promise<string> {
-    const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base));
-    const lib = this.#map.get(this.config.lib);
-    if (!lib) {
-      throw "lib has not been written for html to create"
+    try {
+      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base));
+      const lib = this.#map.get(this.config.lib);
+      if (!lib) {
+        throw "lib has not been written for html to create"
+      }
+      const htmlFunc: HTMLFunction = eval(`${lib.code}\n${htmlFuncSource}; html;`);
+      if (typeof htmlFunc !== "function") {
+        throw `Base ${this.config.base} does not export a function called "html"`
+      }
+      const body = await this.#extractBody(script);
+      const str = await htmlFunc({
+        scripts: [],
+        styles: [],
+        body
+      })
+      return str;
     }
-    const htmlFunc: HTMLFunction = eval(`${lib.code}\n${htmlFuncSource}; html;`);
-    if (typeof htmlFunc !== "function") {
-      throw `Base ${this.config.base} does not export a function called "html"`
+    catch(err) {
+      throw [this.config.base, err]
     }
-    const body = await this.#extractBody(script);
-    const str = await htmlFunc({
-      scripts: [],
-      styles: [],
-      body
-    })
-    return str;
   }
 
   async #extractBody(script: string): Promise<string> {
@@ -308,4 +330,3 @@ function analyzeCss(id: string, source: string): CSSAnalysis {
     css,
   }
 }
-
