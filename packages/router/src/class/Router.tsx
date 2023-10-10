@@ -134,7 +134,7 @@ export class Router {
       pathname === "index" ? ""
       : (
         pathname.endsWith("index")
-        ? pathname.slice(0, pathname.lastIndexOf("/"))
+        ? pathname.slice(0, pathname.lastIndexOf("/")+1)
         : pathname
       )
     )
