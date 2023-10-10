@@ -3,9 +3,10 @@ import { existsSync } from "fs";
 
 import type { Plugin } from "@dunes/wrap";
 import { BabWrap } from "@dunes/bab";
-import { BabelOptions } from "./types";
+import { ResolveOptions } from "./types";
 
-export function localResolve(opts: BabelOptions): Plugin {
+export function localResolve(opts: ResolveOptions): Plugin {
+  const babel = new BabWrap(opts.parseOptions);
   const extensions = ["ts", "tsx", "js", "jsx"];
 
   function makeFile(pastDir: string, src: string): string {
@@ -38,17 +39,6 @@ export function localResolve(opts: BabelOptions): Plugin {
     return fileName;
   }
 
-  const babel = new BabWrap({
-    sourceType: "module",
-    plugins: ["typescript", "jsx", "destructuringPrivate"]
-  });
-  const convertOptions = (filename: string) => ({
-    filename,
-    presets: [
-      ["@babel/preset-typescript", opts.ts],
-      ["@babel/preset-react", opts.jsx],
-    ]
-  })
 
   return {
     name: "bab",
@@ -73,7 +63,7 @@ export function localResolve(opts: BabelOptions): Plugin {
               }
               
 
-              const r = babel.from(path.node).convert(convertOptions(""))?.code;
+              const r = babel.from(path.node).convert(opts.transformOptions(""))?.code;
               if (r) {
                 opts.keeps.add(r)
               }
@@ -101,7 +91,7 @@ export function localResolve(opts: BabelOptions): Plugin {
         }
       });
 
-      return bab.convert(convertOptions(filename))?.code || "";
+      return bab.convert(opts.transformOptions(filename))?.code || "";
     }
   }
 }
