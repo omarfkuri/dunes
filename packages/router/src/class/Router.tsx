@@ -129,9 +129,14 @@ export class Router {
 	}
 
 	async #load(pathname: string): Promise<ViewConst> {
-    const path = pathname.endsWith("index")
-    ? pathname.slice(0, pathname.lastIndexOf("/"))
-    : pathname
+    const path = (
+      pathname === "index" ? ""
+      : (
+        pathname.endsWith("index")
+        ? pathname.slice(0, pathname.lastIndexOf("/"))
+        : pathname
+      )
+    )
 		const {default: Vc} = (await import(`${path}/script.js`)) as {default: ViewConst};
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
