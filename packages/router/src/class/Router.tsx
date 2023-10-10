@@ -143,7 +143,7 @@ export class Router {
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
 		}
-		Vc.stylesRef = `${path}${endslash}/style.css`;
+		Vc.stylesRef = `${path}${endslash}style.css`;
 		return Vc;
 	}
 
