@@ -33,6 +33,7 @@ export class SiteBuilder {
         folder: "views",
         only: /\.tsx$/
       },
+      htmlLib: undefined as unknown as string,
       wrap: {},
       css: {
         match: /\.css/,
@@ -237,12 +238,12 @@ export class SiteBuilder {
 
   async #html(script: string): Promise<string> {
     try {
-      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base));
-      const lib = this.#map.get(this.config.lib);
+      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {}, this.config.htmlLib);
+      let lib = this.#map.get(this.config.lib);
       if (!lib) {
         throw "lib has not been written for html to create"
       }
-      const htmlFunc: HTMLFunction = eval(`${lib.code}\n${htmlFuncSource}; html;`);
+      const htmlFunc: HTMLFunction = eval(`${this.config.htmlLib ? "": lib.code}\n${htmlFuncSource}; html;`);
       if (typeof htmlFunc !== "function") {
         throw `Base ${this.config.base} does not export a function called "html"`
       }
@@ -263,8 +264,8 @@ export class SiteBuilder {
     return ""
   }
 
-  async #compile(path: string, opts?: CompileOptions): Promise<CompileResult> {
-    const script = await readString(path);
+  async #compile(path: string, opts?: CompileOptions, add = ""): Promise<CompileResult> {
+    const script = add + await readString(path);
     let order = 0;
 
     return await Wrap.build({
