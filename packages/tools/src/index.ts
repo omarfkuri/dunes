@@ -46,3 +46,7 @@ export {
   js
 
 } from "./str"
+
+export function sleep(ms = 5000) {
+  return new Promise<void>(res => setTimeout(res, ms));
+}
