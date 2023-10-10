@@ -34,6 +34,7 @@ export class SiteBuilder {
         only: /\.tsx$/
       },
       htmlLib: undefined as unknown as string,
+      htmlBody: "<div>Hello World</div>",
       wrap: {},
       css: {
         match: /\.css/,
@@ -239,7 +240,7 @@ export class SiteBuilder {
 
   async #html(script: string): Promise<string> {
     try {
-      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {}, this.config.htmlLib);
+      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {});
       let lib = this.#map.get(this.config.lib);
       if (!lib) {
         throw "lib has not been written for html to create"
@@ -262,11 +263,11 @@ export class SiteBuilder {
   }
 
   async #extractBody(script: string): Promise<string> {
-    return ""
+    return this.config.htmlBody
   }
 
-  async #compile(path: string, opts?: CompileOptions, add = ""): Promise<CompileResult> {
-    const script = add + await readString(path);
+  async #compile(path: string, opts?: CompileOptions): Promise<CompileResult> {
+    const script = await readString(path);
     let order = 0;
 
     return await Wrap.build({

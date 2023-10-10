@@ -11,8 +11,10 @@ export interface SiteBuildConfig {
   /** View Options */
   views?: ViewOptions
 
-  /** View Options */
+  /** Temp Options */
   htmlLib?: string
+  /** Temp Options */
+  htmlBody?: string
 
   /** CSS Options */
   css?: CSSOptions
