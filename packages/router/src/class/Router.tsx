@@ -7,6 +7,7 @@ export class Router {
 	latestURL?: URL
 	latestReq?: URL
 	latestView?: View
+  
 
 	#views = new Map<string, ViewConst>();
 	get root(): HTMLElement {
