@@ -3,7 +3,6 @@ import { TransformOptions, transformFromAstSync, traverse } from "@babel/core";
 import parser from "@babel/parser";
 import { NodePath, Scope, TraverseOptions } from "@babel/traverse";
 import { File, Node } from "@babel/types";
-import { BabelOptions } from "../types";
 
 
 export class BabWrap {
