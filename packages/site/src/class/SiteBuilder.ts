@@ -222,15 +222,15 @@ export class SiteBuilder {
       treeshake: false
     });
     this.#map.set(path, result);
-    const outFolder = this.out(this.config.views.folder);
-    await writeStr(join(outFolder, path.replace(/(\.\w+)+$/, "/script.js")),
+    const outPath = this.out(path.slice(this.config.views.folder.length));
+    await writeStr(outPath.replace(/(\.\w+)+$/, "/script.js"),
       result.code
     )
-    await writeStr(join(outFolder, path.replace(/(\.\w+)+$/, "/styles.css")),
+    await writeStr(outPath.replace(/(\.\w+)+$/, "/styles.css"),
       resultCSS(result.result)
     )
     const html = await this.#html(result.code);
-    await writeStr(join(outFolder, path.replace(/(\.\w+)+$/, "/index.html")),
+    await writeStr(outPath.replace(/(\.\w+)+$/, "/index.html"),
       html
     )
 
