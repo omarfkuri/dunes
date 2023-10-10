@@ -1,6 +1,6 @@
 {
   "name": "@dunes/site",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
