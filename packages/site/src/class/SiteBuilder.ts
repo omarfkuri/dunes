@@ -36,6 +36,7 @@ export class SiteBuilder {
       wrap: {},
       css: {
         match: /\.css/,
+        file: "global.css",
         ext: "css",
         transform: source => source
       },
@@ -129,6 +130,7 @@ export class SiteBuilder {
           }
         }
       }
+      await this.#globalCSS();
     }
 
     const watcher = new WatchDir(
@@ -149,6 +151,7 @@ export class SiteBuilder {
     await this.#libs(options.hash || null);
     await this.#main();
     await this.#views();
+    await this.#globalCSS();
 
     return {took: Date.now() - start}
   }
@@ -159,6 +162,14 @@ export class SiteBuilder {
 
   out(name: string, ...names: string[]): string {
     return join(this.config.out, name, ...names)
+  }
+
+  #globalCSS() {
+    let style = "";
+    for (const [,{result}] of this.#map) {
+      style += resultCSS(result) + "\n"
+    }
+    return writeStr(this.out(this.config.css.file), style);
   }
 
 
@@ -270,7 +281,9 @@ export class SiteBuilder {
           `/${this.config.lib.replace(/\.tsx?$/, ".js")}`,
           `/${this.config.main.replace(/\.tsx?$/, ".js")}`,
         ],
-        styles: [],
+        styles: [
+          `/${this.config.css.file}`,
+        ],
         body
       })
 

@@ -49,6 +49,7 @@ export interface CSSOptions {
    * */
   match: RegExp 
   ext: string
+  file: Recommend<"global.css">
   transform(source: string): Prom<string>
 
 }
@@ -110,8 +111,8 @@ export type WatchResult = Promise<void>
 export type CSSResult = ActsResult<[CSSAct]>
 
 export interface CSSAct extends Act {
-  name: "css", 
-  match: any, 
+  name: "css"
+  match: any
   action(source: string, id: string): {
     text: string
     data: {
