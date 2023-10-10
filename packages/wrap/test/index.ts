@@ -1,5 +1,5 @@
 
-import { Wrap, bab} from '../src';
+import { Wrap } from '../src';
 
 try {
 	const build = await Wrap.build({
@@ -8,15 +8,7 @@ try {
 			"",
 			"const el: any = extract([<div>22</div>], 0);",
 		].join("\n"),
-		plugs: [
-			bab({
-				id: "script.tsx",
-				jsx: {
-					pragma: "Elem.create",
-					useSpread: true
-				},
-			})
-		],
+		plugs: [],
 		replaceBefore: [
 			[/div/g, "span"]
 		],
