@@ -260,8 +260,8 @@ export class SiteBuilder {
       const body = await this.#extractBody(script);
       const str = await htmlFunc({
         scripts: [
-          `/${this.config.lib.replace(".tsx", ".js")}`,
-          `/${this.config.main.replace(".tsx", ".js")}`,
+          `/${this.config.lib.replace(/\.tsx?$/, ".js")}`,
+          `/${this.config.main.replace(/\.tsx?$/, ".js")}`,
         ],
         styles: [],
         body
