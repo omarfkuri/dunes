@@ -1,13 +1,13 @@
 {
   "name": "@dunes/tools",
-  "version": "0.9.67",
+  "version": "0.9.68",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && tsc && npm version patch",
+    "build": "rm -rf lib && tsc && yarn version --new-version patch",
     "test": "ts-node test"
   },
   "keywords": [
