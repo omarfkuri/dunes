@@ -135,11 +135,3 @@ export interface HTMLFunctionEvent {
   styles: string[]
   body: string
 }
-export interface Redirect {
-  to: string
-  with?: string
-}
-
-export type ViewEventRes = Prom<Redirect | void>;
-
-export type ViewRevealType = "load" | "reload"
