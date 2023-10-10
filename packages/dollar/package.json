@@ -6,7 +6,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && tsc && npm version patch"
+    "build": "rm -rf lib && tsc && yarn version --new-version patch"
   },
   "keywords": [
     "javascript",

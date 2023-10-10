@@ -13,6 +13,7 @@ type WatchListener = {
 export class WatchDir {
 
   #watching = true
+  #working = false
   #events: Map<string | null, WatchEventType>
   #watcher: FSWatcher
   #delay: number
@@ -29,7 +30,7 @@ export class WatchDir {
     this.#events = new Map
 
     this.#watcher = watch(src, options, 
-      (e, f) => this.#trigger(e, f))
+      (e, f) => !this.#working && this.#trigger(e, f))
 
   }
 
@@ -40,10 +41,14 @@ export class WatchDir {
   async start() {
     while(this.#watching) {
 
-      for (const [filename, event] of this.#events) {
-        await this.#listener(event, filename);
+      if (this.#events.size) {
+        this.#working = true;
+        for (const [filename, event] of this.#events) {
+          await this.#listener(event, filename);
+        }
+        this.#working = false;
+        this.#events.clear();
       }
-      this.#events.clear();
 
       await new Promise<void>(res => setTimeout(res, this.#delay));
     }
