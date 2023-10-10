@@ -266,6 +266,7 @@ export class SiteBuilder {
         styles: [],
         body
       })
+      
       return str;
     }
     catch(err) {
