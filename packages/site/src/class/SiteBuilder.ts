@@ -83,7 +83,7 @@ export class SiteBuilder {
       if (fn === null) return;
 
       if (fn == this.config.lib) {
-        await doAction(fn, "file", ()=> this.#libs());
+        await doAction(fn, "file", ()=> this.#libs(null));
       }
       else if (fn == this.config.main) {
         await doAction(fn, "file", ()=> this.#main());
@@ -113,7 +113,7 @@ export class SiteBuilder {
         }
         for (const [mod, files] of changed) {
           if (mod == this.config.lib) {
-            await doAction(mod, "dependency", ()=> this.#libs(), files);
+            await doAction(mod, "dependency", ()=> this.#libs(null), files);
           }
           else if (mod == this.config.main) {
             await doAction(mod, "dependency", ()=> this.#main(), files);
@@ -146,7 +146,7 @@ export class SiteBuilder {
   async build(options: BuildOptions): BuildResult {
     const start = Date.now();
     await this.#env(options.clean);
-    await this.#libs();
+    await this.#libs(options.hash || null);
     await this.#main();
     await this.#views();
 
@@ -170,7 +170,7 @@ export class SiteBuilder {
     }
   }
 
-  async #libs() {
+  async #libs(hash: string | null) {
     try {
       const result = await this.#compile(this.src(this.config.lib), {
         treeshake: true,
@@ -179,7 +179,14 @@ export class SiteBuilder {
         ]
       });
       this.#map.set(this.config.lib, result);
+      const paths: string[] = [];
+      await trav(this.src(this.config.views.folder), {
+        onFile: (parent, file) => {
+          paths.push(join(parent, file.name));
+        }
+      })
       await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
+        `const paths = ${JSON.stringify(paths)};\nconst hash = ${hash? `"${hash}"`: "null"}\n` +
         result.code
       )
     }
@@ -266,7 +273,7 @@ export class SiteBuilder {
         styles: [],
         body
       })
-      
+
       return str;
     }
     catch(err) {
