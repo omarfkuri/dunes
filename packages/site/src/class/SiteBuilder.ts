@@ -222,7 +222,8 @@ export class SiteBuilder {
       treeshake: false
     });
     this.#map.set(path, result);
-    const outPath = this.out(path.slice(this.config.views.folder.length));
+    const outPath = this.out(path.slice(this.config.views.folder.length))
+    .replace(/\/index.tsx/, ".tsx")
     await writeStr(outPath.replace(/(\.\w+)+$/, "/script.js"),
       result.code
     )
