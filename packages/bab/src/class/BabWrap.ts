@@ -1,8 +1,8 @@
 
-import { TransformOptions, transformFromAstSync, traverse } from "@babel/core";
 import parser from "@babel/parser";
-import { NodePath, Scope, TraverseOptions } from "@babel/traverse";
-import { File, Node } from "@babel/types";
+import { transformFromAstSync, traverse } from "@babel/core";
+
+import { File, Node, Scope, TraverseOptions, NodePath, TransformOptions } from "../types";
 
 
 export class BabWrap {
