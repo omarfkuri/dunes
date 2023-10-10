@@ -7,7 +7,7 @@ export class Router {
 	latestURL?: URL
 	latestReq?: URL
 	latestView?: View
-  
+
 
 	#views = new Map<string, ViewConst>();
 	get root(): HTMLElement {
@@ -138,11 +138,12 @@ export class Router {
         : pathname
       )
     )
-		const {default: Vc} = (await import(`${path}/script.js`)) as {default: ViewConst};
+    const endslash = path.endsWith("/")?"":"/";
+		const {default: Vc} = (await import(`${path}${endslash}script.js`)) as {default: ViewConst};
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
 		}
-		Vc.stylesRef = `${path}/style.css`;
+		Vc.stylesRef = `${path}${endslash}/style.css`;
 		return Vc;
 	}
 
