@@ -4,6 +4,8 @@ import { Plugin } from 'rollup';
 
 import type { OutputOptions, RollupOptions } from 'rollup';
 
+export { Plugin }
+
 export interface BaseOpts<A extends Acts> {
 	treeshake?: RollupOptions["treeshake"]
 	format?: OutputOptions["format"]
@@ -52,20 +54,4 @@ export type Result<A extends Acts> = {
 
 export type StrResult<A extends Acts> = Result<A> & {
 	code: string
-}
-
-
-export interface BabelOptions {
-	jsx?: JSXOptions
-	id: string
-	ts?: {[key: string]: any}
-	keeps: Set<string>
-}
-
-export interface JSXOptions {
-	useBuiltIns?: boolean
-	useSpread?: boolean
-	pragma?: string
-	pragmaFrag?: string
-	runtime?: "classic" | (string & ({}))
 }
