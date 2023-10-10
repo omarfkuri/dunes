@@ -259,7 +259,10 @@ export class SiteBuilder {
       }
       const body = await this.#extractBody(script);
       const str = await htmlFunc({
-        scripts: [],
+        scripts: [
+          `/${this.config.lib.replace(".tsx", ".js")}`,
+          `/${this.config.main.replace(".tsx", ".js")}`,
+        ],
         styles: [],
         body
       })
@@ -294,7 +297,6 @@ export class SiteBuilder {
           const compiled = await this.config.css.transform(source);
           order++
           if (id.endsWith(`.m.${this.config.css.ext}`)) {
-
             const data = analyzeCss(id, compiled);
             return {
               text: `export default ${data.exports}`,
