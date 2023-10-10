@@ -138,12 +138,13 @@ export class Router {
         : pathname
       )
     )
+    
     const endslash = path.endsWith("/")?"":"/";
 		const {default: Vc} = (await import(`${path}${endslash}script.js`)) as {default: ViewConst};
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
 		}
-		Vc.stylesRef = `${path}${endslash}style.css`;
+		Vc.stylesRef = `${path}${endslash}ºstyle.css`;
 		return Vc;
 	}
 
