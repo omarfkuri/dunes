@@ -129,12 +129,14 @@ export class Router {
 	}
 
 	async #load(pathname: string): Promise<ViewConst> {
-		const path = `${this.config.views.folder}/js${pathname}.js`;
-		const {default: Vc} = (await import(path)) as {default: ViewConst};
+    const path = pathname.endsWith("index")
+    ? pathname.slice(0, pathname.lastIndexOf("/"))
+    : pathname
+		const {default: Vc} = (await import(`${path}/script.js`)) as {default: ViewConst};
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
 		}
-		Vc.stylesRef = `${this.config.views.folder}/css${pathname}.css`;
+		Vc.stylesRef = `${path}/style.css`;
 		return Vc;
 	}
 
