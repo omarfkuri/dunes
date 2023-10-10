@@ -1,6 +1,6 @@
 {
   "name": "@dunes/site",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -27,7 +27,7 @@
     "@dunes/sys": "^0.9.58",
     "@dunes/tag": "^0.9.67",
     "@dunes/wrap": "^0.9.67",
-    "@dunes/wrap-plug": "^0.9.70",
+    "@dunes/wrap-plug": "^0.9.69",
     "@rollup/plugin-node-resolve": "^15.2.3"
   }
 }
