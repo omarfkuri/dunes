@@ -2,11 +2,15 @@
 import parser from "@babel/parser";
 import { transformFromAstSync, traverse } from "@babel/core";
 
-import { File, Node, Scope, TraverseOptions, NodePath, TransformOptions } from "../types";
+import { 
+  File, Node, Scope, TraverseOptions, 
+  NodePath, TransformOptions, ParserOptions, 
+  ParseResult 
+} from "../types";
 
 
 export class BabWrap {
-  constructor(readonly parseOpts: parser.ParserOptions) {}
+  constructor(readonly parseOpts: ParserOptions) {}
 
   read(source: string): Bab {
     return new Bab(parser.parse(source, this.parseOpts));
@@ -20,7 +24,7 @@ export class BabWrap {
 }
 
 class Bab {
-  constructor(readonly result: parser.ParseResult<File>) {}
+  constructor(readonly result: ParseResult<File>) {}
 
   traverse(options: TraverseOptions, scope?: Scope, parent?: NodePath) {
     traverse(this.result, options, scope, parent);
