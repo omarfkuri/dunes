@@ -1,0 +1,17 @@
+{
+	"extends": "../../tsconfig.json",
+	"exclude": ["test", "lib"],
+
+	"compilerOptions": {
+		"outDir": "lib",
+		"declaration": true,
+    "lib": [
+      "ES2020", "DOM", "DOM.Iterable"
+    ],
+    "baseUrl": ".",
+
+
+    "jsx": "react",
+    "jsxFactory": "Elem.create"
+	}
+}
