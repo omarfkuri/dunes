@@ -8,6 +8,14 @@ export interface SiteBuildConfig {
   /** Source folder */
   src?: Recommend<"src">
 
+  /** Assets Options */
+  assets?: null | {
+    /** Assets source folder */
+    source: Recommend<"assets">
+    /** Assets out folder (leave empty for same as out) */
+    out?: string
+  }
+
   /** View Options */
   views?: ViewOptions
 

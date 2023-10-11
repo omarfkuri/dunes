@@ -12,7 +12,7 @@ import {
   CSSAnalysis,
   HTMLFunction,
 } from "../types";
-import { mkdir, rm } from "fs/promises";
+import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { WatchDir, readString, trav, writeStr } from "@dunes/sys";
 import { Wrap } from "@dunes/wrap";
@@ -33,6 +33,7 @@ export class SiteBuilder {
         folder: "views",
         only: /\.tsx$/
       },
+      assets: null,
       wrap: {},
       css: {
         match: /\.css/,
@@ -159,6 +160,7 @@ export class SiteBuilder {
     await this.#main();
     await this.#views();
     await this.#globalCSS();
+    await this.#assets(options.hash || null);
 
     return {took: Date.now() - start}
   }
@@ -186,6 +188,24 @@ export class SiteBuilder {
     if (clean) {
       await rm(this.config.out, {recursive: true})
     }
+  }
+
+  async #assets(hash: string | null) {
+    if (!this.config.assets) return;
+    const {out, source} = this.config.assets;
+    if (out) {
+      await mkdir(out, {recursive: true});
+    }
+    await trav(this.src(source), {
+      onFile: (parent, file) => 
+        copyFile(
+          join(parent, file.name),
+          out
+          ? this.out(out, parent, file.name)
+          : this.out(parent, file.name),
+        )
+      
+    })
   }
 
   async #libs(hash: string | null) {
