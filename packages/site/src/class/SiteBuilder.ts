@@ -88,7 +88,6 @@ export class SiteBuilder {
     
     const listener: WatchListener<string> = async (_ch, fn) => {
       if (fn === null) return;
-
       const style = this.config.css.match.test(fn);
 
       if (fn == this.config.lib) {
