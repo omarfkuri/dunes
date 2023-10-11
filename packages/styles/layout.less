@@ -1,0 +1,34 @@
+.row() {
+  display: flex;
+  flex-direction: row;
+}
+
+.col() {
+  display: flex;
+  flex-direction: column;
+}
+
+.row(@align) {
+  .row();
+  justify-content: @align;
+  align-items: @align;
+}
+
+.col(@align) {
+  .col();
+  justify-content: @align;
+  align-items: @align;
+}
+
+.row(@justify, @align) {
+  .row();
+  justify-content: @justify;
+  align-items: @align;
+}
+
+.col(@justify, @align) {
+  .col();
+  justify-content: @justify;
+  align-items: @align;
+}
+

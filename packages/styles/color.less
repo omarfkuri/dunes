@@ -1,0 +1,47 @@
+.c(@l, @d) {
+  color: @l;
+
+  @media (prefers-color-scheme: dark) {
+    color: @d;
+  }
+}
+
+.bg(@l, @d) {
+  background-color: @l;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: @d;
+  }
+}
+
+.sh(@a, @c) {
+  box-shadow: @a @c;
+
+  @media (prefers-color-scheme: dark) {
+    box-shadow: @a @c;
+  }
+}
+
+.sh(@a, @l, @d) {
+  box-shadow: @a @l;
+
+  @media (prefers-color-scheme: dark) {
+    box-shadow: @a @d;
+  }
+}
+
+.bd(@a, @l, @d) {
+  border: @a @l;
+
+  @media (prefers-color-scheme: dark) {
+    border: @a @d;
+  }
+}
+
+.bdc(@l, @d) {
+  border-color: @l;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: @d;
+  }
+}
