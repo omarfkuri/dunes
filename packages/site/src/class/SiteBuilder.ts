@@ -54,17 +54,21 @@ export class SiteBuilder {
       name: string, 
       type: "dependency" | "file", 
       func: () => Promise<any>, 
+      style: boolean,
       files?: Set<string>,
     ) => {
       const start = Date.now();
+
       try {
         await options.onActionStart?.({
           name, type, files, original: name,
+          style,
           took: 0,
         })
         await func();
         await options.onActionFinish?.({
           name, type, files, original: name,
+          style,
           took: Date.now() - start,
         })
       }
@@ -75,6 +79,7 @@ export class SiteBuilder {
         }
         await options.onActionFailure({
           name, type, files, error, original: name,
+          style,
           took: Date.now() - start,
         })
       }
@@ -83,20 +88,22 @@ export class SiteBuilder {
     const listener: WatchListener<string> = async (_ch, fn) => {
       if (fn === null) return;
 
+      const style = this.config.css.match.test(fn);
+
       if (fn == this.config.lib) {
-        await doAction(fn, "file", ()=> this.#libs(null));
+        await doAction(fn, "file", ()=> this.#libs(null), style);
       }
       else if (fn == this.config.main) {
-        await doAction(fn, "file", ()=> this.#main());
+        await doAction(fn, "file", ()=> this.#main(), style);
       }
       else if (fn == this.config.base) {
-        await doAction(fn, "file", ()=> this.#views());
+        await doAction(fn, "file", ()=> this.#views(), style);
       }
       else if (
         fn.startsWith(this.config.views.folder) && 
         this.config.views.only.test(fn)
       ) {
-        await doAction(fn, "file", ()=> this.#view(fn));
+        await doAction(fn, "file", ()=> this.#view(fn), style);
       }
 
       else {
@@ -114,19 +121,19 @@ export class SiteBuilder {
         }
         for (const [mod, files] of changed) {
           if (mod == this.config.lib) {
-            await doAction(mod, "dependency", ()=> this.#libs(null), files);
+            await doAction(mod, "dependency", ()=> this.#libs(null), style, files);
           }
           else if (mod == this.config.main) {
-            await doAction(mod, "dependency", ()=> this.#main(), files);
+            await doAction(mod, "dependency", ()=> this.#main(), style, files);
           }
           else if (mod == this.config.base) {
-            await doAction(mod, "dependency", ()=> this.#views(), files);
+            await doAction(mod, "dependency", ()=> this.#views(), style, files);
           }
           else if (
             mod.startsWith(this.config.views.folder) && 
             this.config.views.only.test(mod)
           ) {
-            await doAction(mod, "dependency", ()=> this.#view(mod), files);
+            await doAction(mod, "dependency", ()=> this.#view(mod), style, files);
           }
         }
       }

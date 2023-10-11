@@ -97,6 +97,7 @@ interface WatchEv {
   original?: string
   files?: Set<string>
   took: number
+  style: boolean
 }
 
 export interface WatchOptions {
