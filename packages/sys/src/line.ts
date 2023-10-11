@@ -19,6 +19,7 @@ function LineColor(c1: number, c2: number): Ret {
 	return ret;
 }
 
+/**@deprecated*/
 export class line {
 	static readonly reset = LineColor(0, 0);
 	static readonly bold = LineColor(1, 22);
