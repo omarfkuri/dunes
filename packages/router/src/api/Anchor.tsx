@@ -4,12 +4,12 @@ declare const {Elem}: typeof import("@dunes/tag")
 export const Anchor: Component<Omit<Elements.Anchor, "onclick"> & {
 	href: string
 	desc: any
-}> = function ({desc, ...props}) {
+}> = function ({desc, href, ...props}) {
 
 	return (
-		<a {...props} onclick={(e) => {
+		<a {...props} href={href} onclick={(e) => {
 			e.preventDefault();
-			return router.go(e.target.href);
+			router.visit(href);
 		}}>{desc}</a>
 	)
 }
