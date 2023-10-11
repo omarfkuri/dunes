@@ -14,7 +14,7 @@ import {
 import type { Doc, DocFn, SetDoc, UpdateDoc } from "./types";
 import { AbstractFire } from "./AbstractFire";
 
-export class FireStore extends AbstractFire<Firestore> {
+export class FireData extends AbstractFire<Firestore> {
 
 	constructor(app: FirebaseApp) {
 		super(getFirestore(app))
@@ -30,7 +30,7 @@ export class FireStore extends AbstractFire<Firestore> {
 		return Timestamp.now();
 	}
 
-	onDocs<T>(colRef: Query<T> | CollectionReference<T>, docFn: DocFn<T>) {
+	onSnap<T>(colRef: Query<T> | CollectionReference<T>, docFn: DocFn<T>) {
 		return onSnapshot(colRef, (snap) => {
 			const docs = snap.docs.map(x => ({ ...x.data(), id: x.id })) as Doc<T>[];
 			return docFn(docs);
@@ -49,11 +49,11 @@ export class FireStore extends AbstractFire<Firestore> {
 		return collection(this.self, from) as CollectionReference<T>;
 	}
 
-	colWhere<T>(from: string, ...queries: QueryConstraint[]): Query<T> {
+	query<T>(from: string, ...queries: QueryConstraint[]): Query<T> {
 		return query(collection(this.self, from), ...queries) as Query<T>;
 	}
 
-	async getDoc<T>(docRef: DocumentReference<T>): Promise<Doc<T> | null> {
+	async get<T>(docRef: DocumentReference<T>): Promise<Doc<T> | null> {
 		const siteDoc = await getDoc(docRef);
 		if (!siteDoc.exists()) {
 			return null;
@@ -61,7 +61,7 @@ export class FireStore extends AbstractFire<Firestore> {
 		return { ...siteDoc.data()!, id: siteDoc.id } as Doc<T>;
 	}
 
-	async getCollection<T>(colRef: CollectionReference<T> | Query<T>): Promise<Doc<T>[]> {
+	async getCol<T>(colRef: CollectionReference<T> | Query<T>): Promise<Doc<T>[]> {
 		const p = new Array<Doc<T>>();
 
 		const ref = await getDocs(colRef);
@@ -73,19 +73,19 @@ export class FireStore extends AbstractFire<Firestore> {
 		return p;
 	}
 
-	remDoc<T>(docRef: DocumentReference<T>): Promise<void> {
+	remove<T>(docRef: DocumentReference<T>): Promise<void> {
 		return deleteDoc(docRef);
 	}
 
-  setDoc<T>(docRef: DocumentReference<T>, doc: SetDoc<T>): Promise<void> {
+  set<T>(docRef: DocumentReference<T>, doc: SetDoc<T>): Promise<void> {
     return setDoc(docRef, doc as Doc<T>);
   }
 
-	addDoc<T>(colRef: CollectionReference<T>, doc: SetDoc<T>): Promise<DocumentReference<T>> {
+	add<T>(colRef: CollectionReference<T>, doc: SetDoc<T>): Promise<DocumentReference<T>> {
 		return addDoc(colRef, doc as Doc<T>);
 	}
 
-	updateDoc<T>(docRef: DocumentReference<T>, doc: UpdateDoc<T>): Promise<void> {
+	update<T>(docRef: DocumentReference<T>, doc: UpdateDoc<T>): Promise<void> {
 		return updateDoc(docRef, doc);
 	}
 }

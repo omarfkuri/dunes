@@ -1,7 +1,7 @@
 
 export { Fire } from "./Fire"
 export { FireAuth } from "./FireAuth"
-export { FireStore } from "./FireStore"
+export { FireData } from "./FireData"
 export { FireStorage } from "./FireStorage"
 export { FireFunctions } from "./FireFunctions"
 

@@ -3,8 +3,8 @@ import { type FirebaseApp, type FirebaseOptions, initializeApp } from "firebase/
 type FireAuth = import("./FireAuth").FireAuth
 declare const FireAuth: typeof import("./FireAuth").FireAuth | undefined
 
-type FireStore = import("./FireStore").FireStore
-declare const FireStore: typeof import("./FireStore").FireStore | undefined
+type FireData = import("./FireData").FireData
+declare const FireData: typeof import("./FireData").FireData | undefined
 
 type FireStorage = import("./FireStorage").FireStorage
 declare const FireStorage: typeof import("./FireStorage").FireStorage | undefined
@@ -16,7 +16,7 @@ export class Fire {
 	
 	static #app: FirebaseApp;
 	static #auth: FireAuth; 
-	static #store: FireStore; 
+	static #data: FireData; 
 	static #storage: FireStorage; 
 	static #functions: FireFunctions | null = null;
 
@@ -38,18 +38,18 @@ export class Fire {
 		return this.#auth;
 	}
 
-	static useStore(): void {
+	static useDatabase(): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
-		if (!FireStore) {
-			throw `FireStore is not imported`
+		if (!FireData) {
+			throw `FireData is not imported`
 		}
-		this.#store = new FireStore(this.#app)
+		this.#data = new FireData(this.#app)
 	}
 
-	static get store() {
-		return this.#store;
+	static get data() {
+		return this.#data;
 	}
 
 	static useStorage(): void {
@@ -57,7 +57,7 @@ export class Fire {
 			throw `App is not initialized`
 		}
 		if (!FireStorage) {
-			throw `FireStore is not imported`
+			throw `FireData is not imported`
 		}
 		this.#storage = new FireStorage(this.#app)
 	}
