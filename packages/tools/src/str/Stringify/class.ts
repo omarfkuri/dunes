@@ -1,3 +1,4 @@
+import { isAsync, isConstructor, isNamed } from "../../bool";
 import { getKeys } from "../../obj";
 import { Descriptor, StringifyConfig } from "./types";
 
@@ -75,7 +76,7 @@ export class Stringify {
 
     let str = "";
 
-    if (this.config.options?.displayClassName !== false && obj.constructor.name !== "Object") {
+    if (this.config.options?.displayClassName !== false && obj.constructor?.name !== "Object") {
       str += obj.constructor.name + this.config.symbol.space
     }
 
@@ -104,6 +105,7 @@ export class Stringify {
     for (const {styled, descriptor} of keys) {
       i++;
       const colon = this.config.options?.excludeColon && typeof descriptor.value === "function"
+      && !isConstructor(descriptor.value) && isNamed(descriptor.value) && !isAsync(descriptor.value)
       ? ""
       : (
         this.config.symbol.colon
@@ -132,7 +134,7 @@ export class Stringify {
 
     let str = "";
 
-    if (this.config.options?.displayClassName !== false &&arr.constructor.name !== "Array") {
+    if (this.config.options?.displayClassName !== false &&arr.constructor?.name !== "Array") {
       str += arr.constructor.name + this.config.symbol.space
     }
 

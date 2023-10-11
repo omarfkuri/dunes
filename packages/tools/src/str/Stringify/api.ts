@@ -57,6 +57,7 @@ export const js = (value: unknown, depth = 2) => {
     },
 
     options: {
+      displayClassName: false,
       excludeColon: "function"
     },
 

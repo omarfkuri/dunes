@@ -31,7 +31,8 @@ const obj = {
     },
     [Symbol.asyncIterator]() {
       console.log("Hello world!")
-    }
+    },
+    cl: class Myclass extends Date {}
   }
 
 }
