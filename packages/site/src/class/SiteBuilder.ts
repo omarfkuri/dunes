@@ -192,17 +192,20 @@ export class SiteBuilder {
   async #assets(hash: string | null) {
     if (!this.config.assets) return;
     const {out, source} = this.config.assets;
-    if (out) {
-      await mkdir(out, {recursive: true});
-    }
     await trav(this.src(source), {
-      onFile: (parent, file) => 
-        copyFile(
+      onFile: async (parent, file) => {
+        
+        const outDir = out
+          ? this.out(out, parent)
+          : this.out(parent);
+
+        await mkdir(outDir, {recursive: true});
+
+        await copyFile(
           this.src(source, parent, file.name),
-          out
-          ? this.out(out, parent, file.name)
-          : this.out(parent, file.name),
+          join(outDir, file.name),
         )
+      }
       
     })
   }
