@@ -129,6 +129,17 @@ export class Router {
 		}
 	}
 
+  visit(redirect: Redirect): Promise<void>
+  visit(to: string, w?: string): Promise<void>
+  visit(red: string | Redirect, w?: string): Promise<void> {
+    if (typeof red === "object") {
+      return this.render(location.origin + red.to)
+    }
+    else {
+      return this.render(location.origin + red)
+    }
+  }
+
 	async #load(pathname: string): Promise<ViewConst> {
     const path = (
       pathname === "index" ? ""
