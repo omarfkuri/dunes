@@ -200,7 +200,6 @@ export class SiteBuilder {
           : this.out(parent);
 
         await mkdir(outDir, {recursive: true});
-
         await copyFile(
           this.src(source, parent, file.name),
           join(outDir, file.name),
