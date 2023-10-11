@@ -199,7 +199,7 @@ export class SiteBuilder {
     await trav(this.src(source), {
       onFile: (parent, file) => 
         copyFile(
-          join(parent, file.name),
+          this.src(source, parent, file.name),
           out
           ? this.out(out, parent, file.name)
           : this.out(parent, file.name),
