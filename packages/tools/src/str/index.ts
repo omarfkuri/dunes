@@ -1,10 +1,7 @@
 
+export * from "./slugify"
 export * from "./Stringify"
-
-
-export function capitalize(str: string): string {
-  return str[0]!.toUpperCase() + str.slice(1).toLowerCase();
-}
+export * from "./transform"
 
 
 declare global {
