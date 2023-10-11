@@ -6,7 +6,7 @@ export type FormInput = {
 }
 
 export type FormProps = Elements.Form & {
-	titleText: string
+	titleText?: string
 	submitText: string
 	inputs: FormInput[]
 }
@@ -23,7 +23,7 @@ export type FormStyles = {
 export const Form: Styled<FormProps, FormStyles> = (
 	({css, titleText, submitText, inputs, ...props}) => (
 		<form {...props} cl={css.form_wrapper}>
-			<div cl={css.form_title}>{titleText}</div>
+			{titleText && <div cl={css.form_title}>{titleText}</div>}
 			{
 				inputs.map(({title, input}) => (
 					<div cl={css.input_wrapper}>
