@@ -1,15 +1,7 @@
 
-export {
-  slugify
-} from "./slugify"
-export {
-  Stringify,
-  js,
-  json
-} from "./Stringify"
-export {
-  capitalize
-} from "./transform"
+export * from "./slugify"
+export * from "./Stringify"
+export * from "./transform"
 
 
 declare global {

@@ -43,7 +43,9 @@ export {
 
   Stringify,
   json,
-  js
+  js,
+  slugify,
+  capitalize
 
 } from "./str"
 
