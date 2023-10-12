@@ -449,6 +449,6 @@ function analyzeCss(id: string, source: string): CSSAnalysis {
         return [noDot, makeID(noDot)]
       })
     ), null, 2),
-    css: css.replace(/\$\$DOT_HERE\$\$/, "."),
+    css: css.replace(/\$\$DOT_HERE\$\$/g, "."),
   }
 }
