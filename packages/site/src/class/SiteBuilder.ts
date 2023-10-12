@@ -146,43 +146,45 @@ export class SiteBuilder {
       }
 
       else {
-        const changed = new Map<string, Set<string>>();
+        const changes = new Map<string, Set<string>>();
         for (const [mod, comp] of this.#map) {
           for (const file of comp.watch) {
             if (!file.endsWith(fn)) continue;
-            if (!(mod in changed)) {
-              changed.set(mod, new Set([fn]));
+            if (!(mod in changes)) {
+              changes.set(mod, new Set([fn]));
             }
             else {
-              changed.get(mod)!.add(fn);
+              changes.get(mod)!.add(fn);
             }
           }
         }
-        const actions = new Map<string, MultiAction>();
-        for (const [mod, files] of changed) {
-          if (mod == this.config.lib) {
-            actions.set(mod, {mod, files, prom: ()=> this.#libs(null)})
-          }
-          else if (mod == this.config.main) {
-            actions.set(mod, {mod, files, prom: ()=> this.#main()})
-          }
-          else if (mod == this.config.base) {
-            actions.set(mod, {mod, files, prom: ()=> this.#views()})
-          }
-          else if (
-            mod.startsWith(this.config.views.folder) && 
-            this.config.views.only.test(mod)
-          ) {
-            actions.set(mod, {mod, files, prom: ()=> this.#view(mod)})
-          }
-        }
-        if (actions.size) {
+        
+        if (changes.size) {
+          await options.onDepStart?.({changes, took: 0})
+          const actions = new Map<string, MultiAction>();
           const start = Date.now();
+          for (const [mod, files] of changes) {
+            if (mod == this.config.lib) {
+              actions.set(mod, {mod, files, prom: ()=> this.#libs(null)})
+            }
+            else if (mod == this.config.main) {
+              actions.set(mod, {mod, files, prom: ()=> this.#main()})
+            }
+            else if (mod == this.config.base) {
+              actions.set(mod, {mod, files, prom: ()=> this.#views()})
+            }
+            else if (
+              mod.startsWith(this.config.views.folder) && 
+              this.config.views.only.test(mod)
+            ) {
+              actions.set(mod, {mod, files, prom: ()=> this.#view(mod)})
+            }
+          }
 
-          await options.onDepStart?.({actions: actions.size})
 
 
           for (const [mod, {files, prom}] of actions) {
+            const start = Date.now();
             try {
               await options.onDepBuilding?.({
                 name: fn, 
@@ -214,7 +216,7 @@ export class SiteBuilder {
           }
           
 
-          await options.onDepFinish?.({actions: actions.size})
+          await options.onDepFinish?.({changes, took: Date.now() - start})
 
 
         }

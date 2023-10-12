@@ -123,7 +123,8 @@ export type MultiAction = {
 };
 
 interface MultiEv {
-  actions: number
+  changes: Map<string, Set<string>>
+  took: number
 }
 
 type Err<T> = T & {error: unknown}
