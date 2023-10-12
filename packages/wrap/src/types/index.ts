@@ -36,7 +36,7 @@ export interface Act<X = unknown> {
 	name: string
 	match: RegExp
   prep?(wrapOptions: Opts<Acts>): X
-	action(source: string, id: string, prep: X): Prom<{
+	action(source: string, id: string, wrapOptions: Opts<Acts>, prep: X): Prom<{
 		data?: any
 		text: string | false
 	}>

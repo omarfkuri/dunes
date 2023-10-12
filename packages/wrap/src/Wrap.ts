@@ -117,7 +117,7 @@ export class Wrap {
         let i = 0;
 				for (const {name, match, action} of As) {
 					if (match.test(id)) {
-						const {data, text} = await action(source, id, preps[i]);
+						const {data, text} = await action(source, id, wrOpts, preps[i]);
 						if (data) {
 							res[name]!.push(data)
 						}
