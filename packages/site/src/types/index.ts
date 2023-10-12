@@ -76,12 +76,12 @@ export interface ViewOptions {
 
 export type WrapOptions = Omit<
   StringOpts<Acts>,
-  "script" | "transform"
+  "script"
 >;
 
 export type CompileOptions = Omit<
   StringOpts<Acts>,
-  "script" | "transform" | "plugs"
+  "script" | "plugs"
 >;
 
 export type CompileResult = StrResult<readonly [CSSAct]>;
@@ -122,13 +122,13 @@ export type CSSResult = ActsResult<[CSSAct]>
 export interface CSSAct extends Act {
   name: "css"
   match: any
-  action(source: string, id: string): {
+  action(source: string, id: string): Promise<{
     text: string
     data: {
       text: string
       order: number
     }
-  }
+  }>
 }
 
 export interface CSSAnalysis {

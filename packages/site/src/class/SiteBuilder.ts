@@ -11,6 +11,7 @@ import {
   CSSResult,
   CSSAnalysis,
   HTMLFunction,
+  CSSAct,
 } from "../types";
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
@@ -330,6 +331,29 @@ export class SiteBuilder {
     const script = await readString(path);
     let order = 0;
 
+    const CSSACT: CSSAct = {
+      name: "css",
+      match: this.config.css.match,
+      action: async (source, id) => {
+
+        const compiled = await this.config.css.transform(source);
+        order++
+        if (id.endsWith(`.m.${this.config.css.ext}`)) {
+          const data = analyzeCss(id, compiled);
+          return {
+            text: `export default ${data.exports}`,
+            data: {text: data.css, order}
+          }
+        }
+        else {
+          return {
+            text: "export {}",
+            data: {text: compiled, order}
+          }
+        }
+      }
+    }
+
     return await Wrap.build({
       ...this.config.wrap,
       ...opts,
@@ -338,28 +362,11 @@ export class SiteBuilder {
         ...(opts?.replaceAfter || []),
       ],
       script,
-      transform: [{
-        name: "css",
-        match: this.config.css.match,
-        action: async (source, id) => {
-
-          const compiled = await this.config.css.transform(source);
-          order++
-          if (id.endsWith(`.m.${this.config.css.ext}`)) {
-            const data = analyzeCss(id, compiled);
-            return {
-              text: `export default ${data.exports}`,
-              data: {text: data.css, order}
-            }
-          }
-          else {
-            return {
-              text: "export {}",
-              data: {text: compiled, order}
-            }
-          }
-        }
-      }]
+      transform: [
+        CSSACT, 
+        ...(this.config.wrap.transform || []),
+        ...(opts?.transform || []),
+      ]
     });
   }
 }
