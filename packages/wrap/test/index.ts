@@ -1,5 +1,5 @@
 
-import { Wrap } from '../src';
+import { Wrap, act } from '../src';
 
 try {
 	const build = await Wrap.build({
@@ -28,16 +28,19 @@ try {
 				 }
 				},
 			},
-			{
+			act({
 				name: "rr",
 				match: /\.css$/,
-				action(source, id) {
+        prep(wrapOptions) {
+          return 33;
+        },
+				action(source, id, p) {
 				 return {
 				 	data: {user: ""},
 				 	text: false
 				 }
 				},
-			}
+			})
 		]
 
 	})

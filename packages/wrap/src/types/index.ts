@@ -32,16 +32,17 @@ export interface FileOpts<A extends Acts> extends BaseOpts<A> {
 
 export type Opts<A extends Acts> = StringOpts<A> | FileOpts<A>
 
-export interface Act {
+export interface Act<X = unknown> {
 	name: string
 	match: RegExp
-	action(source: string, id: string, wrapOptions: Opts<Acts>): Prom<{
+  prep?(wrapOptions: Opts<Acts>): X
+	action(source: string, id: string, prep: X): Prom<{
 		data?: any
 		text: string | false
 	}>
 }
 
-export type Acts = readonly Act[]
+export type Acts<X = unknown> = readonly Act<X>[]
 
 export type ActsResult<A extends Acts> = {
 	[K in A[number]["name"]]: Awaited<ReturnType<Extract<A[number], {name: K}>["action"]>>["data"][]

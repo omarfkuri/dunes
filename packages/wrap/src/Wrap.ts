@@ -103,13 +103,21 @@ export class Wrap {
 
 
 	static #transformers(As: Acts, res: ActsResult<any>, wrOpts: Opts<Acts>): Plugin {
+
+    const preps: unknown[] = []
+
+    for (const {prep} of As) {
+      preps.push(prep?.(wrOpts));
+    }
+
+
 		return {
 			name: "As",
 			async transform(source, id) {
-
+        let i = 0;
 				for (const {name, match, action} of As) {
 					if (match.test(id)) {
-						const {data, text} = await action(source, id, wrOpts);
+						const {data, text} = await action(source, id, preps[i]);
 						if (data) {
 							res[name]!.push(data)
 						}
@@ -117,6 +125,7 @@ export class Wrap {
 							return text
 						}
 					}
+          i++;
 				}
 
 				return source;
