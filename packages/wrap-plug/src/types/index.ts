@@ -6,4 +6,5 @@ export interface ResolveOptions {
   parseOptions: ParserOptions
   transformOptions: (id: string) => TransformOptions
   traverseOptions?: TraverseOptions
+  resolveIncludes?: boolean
 }

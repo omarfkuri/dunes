@@ -1,7 +1,7 @@
 import { dirname, join, resolve } from "path";
 import { existsSync } from "fs";
 
-import type { Plugin } from "@dunes/wrap";
+import { type Plugin } from "@dunes/wrap";
 import { BabWrap } from "@dunes/bab";
 import { ResolveOptions } from "./types";
 
@@ -95,3 +95,4 @@ export function localResolve(opts: ResolveOptions): Plugin {
     }
   }
 }
+
