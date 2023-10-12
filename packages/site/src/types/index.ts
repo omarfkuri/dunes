@@ -99,20 +99,49 @@ export type BuildResult = Promise<{
   took: number
 }>
 
-interface WatchEv {
+interface BaseWatchEv {
   type: "dependency" | "file"
   name: string
-  original?: string
-  files?: Set<string>
   took: number
   style: boolean
 }
 
+interface FileEvent extends BaseWatchEv {
+  type: "file"
+}
+
+interface DepEvent extends BaseWatchEv {
+  type: "dependency"
+  original: string
+  files: Set<string>
+}
+
+export type MultiAction = { 
+  prom: () => Promise<any>, 
+  files: Set<string>
+  mod: string
+};
+
+interface MultiEv {
+  actions: number
+}
+
+type Err<T> = T & {error: unknown}
+
+type WatchEv = FileEvent | DepEvent
 
 export interface WatchOptions {
-  onActionStart?(e: WatchEv): Prom<void>
-  onActionFinish?(e: WatchEv): Prom<void>
-  onActionFailure?(e: WatchEv & {error: unknown}): Prom<void>
+  onFileBuilding?(e: WatchEv): Prom<void>
+  onFileBuilt?(e: WatchEv): Prom<void>
+  onFileFailure?(e: Err<WatchEv>): Prom<void>
+
+  onDepStart?(e: MultiEv): Prom<void>
+
+  onDepBuilding?(e: WatchEv): Prom<void>
+  onDepBuilt?(e: WatchEv): Prom<void>
+  onDepFailure?(e: Err<WatchEv>): Prom<void>
+
+  onDepFinish?(e: MultiEv): Prom<void>
 }
 
 export type WatchResult = Promise<void>

@@ -14,6 +14,7 @@ import {
   CSSAct,
   ProduceOptions,
   ProduceResult,
+  MultiAction,
 } from "../types";
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
@@ -94,7 +95,7 @@ export class SiteBuilder {
 
     const doAction = async (
       name: string, 
-      type: "dependency" | "file", 
+      type: "file", 
       func: () => Promise<any>, 
       style: boolean,
       files?: Set<string>,
@@ -102,26 +103,23 @@ export class SiteBuilder {
       const start = Date.now();
 
       try {
-        await options.onActionStart?.({
-          name, type, files, original: name,
-          style,
+        await options.onFileBuilding?.({
+          name, type, style,
           took: 0,
         })
         await func();
-        await options.onActionFinish?.({
-          name, type, files, original: name,
-          style,
+        await options.onFileBuilt?.({
+          name, type, style,
           took: Date.now() - start,
         })
       }
       catch(error) {
-        if (!options.onActionFailure) {
+        if (!options.onFileFailure) {
           console.warn(error);
           return;
         }
-        await options.onActionFailure({
-          name, type, files, error, original: name,
-          style,
+        await options.onFileFailure({
+          name, type, style, error, 
           took: Date.now() - start,
         })
       }
@@ -160,22 +158,65 @@ export class SiteBuilder {
             }
           }
         }
+        const actions = new Map<string, MultiAction>();
         for (const [mod, files] of changed) {
           if (mod == this.config.lib) {
-            await doAction(mod, "dependency", ()=> this.#libs(null), style, files);
+            actions.set(mod, {mod, files, prom: ()=> this.#libs(null)})
           }
           else if (mod == this.config.main) {
-            await doAction(mod, "dependency", ()=> this.#main(), style, files);
+            actions.set(mod, {mod, files, prom: ()=> this.#main()})
           }
           else if (mod == this.config.base) {
-            await doAction(mod, "dependency", ()=> this.#views(), style, files);
+            actions.set(mod, {mod, files, prom: ()=> this.#views()})
           }
           else if (
             mod.startsWith(this.config.views.folder) && 
             this.config.views.only.test(mod)
           ) {
-            await doAction(mod, "dependency", ()=> this.#view(mod), style, files);
+            actions.set(mod, {mod, files, prom: ()=> this.#view(mod)})
           }
+        }
+        if (actions.size) {
+          const start = Date.now();
+
+          await options.onDepStart?.({actions: actions.size})
+
+
+          for (const [mod, {files, prom}] of actions) {
+            try {
+              await options.onDepBuilding?.({
+                name: fn, 
+                type: "dependency", 
+                files, 
+                original: mod,
+                style,
+                took: 0,
+              })
+              await prom();
+              await options.onDepBuilt?.({
+                name: fn, type: "dependency", files, original: mod,
+                style,
+                took: Date.now() - start,
+              })
+            }
+            catch(error) {
+              if (!options.onDepFailure) {
+                console.warn(error);
+                return;
+              }
+              await options.onDepFailure({
+                name: fn, type: "dependency", files, error, original: mod,
+                style,
+                took: Date.now() - start,
+              })
+            }
+
+          }
+          
+
+          await options.onDepFinish?.({actions: actions.size})
+
+
         }
       }
       await this.#globalCSS();
