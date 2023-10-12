@@ -219,12 +219,7 @@ export class SiteBuilder {
         ]
       });
       this.#map.set(this.config.lib, result);
-      const paths: string[] = [];
-      await trav(this.src(this.config.views.folder), {
-        onFile: (parent, file) => {
-          paths.push("/" + join(parent, file.name).replace(/(\.\w+)+$/, ""));
-        }
-      })
+      const paths = await this.paths();
       await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
         `const paths = ${JSON.stringify(paths)};\nconst hash = ${hash? `"${hash}"`: "null"}\n` +
         result.code
@@ -233,6 +228,16 @@ export class SiteBuilder {
     catch(err) {
       throw [this.config.lib, err]
     }
+  }
+
+  async paths(): Promise<string[]> {
+    const paths: string[] = [];
+    await trav(this.src(this.config.views.folder), {
+      onFile: (parent, file) => {
+        paths.push("/" + join(parent, file.name).replace(/(\.\w+)+$/, ""));
+      }
+    })
+    return paths;
   }
 
   async #main() {
