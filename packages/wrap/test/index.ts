@@ -6,7 +6,7 @@ try {
 		script: [
 			'import {extract} from "@dunes/tools";',
 			"",
-			"const el: any = extract([<div>22</div>], 0);",
+			"const el = extract([2, 3], 0);",
 		].join("\n"),
 		plugs: [],
 		replaceBefore: [
