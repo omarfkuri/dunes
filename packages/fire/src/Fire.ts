@@ -24,56 +24,56 @@ export class Fire {
 		this.#app = initializeApp(firebaseConfig)
 	}
 
-	static useAuth(): void {
+	static useAuth(fireAuth = FireAuth): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
-		if (!FireAuth) {
-			throw `FireAuth is not imported`
+		if (!fireAuth) {
+			throw `fireAuth is not imported`
 		}
-		this.#auth = new FireAuth(this.#app)
+		this.#auth = new fireAuth(this.#app)
 	}
 
 	static get auth() {
 		return this.#auth;
 	}
 
-	static useDatabase(): void {
+	static useDatabase(fireData = FireData): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
-		if (!FireData) {
+		if (!fireData) {
 			throw `FireData is not imported`
 		}
-		this.#data = new FireData(this.#app)
+		this.#data = new fireData(this.#app)
 	}
 
 	static get data() {
 		return this.#data;
 	}
 
-	static useStorage(): void {
+	static useStorage(fireStorage = FireStorage): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
-		if (!FireStorage) {
-			throw `FireData is not imported`
+		if (!fireStorage) {
+			throw `fireStorage is not imported`
 		}
-		this.#storage = new FireStorage(this.#app)
+		this.#storage = new fireStorage(this.#app)
 	}
 
 	static get storage() {
 		return this.#storage;
 	}
 
-	static useFunctions(): void {
+	static useFunctions(fireFunctions = FireFunctions): void {
 		if (!this.#app) {
 			throw `App is not initialized`
 		}
-		if (!FireFunctions) {
-			throw `FireFunctions is not imported`
+		if (!fireFunctions) {
+			throw `fireFunctions is not imported`
 		}
-		this.#functions = new FireFunctions(this.#app)
+		this.#functions = new fireFunctions(this.#app)
 	}
 
 	static get functions() {
