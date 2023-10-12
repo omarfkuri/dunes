@@ -183,8 +183,8 @@ interface element<E extends Element = Element> extends ElementDef {
   ariaselected?: boolean
   ariasetsize?: string
   ariasort?: string
-  ariavaluemax?: string
-  ariavaluemin?: string
+  ariavaluemax?: num
+  ariavaluemin?: num
   ariavaluenow?: string
   ariavaluetext?: string
 }
@@ -244,7 +244,7 @@ interface Generic<H extends HTMLElement> extends element<H> {
   // onfocusout?: OnFunction<H, FocusEvent>
   onformdata?: OnEvent<H, FormDataEvent>
   ongotpointercapture?: OnEvent<H, PointerEvent>
-  oninput?: OnEvent<H>,
+  oninput?: OnEvent<H, InputEvent>,
   oninvalid?: OnEvent<H>,
   onkeydown?: OnEvent<H, KeyboardEvent>
   onkeypress?: OnEvent<H, KeyboardEvent>
@@ -797,8 +797,8 @@ declare global {
     }
     interface Meter extends Generic<HTMLMeterElement> {
       value?: string
-      min?: string
-      max?: string
+      min?: num
+      max?: num
       low?: string
       high?: string
       optimum?: string
@@ -887,7 +887,7 @@ declare global {
     }
     interface Progress extends Generic<HTMLProgressElement> {
       value?: string
-      max?: string
+      max?: num
       position?: string
       labels?: string
     }

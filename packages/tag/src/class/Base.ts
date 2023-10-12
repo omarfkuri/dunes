@@ -243,13 +243,13 @@ export class Comp<P extends { [key: string]: any; } = any> extends Base<P> {
 		return elem;
 	}
 
-	willRender() {}
-	hasRendered() {}
-	willDestroy() {}
+	willRender?(): void;
+	hasRendered?(): void;
+	willDestroy?(): void;
 
 	re(props?: Partial<P>) {
 		if (!this.root) throw "Not rooted";
-		this.willDestroy()
+		this.willDestroy?.();
 
 		if (props) for (const key in props) {
 			// @ts-expect-error
@@ -260,19 +260,19 @@ export class Comp<P extends { [key: string]: any; } = any> extends Base<P> {
 	}
 
 	override appendTo(elem: HTMLElement): HTMLElement {
-		this.willRender()
+		this.willRender?.();
 		const node = this.template().appendTo(elem);
 		this.root = node;
-		this.hasRendered()
+		this.hasRendered?.();
 		return node;
 
 	}
 
 	override replace(elem: HTMLElement): HTMLElement {
-		this.willRender()
+		this.willRender?.()
 		const node = this.template().replace(elem);
 		this.root = node;
-		this.hasRendered()
+		this.hasRendered?.()
 		return node;
 	}
 }
