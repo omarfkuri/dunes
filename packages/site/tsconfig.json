@@ -6,7 +6,7 @@
 		"outDir": "lib",
 		"declaration": true,
     "lib": [
-      "ES2020", "DOM", "DOM.Iterable"
+      "ES2021", "DOM", "DOM.Iterable"
     ],
     "baseUrl": ".",
 

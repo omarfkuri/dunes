@@ -427,7 +427,7 @@ function resultCSS(result: CSSResult): string {
 
 function analyzeCss(id: string, source: string): CSSAnalysis {
 
-  source = source.replace(/"[^"]*"|'[^']*'/g, (x) => x.replace(/\./g, "$$DOT_HERE$$"));
+  source = source.replace(/"[^"]*"|'[^']*'/g, (x) => x.replace(/\./g, "$---DOT_HERE---$"));
 
   let styleID = basename(id.split(".")[0]!);
 
@@ -449,6 +449,6 @@ function analyzeCss(id: string, source: string): CSSAnalysis {
         return [noDot, makeID(noDot)]
       })
     ), null, 2),
-    css: css.replace(/\$\$DOT_HERE\$\$/g, "."),
+    css: css.replaceAll("$---DOT_HERE---$", ""),
   }
 }
