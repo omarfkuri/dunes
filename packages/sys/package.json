@@ -1,6 +1,6 @@
 {
   "name": "@dunes/sys",
-  "version": "0.9.71",
+  "version": "0.9.72",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -18,5 +18,10 @@
   "author": "Omar <omarfkuri@gmail.com>",
   "scripts": {
     "build": "rm -rf lib && tsc && yarn version --new-version patch"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.19",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
   }
 }
