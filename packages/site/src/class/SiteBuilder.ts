@@ -66,7 +66,7 @@ export class SiteBuilder {
     }
 
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: true});
     const paths = await this.paths();
 
     for (const path of paths) {
