@@ -427,7 +427,7 @@ function resultCSS(result: CSSResult): string {
 
 function analyzeCss(id: string, source: string): CSSAnalysis {
 
-  source = source.replace(/"[^"]*"|'[^']*'/g, (x) => x.replace(/\./g, "$---DOT_HERE---$"));
+  source = source.replace(/"[^"]*"|'[^']*'/g, (x) => x.replaceAll(".", "$---DOT_HERE---$"));
 
   let styleID = basename(id.split(".")[0]!);
 
