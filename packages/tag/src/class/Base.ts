@@ -129,7 +129,7 @@ export class Elem<T extends TagName = "div"> extends Base<JSX.IntrinsicElements[
 			if (value === true) {
 				continue
 			}
-			if (value === false || value) {
+			if (!isNone(value)) {
 				str += "=" + JSON.stringify(value);
 			}
 		}
@@ -165,7 +165,7 @@ export class Elem<T extends TagName = "div"> extends Base<JSX.IntrinsicElements[
 	  			e => value.bind(node)(e)
 	  		)
 	  	}
-	  	else if (isNone(value) && value !== false) {
+	  	else if (isNone(value) || value === "") {
 	  		continue;
 	  	}
 	  	else {
