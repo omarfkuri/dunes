@@ -152,13 +152,13 @@ interface element<E extends Element = Element> extends ElementDef {
   ariaatomic?: string
   ariaautocomplete?: string
   ariabusy?: string
-  ariachecked?: boolean
+  ariachecked?: bool
   ariacolcount?: string
   ariacolindex?: string
   ariacolspan?: string
   ariacurrent?: string
-  ariadisabled?: boolean
-  ariaexpanded?: boolean
+  ariadisabled?: bool
+  ariaexpanded?: bool
   ariahaspopup?: string
   ariahidden?: string
   ariainvalid?: string
@@ -172,15 +172,15 @@ interface element<E extends Element = Element> extends ElementDef {
   ariaorientation?: string
   ariaplaceholder?: string
   ariaposinset?: string
-  ariapressed?: boolean
+  ariapressed?: bool
   ariareadonly?: string
   ariarelevant?: string
-  ariarequired?: boolean
+  ariarequired?: bool
   ariaroledescription?: string
   ariarowcount?: string
   ariarowindex?: string
   ariarowspan?: string
-  ariaselected?: boolean
+  ariaselected?: bool
   ariasetsize?: string
   ariasort?: string
   ariavaluemax?: num
@@ -194,12 +194,12 @@ interface Generic<H extends HTMLElement> extends element<H> {
   accesskeylabel?: string
   autocorrect?: string
   autofocus?: string
-  contenteditable?: boolean
+  contenteditable?: bool
   dataset?: Record<string, string>
   dir?: string
-  draggable?: boolean
+  draggable?: bool
   enterkeyhint?: string
-  hidden?: boolean
+  hidden?: bool
   inputmode?: string
   lang?: string
   nonce?: string
@@ -325,23 +325,23 @@ interface GenericMedia<H extends HTMLMediaElement> extends Generic<H>{
   crossOrigin?: string
   networkState?: string
   preload?: string
-  buffered?: boolean
+  buffered?: bool
   readyState?: string
   seeking?: string
   currentTime?: string
   duration?: string
-  paused?: boolean
+  paused?: bool
   defaultPlaybackRate?: string
   playbackRate?: string
-  played?: boolean
+  played?: bool
   seekable?: string
-  ended?: boolean
+  ended?: bool
   autoplay?: string
   loop?: string
   controls?: string
   volume?: string
-  muted?: boolean
-  defaultMuted?: boolean
+  muted?: bool
+  defaultMuted?: bool
   webkitPreservesPitch?: string
   webkitHasClosedCaptions?: string
   webkitClosedCaptionsVisible?: string
@@ -474,7 +474,7 @@ declare global {
       onunload?: OnEvent<HTMLBodyElement>
     }
     interface Button extends Generic<HTMLButtonElement> {
-      disabled?: boolean
+      disabled?: bool
       form?: string
       formAction?: string
       formEnctype?: string
@@ -531,7 +531,7 @@ declare global {
       width?: num
     }
     interface FieldSet extends Generic<HTMLFieldSetElement> {
-      disabled?: boolean
+      disabled?: bool
       form?: string
       name?: string
       type?: string
@@ -679,10 +679,10 @@ declare global {
       accept?: string
       alt?: string
       autocomplete?: string
-      defaultChecked?: boolean
-      checked?: boolean
+      defaultChecked?: bool
+      checked?: bool
       dirName?: string
-      disabled?: boolean
+      disabled?: bool
       form?: string
       files?: string
       formAction?: string
@@ -699,18 +699,18 @@ declare global {
       min?: num
       multiple?: bool
       name?: string
-      pattern?: string
+      pattern?: string | RegExp
       placeholder?: string
       readOnly?: string
-      required?: boolean
-      size?: string
+      required?: bool
+      size?: num
       src?: string
-      step?: string
+      step?: num
       type?: InputType
       defaultValue?: string
       value?: string
-      valueAsDate?: string
-      valueAsNumber?: string
+      valueAsDate?: Date
+      valueAsNumber?: number
       width?: num
       willValidate?: string
       validity?: string
@@ -747,7 +747,7 @@ declare global {
       align?: string
     }
     interface Link extends Generic<HTMLLinkElement> {
-      disabled?: boolean
+      disabled?: bool
       charset?: string
       href?: string
       hrefLang?: string
@@ -778,7 +778,7 @@ declare global {
       loop?: string
       scrollAmount?: string
       scrollDelay?: string
-      trueSpeed?: boolean
+      trueSpeed?: bool
       vspace?: string
       width?: num
       start?: string
@@ -811,7 +811,7 @@ declare global {
     interface OList extends Generic<HTMLOListElement> {
       compact?: string
       start?: string
-      reversed?: boolean
+      reversed?: bool
       type?: string
     }
     interface Object extends Generic<HTMLObjectElement> {
@@ -843,15 +843,15 @@ declare global {
       getSVGDocument?: string
     }
     interface OptGroup extends Generic<HTMLOptGroupElement> {
-      disabled?: boolean
+      disabled?: bool
       label?: string
     }
     interface Option extends Generic<HTMLOptionElement> {
-      disabled?: boolean
+      disabled?: bool
       form?: string
       label?: string
-      defaultSelected?: boolean
-      selected?: boolean
+      defaultSelected?: bool
+      selected?: bool
       value?: string
       text?: string
       index?: string
@@ -900,7 +900,7 @@ declare global {
       event?: string
       charset?: string
       async?: string
-      defer?: boolean
+      defer?: bool
       src?: string
       type?: string
       crossOrigin?: string
@@ -912,7 +912,7 @@ declare global {
       add?: string
       autocomplete?: string
       checkValidity?: string
-      disabled?: boolean
+      disabled?: bool
       form?: string
       item?: string
       labels?: string
@@ -923,7 +923,7 @@ declare global {
       options?: string
       remove?: string
       reportValidity?: string
-      required?: boolean
+      required?: bool
       selectedIndex?: string
       selectedOptions?: string
       setCustomValidity?: string
@@ -950,7 +950,7 @@ declare global {
     }
     interface Span extends Generic<HTMLSpanElement> {}
     interface Style extends Generic<HTMLStyleElement> {
-      disabled?: boolean
+      disabled?: bool
       media?: string
       type?: string
       sheet?: string
@@ -1035,14 +1035,14 @@ declare global {
     }
     interface TextArea extends Generic<HTMLTextAreaElement> {
       dirName?: string
-      disabled?: boolean
+      disabled?: bool
       form?: string
       minLength?: string
       maxLength?: string
       name?: string
       placeholder?: string
       readOnly?: string
-      required?: boolean
+      required?: bool
       rows?: string
       cols?: string
       wrap?: string
@@ -1099,7 +1099,7 @@ declare global {
       playsInline?: string
       webkitSupportsFullscreen?: string
       webkitDisplayingFullscreen?: string
-      webkitWirelessVideoPlaybackDisabled?: boolean
+      webkitWirelessVideoPlaybackDisabled?: bool
       webkitPresentationMode?: string
       onenterpictureinpicture?: OnEvent<HTMLVideoElement>,
       onleavepictureinpicture?: OnEvent<HTMLVideoElement>,
