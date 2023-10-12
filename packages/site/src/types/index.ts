@@ -100,17 +100,20 @@ export type BuildResult = Promise<{
 }>
 
 interface BaseWatchEv {
-  type: "dependency" | "file"
-  name: string
   took: number
   style: boolean
 }
 
-interface FileEvent extends BaseWatchEv {
+interface BaseActEv extends BaseWatchEv {
+  type: "dependency" | "file"
+  name: string
+}
+
+interface FileEvent extends BaseActEv {
   type: "file"
 }
 
-interface DepEvent extends BaseWatchEv {
+interface DepEvent extends BaseActEv {
   type: "dependency"
   original: string
   files: Set<string>
@@ -122,9 +125,8 @@ export type MultiAction = {
   mod: string
 };
 
-interface MultiEv {
+interface MultiEv extends BaseWatchEv {
   changes: Map<string, Set<string>>
-  took: number
 }
 
 type Err<T> = T & {error: unknown}

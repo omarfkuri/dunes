@@ -160,7 +160,7 @@ export class SiteBuilder {
         }
         
         if (changes.size) {
-          await options.onDepStart?.({changes, took: 0})
+          await options.onDepStart?.({changes, took: 0, style})
           const actions = new Map<string, MultiAction>();
           const start = Date.now();
           for (const [mod, files] of changes) {
@@ -216,7 +216,7 @@ export class SiteBuilder {
           }
           
 
-          await options.onDepFinish?.({changes, took: Date.now() - start})
+          await options.onDepFinish?.({changes, took: Date.now() - start, style})
 
 
         }
