@@ -108,6 +108,7 @@ interface WatchEv {
   style: boolean
 }
 
+
 export interface WatchOptions {
   onActionStart?(e: WatchEv): Prom<void>
   onActionFinish?(e: WatchEv): Prom<void>
@@ -115,6 +116,29 @@ export interface WatchOptions {
 }
 
 export type WatchResult = Promise<void>
+
+
+export interface ProduceOptions {
+  origin: string
+  hash?: string
+  do?: {
+    [path: string]: ProducePropsFn
+  }
+}
+
+export interface ProducePropsFn {
+  (): Promise<ProduceProps>
+}
+
+export interface ProduceProps {
+  ids: IDDef[]
+}
+
+export interface IDDef {
+  id: string
+}
+
+export type ProduceResult = Promise<void>
 
 
 export type CSSResult = ActsResult<[CSSAct]>

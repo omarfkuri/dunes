@@ -12,12 +12,15 @@ import {
   CSSAnalysis,
   HTMLFunction,
   CSSAct,
+  ProduceOptions,
+  ProduceResult,
 } from "../types";
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { WatchDir, readString, trav, writeStr } from "@dunes/sys";
 import { Wrap } from "@dunes/wrap";
-import {  } from "@dunes/wrap-plug";
+import puppeteer from "puppeteer";
+import jsb from "js-beautify";
 
 export class SiteBuilder {
 
@@ -48,6 +51,37 @@ export class SiteBuilder {
 
       ...config,
     };
+  }
+
+  async produce(options: ProduceOptions): ProduceResult {
+
+    const goWrite = async (path: string): Promise<void> => {
+      const page = await browser.newPage();
+
+      await page.goto(options.origin + path, {
+        waitUntil: 'networkidle2'
+      });
+      const str = await page.content();
+      await writeStr(this.out(path) + ".html", jsb.html(str))
+    }
+
+
+    const browser = await puppeteer.launch();
+    const paths = await this.paths();
+
+    for (const path of paths) {
+      if (options.do && path in options.do) {
+        for (const {id} of (await options.do[path]!()).ids) {
+          await goWrite(join(path, id));
+        }
+      }
+      else {
+        await goWrite(path)
+      }
+    }
+
+    await browser.close();
+
   }
 
   watch(options: WatchOptions): WatchResult {
