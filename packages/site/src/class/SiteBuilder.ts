@@ -62,6 +62,11 @@ export class SiteBuilder {
         waitUntil: 'networkidle2'
       });
       const str = await page.content();
+
+      if (!path.endsWith("/index")) {
+        path += "/index"
+      }
+
       await writeStr(this.out(path) + ".html", jsb.html(str))
     }
 
