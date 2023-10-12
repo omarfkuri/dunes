@@ -71,8 +71,9 @@ export class SiteBuilder {
 
     for (const path of paths) {
       if (options.do && path in options.do) {
-        for (const {id} of (await options.do[path]!()).ids) {
-          await goWrite(join(path, id));
+        const {ids, path: p} = await options.do[path]!(path);
+        for (const {id} of ids) {
+          await goWrite(join(p, id));
         }
       }
       else {

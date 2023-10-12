@@ -127,10 +127,11 @@ export interface ProduceOptions {
 }
 
 export interface ProducePropsFn {
-  (): Promise<ProduceProps>
+  (path: string): Promise<ProduceProps>
 }
 
 export interface ProduceProps {
+  path: string
   ids: IDDef[]
 }
 
