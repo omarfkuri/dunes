@@ -5,15 +5,15 @@ import { writeStr } from "@dunes/sys"
 import { InputPluginOption, Plugin, rollup } from 'rollup';
 import virtual from '@rollup/plugin-virtual';
 
-import { Acts, ActsResult, Opts, Result, StrResult } from "./types";
+import { Act, Acts, ActsResult, FileOpts, Opts, Result, StrResult, StringOpts } from "./types";
 
 
 export class Wrap {
 	private constructor() {}
 
-	static async build<const A extends Acts>(options: Opts<A>): Promise<StrResult<A>> 
-	static async build<const A extends Acts>(options: Opts<A>, outFile: string): Promise<Result<A>> 
-	static async build<const A extends Acts>(options: Opts<A>, outFile?: string): Promise<StrResult<A> | Result<A>> {
+  static async build<const A extends Acts>(options: StringOpts<A>): Promise<StrResult<A>> 
+	static async build<const A extends Acts>(options: FileOpts<A>): Promise<Result<A>> 
+	static async build<const A extends Acts>(options: Opts<A>): Promise<StrResult<A> | Result<A>> {
 
 		const result = {} as ActsResult<A>;
 		if (options.transform) {
@@ -45,7 +45,7 @@ export class Wrap {
 		}
 
 
-		if (!outFile) {
+		if (!options.outFile) {
 			return {
 				code: script,
 				watch: build.watchFiles, 
@@ -53,7 +53,7 @@ export class Wrap {
 			};
 		}
 
-		await writeStr(outFile, script);
+		await writeStr(options.outFile, script);
 
 		return {
 			watch: build.watchFiles, 
@@ -68,7 +68,7 @@ export class Wrap {
 		const plugins: InputPluginOption = []
 
 		if (opt.transform) {
-			plugins.push(this.#transformers(opt.transform, results));
+			plugins.push(this.#transformers(opt.transform, results, opt));
 		}
 
 		if (opt.plugs) {
@@ -102,14 +102,14 @@ export class Wrap {
 	}
 
 
-	static #transformers(As: Acts, res: ActsResult<any>): Plugin {
+	static #transformers(As: Acts, res: ActsResult<any>, wrOpts: Opts<Acts>): Plugin {
 		return {
 			name: "As",
 			async transform(source, id) {
 
 				for (const {name, match, action} of As) {
 					if (match.test(id)) {
-						const {data, text} = await action(source, id);
+						const {data, text} = await action(source, id, wrOpts);
 						if (data) {
 							res[name]!.push(data)
 						}

@@ -13,6 +13,7 @@ export interface BaseOpts<A extends Acts> {
 	transform?: A
 	replaceBefore?: Replacer[]
 	replaceAfter?: Replacer[]
+  outFile?: string
 }
 
 export type Replacer = [ReplacerMatch, ReplacerValue];
@@ -34,7 +35,7 @@ export type Opts<A extends Acts> = StringOpts<A> | FileOpts<A>
 export interface Act {
 	name: string
 	match: RegExp
-	action(source: string, id: string): Prom<{
+	action(source: string, id: string, wrapOptions: Opts<Acts>): Prom<{
 		data?: any
 		text: string | false
 	}>
