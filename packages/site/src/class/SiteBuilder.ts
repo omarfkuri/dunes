@@ -322,14 +322,14 @@ export class SiteBuilder {
     await writeStr(outPath.replace(/(\.\w+)+$/, "/styles.css"),
       resultCSS(result.result)
     )
-    const html = await this.#html(result.code);
+    const html = await this.#html(path, result.code);
     await writeStr(outPath.replace(/(\.\w+)+$/, "/index.html"),
       html
     )
 
   }
 
-  async #html(script: string): Promise<string> {
+  async #html(path: string, script: string): Promise<string> {
     try {
       const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {
         replaceAfter: [
@@ -353,7 +353,8 @@ export class SiteBuilder {
         styles: [
           `/${this.config.css.file}`,
         ],
-        body
+        body,
+        path
       })
 
       return str;
