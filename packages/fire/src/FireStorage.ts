@@ -1,12 +1,14 @@
-import { AbstractFire } from "./AbstractFire";
+import { AbstractFire } from "./AbstractFire.js";
 import { type FirebaseApp } from "firebase/app";
 import { 
 	type FirebaseStorage,
 	type StorageReference,
-	
+	type UploadTaskSnapshot,
+  type ListOptions,
+
 	getStorage,
 	deleteObject,
-	ref, uploadBytesResumable, getDownloadURL, UploadTaskSnapshot, listAll, list, ListOptions, StorageError,
+	ref, uploadBytesResumable, getDownloadURL, listAll, list, StorageError,
 } from "firebase/storage";
 
 

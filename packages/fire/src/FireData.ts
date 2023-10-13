@@ -11,8 +11,8 @@ import {
 	arrayUnion, arrayRemove, increment,
 	onSnapshot, query, where, setDoc, updateDoc, Timestamp, addDoc, deleteDoc
 } from "firebase/firestore";
-import type { Doc, DocFn, SetDoc, UpdateDoc } from "./types";
-import { AbstractFire } from "./AbstractFire";
+import type { Doc, DocFn, SetDoc, UpdateDoc } from "./types/index.js";
+import { AbstractFire } from "./AbstractFire.js";
 
 export class FireData extends AbstractFire<Firestore> {
 

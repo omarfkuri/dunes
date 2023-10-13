@@ -1,16 +1,16 @@
 import { type FirebaseApp, type FirebaseOptions, initializeApp } from "firebase/app";
 
-type FireAuth = import("./FireAuth").FireAuth
-declare const FireAuth: typeof import("./FireAuth").FireAuth | undefined
+type FireAuth = import("./FireAuth.js").FireAuth
+declare const FireAuth: typeof import("./FireAuth.js").FireAuth | undefined
 
-type FireData = import("./FireData").FireData
-declare const FireData: typeof import("./FireData").FireData | undefined
+type FireData = import("./FireData.js").FireData
+declare const FireData: typeof import("./FireData.js").FireData | undefined
 
-type FireStorage = import("./FireStorage").FireStorage
-declare const FireStorage: typeof import("./FireStorage").FireStorage | undefined
+type FireStorage = import("./FireStorage.js").FireStorage
+declare const FireStorage: typeof import("./FireStorage.js").FireStorage | undefined
 
-type FireFunctions = import("./FireFunctions").FireFunctions
-declare const FireFunctions: typeof import("./FireFunctions").FireFunctions | undefined
+type FireFunctions = import("./FireFunctions.js").FireFunctions
+declare const FireFunctions: typeof import("./FireFunctions.js").FireFunctions | undefined
 
 export class Fire {
 	

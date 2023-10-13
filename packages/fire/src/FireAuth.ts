@@ -5,7 +5,7 @@ import {
 	signInWithEmailAndPassword,
 	browserLocalPersistence
 } from "firebase/auth";
-import { AbstractFire } from "./AbstractFire";
+import { AbstractFire } from "./AbstractFire.js";
 
 export class FireAuth extends AbstractFire<Auth> {
 

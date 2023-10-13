@@ -1,4 +1,4 @@
-import "@dunes/tools";
+import type { ArrayFn } from "@dunes/tools";
 import { FieldValue } from "firebase/firestore";
 
 /**

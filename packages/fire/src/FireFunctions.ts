@@ -1,11 +1,11 @@
-import { FirebaseApp } from "firebase/app";
+import type { FirebaseApp } from "firebase/app";
 import {
 	type HttpsCallable,
 	type Functions,
 	getFunctions,
 	httpsCallable,
 } from "firebase/functions";
-import { AbstractFire } from "./AbstractFire";
+import { AbstractFire } from "./AbstractFire.js";
 
 export class FireFunctions extends AbstractFire<Functions> {
 
