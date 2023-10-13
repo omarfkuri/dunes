@@ -4,8 +4,9 @@ export * from "./array/index.js"
 export * from "./bool/index.js"
 export * from "./str/index.js"
 export * from "./obj/index.js"
-
+export * from "./regexp/index.js"
 export * from "./unicode/index.js"
+
 export * from "./extra.js"
 
 export type obj = {
