@@ -6,6 +6,10 @@
 		"outDir": "lib",
 		"declaration": true,
 
+    "sourceMap": true,
+    "declarationMap": true,
+    
+
 		"jsx": "react",
 		"jsxFactory": "Elem.create"
 	}

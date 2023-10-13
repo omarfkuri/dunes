@@ -1,7 +1,6 @@
-import { lexer } from "../../../";
-import { TokenType } from "./types";
-
-export { TokenType }
+import { lexer } from "../../../index.js";
+import type { TokenType } from "./types.js";
+export type { TokenType }
 
 export class JSLexer extends lexer.Lexer<TokenType> {
 

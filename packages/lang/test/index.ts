@@ -1,6 +1,6 @@
 import { js } from "@dunes/tools";
 import { JSParser } from "../src/langs/js";
-import { line } from "@dunes/sys"
+import { c } from "@dunes/sys"
 
 
 const jsParser = new JSParser();
@@ -12,11 +12,11 @@ try {
 
 	 `);
 
-  line.obj(result.program)
+  c.log(result.program)
 }
 catch(err) {
-	line.red("ERROR")
-	line.gray(err + " " + js(jsParser.body));
+	c.red.log("ERROR")
+	c.gray.log(err + " " + js(jsParser.body));
 }
 
 /* Cannot use keyword as member expression */

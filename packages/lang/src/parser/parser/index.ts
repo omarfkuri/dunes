@@ -1,4 +1,4 @@
 
-export * from "./types"
-export * from "./Parser"
-export * from "./AST"
+export * from "./types.js"
+export * from "./Parser.js"
+export * from "./AST.js"

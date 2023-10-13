@@ -1,6 +1,6 @@
-import { TType, Token, TokenList, Lexer } from "../lexer";
-import { AST } from "./AST";
-import { NodesObj, Node } from "./types";
+import { type TType, Token, TokenList, Lexer } from "../lexer/index.js";
+import { AST } from "./AST.js";
+import type { NodesObj, Node } from "./types.js";
 
 class ParserError extends Error {
 	constructor(tokens: TokenList<any>, err: unknown) {

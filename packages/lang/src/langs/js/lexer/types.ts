@@ -1,4 +1,4 @@
-import { lexer } from "../../../";
+import type { lexer } from "../../../index.js";
 
 
 export type TokenType = lexer.TType<(

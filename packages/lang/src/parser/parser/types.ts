@@ -1,4 +1,4 @@
-import type { NodeList } from "./AST"
+import type { NodeList } from "./AST.js"
 
 export interface NodeDecl {
 	[key: string]: any

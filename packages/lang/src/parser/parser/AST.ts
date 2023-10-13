@@ -1,4 +1,4 @@
-import { NodesObj, Program } from "./types";
+import type { NodesObj, Program } from "./types.js";
 
 export class NodeList<const Nodes extends NodesObj> extends Array<Nodes[keyof Nodes]> {}
 

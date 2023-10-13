@@ -1,4 +1,4 @@
-import { Position } from "./types";
+import type { Position } from "./types.js";
 
 export class Char implements Position {
 	constructor(

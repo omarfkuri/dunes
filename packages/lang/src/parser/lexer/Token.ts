@@ -1,5 +1,5 @@
-import type { Char } from "./Char";
-import { TType } from "./types";
+import type { Char } from "./Char.js";
+import type { TType } from "./types.js";
 
 export class Token<T extends string> {
 	#value: TokenValue

@@ -1,4 +1,4 @@
 
 
-export { JSParser } from "./parser"
-export { JSLexer } from "./lexer"
+export { JSParser } from "./parser/index.js"
+export { JSLexer } from "./lexer/index.js"

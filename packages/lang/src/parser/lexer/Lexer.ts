@@ -1,6 +1,6 @@
-import { Char, CharList } from "./Char";
-import { Token, TokenList } from "./Token";
-import { TType } from "./types";
+import { Char, CharList } from "./Char.js";
+import { Token, TokenList } from "./Token.js";
+import type { TType } from "./types.js";
 
 export abstract class Lexer<T extends string> {
 

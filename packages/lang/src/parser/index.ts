@@ -1,3 +1,3 @@
 
-export * as lexer from "./lexer"
-export * as parser from "./parser"
+export * as lexer from "./lexer/index.js"
+export * as parser from "./parser/index.js"

@@ -1,7 +1,7 @@
-import { parser } from "../../../";
-import { JSLexer, TokenType } from "../lexer";
-import { 
-    ArrayExpression,
+import { parser } from "../../../index.js";
+import { JSLexer, type TokenType } from "../lexer/index.js";
+import type { 
+  ArrayExpression,
   ArrayPattern,
   Assignee,
   BlockComment,
@@ -25,8 +25,8 @@ import {
 	Property, 
 	StringLiteral, 
 	VariableDeclaration, 
-    VariableDeclarator
-} from "./types";
+  VariableDeclarator
+} from "./types.js";
 
 export class JSParser extends parser.Parser<TokenType, NodeTypes> 
 {

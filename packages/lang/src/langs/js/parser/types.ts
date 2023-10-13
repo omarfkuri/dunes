@@ -1,5 +1,5 @@
-import { parser } from "../../../";
-import { TokenType } from "../lexer";
+import { parser } from "../../../index.js";
+import type { TokenType } from "../lexer/index.js";
 
 export type NodeType = (
   | "FunctionDeclaration"
