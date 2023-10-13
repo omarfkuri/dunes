@@ -153,7 +153,7 @@ export class Router {
       )
     )
 
-    const dir = `${path}${path.endsWith("/")?"":"/"}script.js`;
+    const dir = path + (path.endsWith("/")?"":"/");
 
 		const {default: Vc} = (await import(this.hash(`${dir}script.js`))) as {default: ViewConst};
 		if (!Vc) {
