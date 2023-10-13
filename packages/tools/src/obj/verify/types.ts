@@ -1,3 +1,4 @@
+import type { Many } from "../../index.js"
 
 export type Infer<T> = (
   T extends string? "string":

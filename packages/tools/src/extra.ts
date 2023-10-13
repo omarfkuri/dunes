@@ -1,6 +1,7 @@
 
 
 export function sleep(ms = 5000) {
+  // @ts-expect-error
   return new Promise<void>(res => setTimeout(res, ms));
 }
 
