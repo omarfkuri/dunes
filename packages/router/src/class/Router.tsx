@@ -95,6 +95,7 @@ export class Router {
 	}
 
 	async #reveal(view: View, url: URL, req: URL, type: ViewRevealType) {
+    const {scrollTop, scrollLeft} = document.body;
 		const willRes = await view.willShow(type);
 		if (willRes) {
 			return await this.go(willRes);
@@ -116,6 +117,8 @@ export class Router {
 			return await this.go(hasRes);
 		}
 		this.latestView = view;
+    document.body.scrollTop = scrollTop;
+    document.body.scrollLeft = scrollLeft;
 	}
 
 	go(redirect: Redirect): Promise<void>
