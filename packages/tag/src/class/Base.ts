@@ -1,6 +1,10 @@
 import { isConstructor, isNone } from "@dunes/tools";
-import { Content } from "./Content";
-import { Descendants, Properties, Template, TemplateFunctionParam, Thing } from "../types";
+import { Content } from "./Content.js";
+import type { 
+  Descendants, Properties, Template, 
+  TemplateFunction, 
+  TemplateFunctionParam, Thing 
+} from "../types/index.js";
 
 abstract class Base<P extends {[key: string]: any}> implements Thing {
 	static type: "elem" | "comp"
@@ -24,10 +28,10 @@ abstract class Base<P extends {[key: string]: any}> implements Thing {
 	{
 		if (typeof temp === "function") {
 			if (isConstructor(temp)) {
-				if (temp.type === "elem") {
+				if ((temp as typeof Elem).type === "elem") {
 					throw "Cannot extend Elem yet"
 				}
-				return new temp(temp, props, desc);
+				return new (temp as typeof Comp)(temp, props, desc);
 			}
 			else {
 				return new Comp(temp, props, desc)
@@ -228,7 +232,7 @@ export class Comp<P extends { [key: string]: any; } = any> extends Base<P> {
 			throw "Override produce in a class component";
 		}
 
-		return this.temp(this.props, this);
+		return (this.temp as TemplateFunction)(this.props, this);
 	}
 
 	override toString(n = 0): string {

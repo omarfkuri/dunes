@@ -1,4 +1,4 @@
 
 
-export * from "./tag"
-export * from "./elements"
+export * from "./tag.js"
+export * from "./elements.js"

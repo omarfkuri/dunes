@@ -1,6 +1,3 @@
-
-
-
 export type CSSProperties = 
 {[k in keyof CSSStyleDeclaration]: CSSStyleDeclaration[k]}
 
@@ -43,6 +40,7 @@ export type InputType = (
 	| "time"
 	| "url"
 	| "week"
+  | (string & {})
 )
 
 export type AriaRole = (

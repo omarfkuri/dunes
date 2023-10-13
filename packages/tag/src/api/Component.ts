@@ -1,8 +1,8 @@
-import { Comp } from "../class/Base"
+import type { Comp } from "../class/Base.js"
 
 
 
-export function Component<T extends obj = {}>(comp: Component<T>) {
+export function Component<T extends {[key: string]: any} = {}>(comp: Component<T>) {
 	return comp;
 }
 

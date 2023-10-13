@@ -1,5 +1,5 @@
 
-import { Thing } from "../types"
+import type { Thing } from "../types/index.js"
 
 
 export class Content implements Thing {

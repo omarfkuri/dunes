@@ -1,10 +1,10 @@
-import { Comp, Elem } from "./class/Base";
-import { Content } from "./class/Content";
+import { Comp, Elem } from "./class/Base.js";
+import { Content } from "./class/Content.js";
 
-export { Component } from "./api/Component";
+export { Component } from "./api/Component.js";
 
 export {Comp, Elem}
-export * from "./types";
+export * from "./types/index.js";
 
 declare global {
 
