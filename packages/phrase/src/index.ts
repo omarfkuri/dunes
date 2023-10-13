@@ -17,7 +17,7 @@ export class Phrases<L extends string, T extends LangDecl<L>> {
   }
 
   set lang(l: L) {
-    if (!this.#languages.includes(l)) {
+    if (!this.isLang(l)) {
       this.#current = this.#def;
     }
     else {
@@ -27,6 +27,10 @@ export class Phrases<L extends string, T extends LangDecl<L>> {
 
   get lang(): L {
     return this.#current;
+  }
+
+  isLang(x: string): x is L {
+    return this.#languages.includes(x as L);
   }
 
   userLang() {
