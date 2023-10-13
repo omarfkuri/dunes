@@ -8,6 +8,9 @@ export interface SiteBuildConfig {
 
   /** Source folder */
   src?: Recommend<"src">
+  
+  hash?: string | null
+
 
   /** Assets Options */
   assets?: null | {
@@ -93,7 +96,6 @@ export type ModuleMap = Map<string, CompileResult>;
 
 export interface BuildOptions {
   clean?: boolean
-  hash?: string
 }
 
 export type BuildResult = Promise<{
@@ -153,7 +155,6 @@ export type WatchResult = Promise<void>
 
 export interface ProduceOptions {
   origin: string
-  hash?: string
   do?: {
     [path: string]: ProducePropsFn
   }

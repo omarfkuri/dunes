@@ -32,6 +32,8 @@ export class SiteBuilder {
   constructor(config: SiteBuildConfig = {}) {
     this.config = {
 
+      hash: null,
+
       out: "public",
       src: "src",
       views: {
@@ -128,7 +130,7 @@ export class SiteBuilder {
       const style = this.config.css.match.test(fn);
 
       if (fn == this.config.lib) {
-        await doAction(fn, "file", ()=> this.#libs(null), style);
+        await doAction(fn, "file", ()=> this.#libs(), style);
       }
       else if (fn == this.config.main) {
         await doAction(fn, "file", ()=> this.#main(), style);
@@ -163,7 +165,7 @@ export class SiteBuilder {
           const start = Date.now();
           for (const [mod, files] of changes) {
             if (mod == this.config.lib) {
-              actions.set(mod, {mod, files, prom: ()=> this.#libs(null)})
+              actions.set(mod, {mod, files, prom: ()=> this.#libs()})
             }
             else if (mod == this.config.main) {
               actions.set(mod, {mod, files, prom: ()=> this.#main()})
@@ -237,11 +239,11 @@ export class SiteBuilder {
   async build(options: BuildOptions): BuildResult {
     const start = Date.now();
     await this.#env(options.clean);
-    await this.#libs(options.hash || null);
+    await this.#libs();
     await this.#main();
     await this.#views();
     await this.#globalCSS();
-    await this.#assets(options.hash || null);
+    await this.#assets();
 
     return {took: Date.now() - start}
   }
@@ -252,6 +254,13 @@ export class SiteBuilder {
 
   out(name: string, ...names: string[]): string {
     return join(this.config.out, name, ...names)
+  }
+
+  hash(filename: string): string {
+    const [name, ext] = filename.split(0, filename.lastIndexOf(".")) as [string, string];
+    return filename + (
+      this.config.hash ? ("." + this.config.hash): ""
+    ) + "." + ext;
   }
 
   #globalCSS() {
@@ -271,7 +280,7 @@ export class SiteBuilder {
     }
   }
 
-  async #assets(hash: string | null) {
+  async #assets() {
     if (!this.config.assets) return;
     const {out, source} = this.config.assets;
     await trav(this.src(source), {
@@ -291,7 +300,7 @@ export class SiteBuilder {
     })
   }
 
-  async #libs(hash: string | null) {
+  async #libs() {
     try {
       const result = await this.#compile(this.src(this.config.lib), {
         treeshake: true,
@@ -302,7 +311,9 @@ export class SiteBuilder {
       this.#map.set(this.config.lib, result);
       const paths = await this.paths();
       await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
-        `const paths = ${JSON.stringify(paths)};\nconst hash = ${hash? `"${hash}"`: "null"}\n` +
+        `const paths = ${JSON.stringify(paths)};\nconst hash = ${
+          this.config.hash? `"${this.config.hash}"`: "null"
+        }\n` +
         result.code
       )
     }
