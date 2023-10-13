@@ -1,5 +1,6 @@
 node_modules
 packages/**/lib
+!packages/styles/lib
 packages/**/rollup.config.js
 
 .DS_Store

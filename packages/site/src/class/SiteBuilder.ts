@@ -98,7 +98,6 @@ export class SiteBuilder {
       type: "file", 
       func: () => Promise<any>, 
       style: boolean,
-      files?: Set<string>,
     ) => {
       const start = Date.now();
 
