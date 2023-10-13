@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 
 import { type Plugin } from "@dunes/wrap";
 import { BabWrap } from "@dunes/bab";
-import { ResolveOptions } from "./types";
+import type { ResolveOptions } from "./types/index.js";
 
 export function localResolve(opts: ResolveOptions): Plugin {
   const babel = new BabWrap(opts.parseOptions);

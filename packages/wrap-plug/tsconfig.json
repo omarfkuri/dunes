@@ -2,9 +2,14 @@
 	"extends": "../../tsconfig.json",
 	"exclude": ["test", "lib"],
 	"compilerOptions": {
+		"jsx": "react",
+
 		"outDir": "lib",
 		"declaration": true,
 
-		"jsx": "react"
+    "sourceMap": true,
+    "declarationMap": true,
+    
+
 	}
 }

@@ -1,4 +1,4 @@
-import { ParserOptions, TransformOptions, TraverseOptions } from "@dunes/bab"
+import type { ParserOptions, TransformOptions, TraverseOptions } from "@dunes/bab"
 
 export interface ResolveOptions {
   id: string

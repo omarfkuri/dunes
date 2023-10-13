@@ -1,8 +1,8 @@
-import { Wrap, type Act, type StringOpts, act, FileOpts } from "@dunes/wrap";
-import { BabWrap } from "@dunes/bab";
-import { ResolveOptions } from "./types";
+
 import { js } from "@dunes/tools";
-import { ScriptTarget } from "typescript";
+import { Wrap, act } from "@dunes/wrap";
+import { BabWrap } from "@dunes/bab";
+import type { ResolveOptions } from "./types/index.js";
 
 export function transformInclude(opts: ResolveOptions) {
   const babel = new BabWrap(opts.parseOptions);
