@@ -1,5 +1,6 @@
 import type { Prom, Recommend } from "@dunes/tools"
 import type { Act, Acts, ActsResult, StrResult, StringOpts } from "@dunes/wrap"
+import type { SiteBuilder } from "src/index.js"
 
 
 export interface SiteBuildConfig {
@@ -203,4 +204,5 @@ export interface HTMLFunctionEvent {
   scripts: string[]
   styles: string[]
   path: string
+  builder: SiteBuilder
 }

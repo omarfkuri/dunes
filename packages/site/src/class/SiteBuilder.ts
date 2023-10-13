@@ -408,7 +408,8 @@ export class SiteBuilder {
         styles: [
           `/${this.config.css.file}`,
         ],
-        path
+        path,
+        builder: this
       })
 
       return str;
