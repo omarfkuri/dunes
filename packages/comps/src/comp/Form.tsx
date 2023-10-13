@@ -1,3 +1,5 @@
+import type { Styled } from "../index.js"
+
 declare const Elem: typeof import("@dunes/tag").Elem
 
 export type FormInput = {

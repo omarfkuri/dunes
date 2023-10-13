@@ -2,7 +2,7 @@ import { Component } from "@dunes/tag"
 declare const Elem: typeof import("@dunes/tag").Elem
 
 
-export function Classed<T extends obj>(
+export function Classed<T extends {[key: string]: any}>(
 	glob: string,
 	Co: Component<T & {cl?: string}>
 ) {

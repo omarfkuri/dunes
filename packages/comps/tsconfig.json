@@ -9,6 +9,10 @@
 			"ES2020", "DOM", "DOM.Iterable"
 		],
 
+    "sourceMap": true,
+    "declarationMap": true,
+    
+
 		"jsx": "react",
 		"jsxFactory": "Elem.create"
 	}
