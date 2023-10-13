@@ -1,0 +1,19 @@
+{
+	"extends": "../../tsconfig.json",
+
+	"compilerOptions": {
+		"outDir": "lib",
+		"declaration": true,
+
+		"lib": [
+			"ES2020", "DOM", "DOM.Iterable"
+		],
+
+    "sourceMap": true,
+    "declarationMap": true,
+    
+
+		"jsx": "react",
+		"jsxFactory": "Elem.create"
+	}
+}
