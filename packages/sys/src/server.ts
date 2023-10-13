@@ -1,6 +1,7 @@
 
   
-import express, { Express } from "express"
+import type { Prom } from "@dunes/tools";
+import express, { type Express } from "express"
 import http, { Server } from 'http';
 import { Server as IoServer } from "socket.io";
 

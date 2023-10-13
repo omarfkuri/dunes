@@ -1,3 +1,5 @@
+import type { obj } from "@dunes/tools"
+
 import { mkdir, readFile, writeFile } from "fs/promises";
 import { dirname } from "path";
 

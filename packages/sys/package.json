@@ -1,6 +1,6 @@
 {
   "name": "@dunes/sys",
-  "version": "0.9.73",
+  "version": "0.9.74",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -17,7 +17,7 @@
   ],
   "author": "Omar <omarfkuri@gmail.com>",
   "scripts": {
-    "build": "rm -rf lib && tsc && yarn version --new-version patch"
+    "build": "rm -rf lib && tsc && npm version patch"
   },
   "dependencies": {
     "@dunes/tools": "^0.9.78",

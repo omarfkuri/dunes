@@ -1,4 +1,5 @@
-import { FSWatcher, WatchEventType, WatchOptions } from "fs"
+import type { Prom } from "@dunes/tools"
+import type { FSWatcher, WatchEventType, WatchOptions } from "fs"
 import { watch } from "fs"
 
 

@@ -1,13 +1,12 @@
 
 
-import "@dunes/tools"
 
-export * from "./write"
-export * from "./watch"
-export * from "./clear"
-export * from "./trav"
-export * from "./tree"
-export * from "./prompt"
-export * from "./server"
-export * from "./line"
-export * from "./c"
+export * from "./write.js"
+export * from "./watch.js"
+export * from "./clear.js"
+export * from "./trav.js"
+export * from "./tree.js"
+export * from "./prompt.js"
+export * from "./server.js"
+export * from "./line.js"
+export * from "./c.js"
