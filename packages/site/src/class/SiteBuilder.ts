@@ -382,14 +382,14 @@ export class SiteBuilder {
     await writeStr(this.hash(outPath.replace(/(\.\w+)+$/, "/styles.css")),
       resultCSS(result.result)
     )
-    const html = await this.#html(path, result.code);
+    const html = await this.#html(path);
     await writeStr(outPath.replace(/(\.\w+)+$/, "/index.html"),
       html
     )
 
   }
 
-  async #html(path: string, script: string): Promise<string> {
+  async #html(path: string): Promise<string> {
     try {
       const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {
         replaceAfter: [
@@ -406,7 +406,7 @@ export class SiteBuilder {
           `/${this.hash(this.config.main.replace(/\.tsx?$/, ".js"))}`,
         ],
         styles: [
-          `/${this.config.css.file}`,
+          `/${this.hash(this.config.css.file)}`,
         ],
         path,
         builder: this
