@@ -1,6 +1,7 @@
 import { type Comp, Elem, type Template } from "@dunes/tag";
 import type { Redirect, RouterConfig, ViewConst, ViewRevealType } from "../types/index.js";
 import type { View } from "./View.js";
+import { splitLast } from "@dunes/tools";
 
 export class Router {
 
@@ -152,14 +153,22 @@ export class Router {
       )
     )
 
-    const endslash = path.endsWith("/")?"":"/";
-		const {default: Vc} = (await import(`${path}${endslash}script.js`)) as {default: ViewConst};
+    const dir = `${path}${path.endsWith("/")?"":"/"}script.js`;
+
+		const {default: Vc} = (await import(this.hash(`${dir}script.js`))) as {default: ViewConst};
 		if (!Vc) {
 			throw `View is not default export of "${pathname}.js"`
 		}
-		Vc.stylesRef = `${path}${endslash}styles.css`;
+		Vc.stylesRef = this.hash(`${dir}styles.css`);
 		return Vc;
 	}
+
+  hash(filename: string): string {
+    const [name, ext] = splitLast(filename, ".", 0);
+    return name + (
+      this.config.hash ? ("." + this.config.hash): ""
+    ) + ext;
+  }
 
   async print() {
 

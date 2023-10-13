@@ -1,6 +1,6 @@
 {
   "name": "@dunes/router",
-  "version": "0.9.97",
+  "version": "0.9.98",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -20,6 +20,7 @@
     "build": "rm -rf lib && tsc && npm version patch"
   },
   "dependencies": {
-    "@dunes/tag": "^0.9.75"
+    "@dunes/tag": "^0.9.75",
+    "@dunes/tools": "^0.9.84"
   }
 }
