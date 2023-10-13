@@ -7,8 +7,16 @@ export function $<E extends HTMLElement>(
 {
 	return parent.querySelector(selector);
 }
+export function $i<E extends HTMLElement>(
+  selector: string, 
+  parent: Document = document
+)
+: E | null 
+{
+  return parent.getElementById(selector) as E;
+}
 
-export function $$<E extends HTMLElement>(
+export function $a<E extends HTMLElement>(
 	selector: string, 
 	parent: Document | HTMLElement = document
 )
