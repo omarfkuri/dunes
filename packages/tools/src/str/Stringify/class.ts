@@ -1,6 +1,6 @@
-import { isAsync, isConstructor, isNamed } from "../../bool";
-import { getKeys } from "../../obj";
-import { Descriptor, StringifyConfig } from "./types";
+import { isAsync, isConstructor, isNamed } from "../../bool/index.js";
+import { getKeys } from "../../obj/index.js";
+import type { Descriptor, StringifyConfig } from "./types.js";
 
 
 export class Stringify {

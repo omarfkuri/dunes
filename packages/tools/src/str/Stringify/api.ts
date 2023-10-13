@@ -1,4 +1,4 @@
-import { Stringify } from "./class";
+import { Stringify } from "./class.js";
 
 
 export const json = (value: unknown, depth = 2) => {

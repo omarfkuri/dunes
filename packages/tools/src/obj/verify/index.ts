@@ -1,4 +1,4 @@
-import { VerDecl } from "./types";
+import type { VerDecl } from "./types.js";
 
 
 

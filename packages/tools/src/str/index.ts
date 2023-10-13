@@ -1,7 +1,7 @@
 
-export * from "./slugify"
-export * from "./Stringify"
-export * from "./transform"
+export * from "./slugify.js"
+export * from "./Stringify/index.js"
+export * from "./transform.js"
 
 
 declare global {

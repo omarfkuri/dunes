@@ -1,3 +1,13 @@
+
+
+export * from "./array/index.js"
+export * from "./bool/index.js"
+export * from "./str/index.js"
+export * from "./obj/index.js"
+
+export * from "./unicode/index.js"
+export * from "./extra.js"
+
 declare global {
 	type obj = {
 		[key: PropertyKey]: unknown
@@ -23,34 +33,4 @@ declare global {
 
 	type Prom<T> = T | Promise<T>;
 
-}
-
-export {
-	
-	extract,
-	insert,
-	swap,
-	Arr,
-
-} from "./array"
-export {
-
-	isConstructor,
-	isNone,
-
-} from "./bool"
-export {
-
-  Stringify,
-  json,
-  js,
-  slugify,
-  capitalize
-
-} from "./str"
-
-export * from "./unicode"
-
-export function sleep(ms = 5000) {
-  return new Promise<void>(res => setTimeout(res, ms));
 }
