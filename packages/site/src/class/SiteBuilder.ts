@@ -19,6 +19,7 @@ import type {
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { WatchDir, readString, trav, writeStr } from "@dunes/sys";
+import { splitLast } from "@dunes/tools";
 import { Wrap } from "@dunes/wrap";
 import puppeteer from "puppeteer";
 import jsb from "js-beautify";
@@ -257,10 +258,10 @@ export class SiteBuilder {
   }
 
   hash(filename: string): string {
-    const [name, ext] = filename.split(0, filename.lastIndexOf(".")) as [string, string];
-    return filename + (
+    const [name, ext] = splitLast(filename, ".", 0);
+    return name + (
       this.config.hash ? ("." + this.config.hash): ""
-    ) + "." + ext;
+    ) + ext;
   }
 
   #globalCSS() {
@@ -268,7 +269,7 @@ export class SiteBuilder {
     for (const [,{result}] of this.#map) {
       style += resultCSS(result) + "\n"
     }
-    return writeStr(this.out(this.config.css.file), style);
+    return writeStr(this.hash(this.out(this.config.css.file)), style);
   }
 
 
@@ -279,6 +280,8 @@ export class SiteBuilder {
       await rm(this.config.out, {recursive: true})
     }
   }
+
+  /**@TODO implement hash*/
 
   async #assets() {
     if (!this.config.assets) return;
@@ -310,7 +313,7 @@ export class SiteBuilder {
       });
       this.#map.set(this.config.lib, result);
       const paths = await this.paths();
-      await writeStr(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js")),
+      await writeStr(this.hash(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js"))),
         `const paths = ${JSON.stringify(paths)};\nconst hash = ${
           this.config.hash? `"${this.config.hash}"`: "null"
         }\n` +
@@ -341,7 +344,7 @@ export class SiteBuilder {
         ]
       });
       this.#map.set(this.config.main, result);
-      await writeStr(this.out(this.config.main.replace(/(\.\w+)+$/, ".js")),
+      await writeStr(this.hash(this.out(this.config.main.replace(/(\.\w+)+$/, ".js"))),
         result.code
       )
     }
@@ -373,10 +376,10 @@ export class SiteBuilder {
     this.#map.set(path, result);
     const outPath = this.out(path.slice(this.config.views.folder.length))
     .replace(/\/index.tsx/, ".tsx")
-    await writeStr(outPath.replace(/(\.\w+)+$/, "/script.js"),
+    await writeStr(this.hash(outPath.replace(/(\.\w+)+$/, "/script.js")),
       result.code
     )
-    await writeStr(outPath.replace(/(\.\w+)+$/, "/styles.css"),
+    await writeStr(this.hash(outPath.replace(/(\.\w+)+$/, "/styles.css")),
       resultCSS(result.result)
     )
     const html = await this.#html(path, result.code);
@@ -393,24 +396,18 @@ export class SiteBuilder {
           [/export *{ .+ };? *\n*/, ""],
         ]
       });
-      // let lib = this.#map.get(this.config.lib);
-      // if (!lib) {
-      //   throw "lib has not been written for html to create"
-      // }
       const htmlFunc: HTMLFunction = eval(`${htmlFuncSource}; html;`);
       if (typeof htmlFunc !== "function") {
         throw `Base ${this.config.base} does not export a function called "html"`
       }
-      const body = await this.#extractBody(script);
       const str = await htmlFunc({
         scripts: [
-          `/${this.config.lib.replace(/\.tsx?$/, ".js")}`,
-          `/${this.config.main.replace(/\.tsx?$/, ".js")}`,
+          `/${this.hash(this.config.lib.replace(/\.tsx?$/, ".js"))}`,
+          `/${this.hash(this.config.main.replace(/\.tsx?$/, ".js"))}`,
         ],
         styles: [
           `/${this.config.css.file}`,
         ],
-        body,
         path
       })
 
@@ -419,10 +416,6 @@ export class SiteBuilder {
     catch(err) {
       throw [this.config.base, err]
     }
-  }
-
-  async #extractBody(script: string): Promise<string> {
-    return ""
   }
 
   async #compile(path: string, opts?: CompileOptions): Promise<CompileResult> {

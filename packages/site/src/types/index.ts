@@ -203,5 +203,4 @@ export interface HTMLFunctionEvent {
   scripts: string[]
   styles: string[]
   path: string
-  body: string
 }
