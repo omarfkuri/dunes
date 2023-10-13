@@ -1,7 +1,8 @@
 
 import "@dunes/tools"
-import type { View } from "../class/View"
+import type { View } from "../class/View.js"
 import type { Comp } from "@dunes/tag"
+import type { Prom, obj } from "@dunes/tools"
 
 export interface Director {
 	(url: URL, req: URL): Prom<void>

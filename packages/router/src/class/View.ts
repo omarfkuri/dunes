@@ -1,5 +1,5 @@
 import { Comp } from "@dunes/tag";
-import { ViewEventRes, ViewRevealType } from "../types";
+import type { ViewEventRes, ViewRevealType } from "../types/index.js";
 
 
 export abstract class View {

@@ -1,6 +1,6 @@
 import { type Comp, Elem, type Template } from "@dunes/tag";
-import type { Redirect, RouterConfig, ViewConst, ViewRevealType } from "../types";
-import type { View } from "./View";
+import type { Redirect, RouterConfig, ViewConst, ViewRevealType } from "../types/index.js";
+import type { View } from "./View.js";
 
 export class Router {
 

@@ -1,10 +1,10 @@
 
-export { Anchor } from "./api/Anchor"
-export { View } from "./class/View"
-export { Router } from "./class/Router"
+export { Anchor } from "./api/Anchor.js"
+export { View } from "./class/View.js"
+export { Router } from "./class/Router.js"
 
 
-import type { Router } from "./class/Router"
+import type { Router } from "./class/Router.js"
 
 declare global {
 	const router: Router
