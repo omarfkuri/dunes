@@ -60,11 +60,15 @@ export class Router {
 		await this.config.direct(url, req);
 		this.latestReq = req;
 
-		if (
-			this.latestReq.pathname === url.pathname || 
-			this.latestReq.pathname === url.pathname + "/index") {
-			return;
-		}
+    if (this.latestURL?.pathname === url.pathname
+      || this.latestURL?.pathname === url.pathname + "/index") {
+
+
+      if (this.latestReq.pathname === req.pathname) {
+        return;
+      }
+
+    }
 		if (url.pathname === "/" || url.pathname === "/index") {
 			url.pathname = this.config.views.home;
 		}
