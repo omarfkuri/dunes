@@ -1,4 +1,4 @@
-import { LangDecl } from "./types";
+import type { LangDecl } from "./types.js";
 
 export class Phrases<L extends string, T extends LangDecl<L>> {
   #current: L
