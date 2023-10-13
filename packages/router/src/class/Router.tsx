@@ -75,7 +75,7 @@ export class Router {
 			url.pathname = this.config.views.error;
 		}
 
-		if (this.latestURL?.pathname === url.pathname) {
+		if (this.latestReq.pathname === url.pathname) {
 			return;
 		}
 

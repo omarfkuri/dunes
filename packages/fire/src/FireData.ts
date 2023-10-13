@@ -73,6 +73,20 @@ export class FireData extends AbstractFire<Firestore> {
 		return p;
 	}
 
+  async list<T>(colRef: CollectionReference<T> | Query<T>): Promise<Doc<T>[]> {
+    const p = new Array<Doc<T>>();
+
+
+
+    const ref = await getDocs(colRef);
+
+    for (const x of ref.docs) {
+      p.push(({ ...x.data(), id: x.id }) as Doc<T>);
+    }
+
+    return p;
+  }
+
 	remove<T>(docRef: DocumentReference<T>): Promise<void> {
 		return deleteDoc(docRef);
 	}
