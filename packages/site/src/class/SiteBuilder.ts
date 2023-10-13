@@ -1,5 +1,5 @@
-import { WatchListener, watch } from "fs";
-import { 
+import type { WatchListener } from "fs";
+import type { 
   SiteBuildConfig,
   BuildOptions,
   BuildResult,
@@ -15,7 +15,7 @@ import {
   ProduceOptions,
   ProduceResult,
   MultiAction,
-} from "../types";
+} from "../types/index.js";
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { WatchDir, readString, trav, writeStr } from "@dunes/sys";
@@ -49,7 +49,6 @@ export class SiteBuilder {
       lib: "lib.ts",
       main: "main.ts",
       base: "base.tsx",
-
       ...config,
     };
   }

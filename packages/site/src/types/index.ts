@@ -1,4 +1,5 @@
-import { Act, Acts, ActsResult, StrResult, StringOpts } from "@dunes/wrap"
+import type { Prom, Recommend } from "@dunes/tools"
+import type { Act, Acts, ActsResult, StrResult, StringOpts } from "@dunes/wrap"
 
 
 export interface SiteBuildConfig {
