@@ -2,11 +2,11 @@
 import parser from "@babel/parser";
 import { transformFromAstSync, traverse } from "@babel/core";
 
-import { 
+import type { 
   File, Node, Scope, TraverseOptions, 
   NodePath, TransformOptions, ParserOptions, 
   ParseResult 
-} from "../types";
+} from "../types/index.js";
 
 
 export class BabWrap {

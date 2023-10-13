@@ -5,6 +5,10 @@
 		"outDir": "lib",
 		"declaration": true,
 
-		"jsx": "react"
+		"jsx": "react",
+
+    "sourceMap": true,
+    "declarationMap": true,
+    "composite": true,
 	}
 }

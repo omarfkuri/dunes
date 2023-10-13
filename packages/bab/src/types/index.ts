@@ -1,10 +1,10 @@
-export { type TransformOptions } from "@babel/core";
+export type { TransformOptions } from "@babel/core";
 
-export { type NodePath, type Scope, type TraverseOptions } from "@babel/traverse";
+export type { NodePath, Scope, TraverseOptions } from "@babel/traverse";
 
-export { type File, type Node } from "@babel/types";
+export type { File, Node } from "@babel/types";
 
-export { ParseResult, ParserOptions } from "@babel/parser";
+export type { ParseResult, ParserOptions } from "@babel/parser";
 
 export interface JSXOptions {
   useBuiltIns?: boolean

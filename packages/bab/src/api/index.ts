@@ -1,4 +1,4 @@
-import { JSXOptions, TSOptions, Plug } from "../types";
+import type { JSXOptions, TSOptions, Plug } from "../types/index.js";
 
 
 
