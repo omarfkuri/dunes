@@ -61,8 +61,8 @@ export class Router {
 		this.latestReq = req;
 
 		if (
-			this.latestURL?.pathname === url.pathname || 
-			this.latestURL?.pathname === url.pathname + "/index") {
+			this.latestReq.pathname === url.pathname || 
+			this.latestReq.pathname === url.pathname + "/index") {
 			return;
 		}
 		if (url.pathname === "/" || url.pathname === "/index") {
@@ -73,10 +73,6 @@ export class Router {
 		}
 		else if (!this.config.pages.includes(url.pathname)) {
 			url.pathname = this.config.views.error;
-		}
-
-		if (this.latestReq.pathname === url.pathname) {
-			return;
 		}
 
 		let viewConst = this.#views.get(url.pathname)
