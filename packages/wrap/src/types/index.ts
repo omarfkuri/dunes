@@ -1,10 +1,11 @@
-import "@dunes/tools"
 
-import { Plugin } from 'rollup';
+import type { Prom } from "@dunes/tools";
+
+import type { Plugin } from 'rollup';
 
 import type { OutputOptions, RollupOptions } from 'rollup';
 
-export { Plugin }
+export type { Plugin }
 
 export interface BaseOpts<A extends Acts> {
 	treeshake?: RollupOptions["treeshake"]

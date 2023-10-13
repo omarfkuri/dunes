@@ -1,4 +1,4 @@
-import { Act } from "./types";
+import type { Act } from "./types/index.js";
 
 
 

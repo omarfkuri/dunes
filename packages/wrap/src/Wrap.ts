@@ -2,10 +2,14 @@ import "@dunes/tools"
 
 import { writeStr } from "@dunes/sys"
 
-import { InputPluginOption, Plugin, rollup } from 'rollup';
+import { type InputPluginOption, type Plugin, rollup } from 'rollup';
 import virtual from '@rollup/plugin-virtual';
 
-import { Act, Acts, ActsResult, FileOpts, Opts, Result, StrResult, StringOpts } from "./types";
+import type { 
+  Acts, ActsResult, FileOpts, 
+  Opts, Result, StrResult, 
+  StringOpts 
+} from "./types/index.js";
 
 
 export class Wrap {
@@ -90,7 +94,10 @@ export class Wrap {
 
 		const isSTR = "script" in opt;
 
+    virtual
+
 		if (isSTR) {
+      // @ts-expect-error
 			plugins.push(virtual({script: opt.script}));
 		}
 

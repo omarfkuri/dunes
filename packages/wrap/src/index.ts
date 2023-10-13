@@ -1,7 +1,7 @@
 
 
 
-export { Wrap } from "./Wrap"
+export { Wrap } from "./Wrap.js"
 
-export * from "./types"
-export * from "./api"
+export * from "./types/index.js"
+export * from "./api.js"

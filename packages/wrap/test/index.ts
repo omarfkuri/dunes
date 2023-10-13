@@ -1,5 +1,5 @@
 
-import { Wrap, act } from '../src';
+import { Wrap, act } from '../src/index.js';
 
 try {
 	const build = await Wrap.build({
