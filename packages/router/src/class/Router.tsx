@@ -58,17 +58,16 @@ export class Router {
 		const req = new URL(href);
 		const url = new URL(href);
 		await this.config.direct(url, req);
-		this.latestReq = req;
 
     if (this.latestURL?.pathname === url.pathname
       || this.latestURL?.pathname === url.pathname + "/index") {
 
-
-      if (this.latestReq.pathname === req.pathname) {
+      if (this.latestReq?.pathname === req.pathname) {
         return;
       }
-
     }
+    this.latestReq = req;
+
 		if (url.pathname === "/" || url.pathname === "/index") {
 			url.pathname = this.config.views.home;
 		}

@@ -1,6 +1,6 @@
 {
   "name": "@dunes/router",
-  "version": "0.9.96",
+  "version": "0.9.97",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
