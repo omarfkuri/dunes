@@ -10,7 +10,7 @@
     "test": "ts-node test/entry"
   },
   "bin": {
-    "create": "./lib/bin/create.js"
+    "site": "./lib/bin/create.js"
   },
   "keywords": [
     "javascript",
@@ -34,6 +34,7 @@
     "@dunes/wrap-plug": "^0.9.69",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/js-beautify": "^1.14.1",
+    "@types/node": "^20.8.6",
     "js-beautify": "^1.14.9",
     "puppeteer": "^21.3.8",
     "types-package-json": "^2.0.39"

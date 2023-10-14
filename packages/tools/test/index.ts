@@ -15,7 +15,7 @@ const obj: object = {
   shan: ["Some", "body", "once", "told", "me"],
   hobbies: [
     {name: "Soccer"},
-    {namse: "Tennis"},
+    {name: "Tennis"},
     {name: "Baseball"},
     {name: "Dance"},
   ]
@@ -33,16 +33,23 @@ try {
       name: string
     }[]
   }>(obj, {
-    name: "string",
+    name: "number",
     date: "number",
 
-    chin: ["object", {
-
-    }],
-    shan: ["array", "string"],
-    hobbies: ["array", {
-      name: "string",
-    }],
+    chin: "object",
+    shan: {
+      type: "array",
+      items: "string"
+    },
+    hobbies: {
+      type: "array",
+      items: {
+        type: "object",
+        props: {
+          name: "string",
+        }
+      }
+    },
   })
 
   console.log(obj.name, obj.date, obj.chin.cachin)
