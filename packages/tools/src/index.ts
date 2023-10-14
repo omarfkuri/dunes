@@ -32,3 +32,15 @@ export type prim = (
 )
 
 export type Prom<T> = T | Promise<T>;
+
+export type DeepRequired<T extends object> = {
+  readonly [K in keyof T]: T[K] extends object
+  ? DeepRequired<T[K]>
+  : T[K];
+}
+
+export type DeepPartial<T extends object> = {
+  [K in keyof T]?: T[K] extends object
+  ? DeepPartial<T[K]>
+  : T[K];
+}
