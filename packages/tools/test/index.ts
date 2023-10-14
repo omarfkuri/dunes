@@ -33,13 +33,14 @@ try {
       name: string
     }[]
   }>(obj, {
-    name: "number",
+    name: "string",
     date: "number",
 
     chin: "object",
     shan: {
       type: "array",
-      items: "string"
+      items: "string",
+      or: "number"
     },
     hobbies: {
       type: "array",
