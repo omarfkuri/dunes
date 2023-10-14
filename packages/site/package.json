@@ -1,6 +1,6 @@
 {
   "name": "@dunes/site",
-  "version": "0.9.52",
+  "version": "0.9.55",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -8,6 +8,9 @@
   "scripts": {
     "build": "rm -rf lib && tsc && npm version patch",
     "test": "ts-node test/entry"
+  },
+  "bin": {
+    "create": "./lib/bin/create.js"
   },
   "keywords": [
     "javascript",
