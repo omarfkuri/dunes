@@ -1,7 +1,6 @@
 import type { WatchListener } from "fs";
 import type { 
-  SiteBuildConfig,
-  BuildOptions,
+  BuilderOptions,
   BuildResult,
   WatchOptions,
   WatchResult,
@@ -15,6 +14,7 @@ import type {
   ProduceOptions,
   ProduceResult,
   MultiAction,
+  BuildOptions,
 } from "../types/index.js";
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
@@ -28,10 +28,10 @@ export class SiteBuilder {
 
   #map: ModuleMap = new Map();
 
-  config: Required<SiteBuildConfig>
+  options: Required<BuilderOptions>
 
-  constructor(config: SiteBuildConfig = {}) {
-    this.config = {
+  constructor(options: BuilderOptions = {}) {
+    this.options = {
 
       hash: null,
 
@@ -52,7 +52,7 @@ export class SiteBuilder {
       lib: "lib.ts",
       main: "main.ts",
       base: "base.tsx",
-      ...config,
+      ...options,
     };
   }
 
@@ -128,20 +128,20 @@ export class SiteBuilder {
     
     const listener: WatchListener<string> = async (_ch, fn) => {
       if (fn === null) return;
-      const style = this.config.css.match.test(fn);
+      const style = this.options.css.match.test(fn);
 
-      if (fn == this.config.lib) {
+      if (fn == this.options.lib) {
         await doAction(fn, "file", ()=> this.#libs(), style);
       }
-      else if (fn == this.config.main) {
+      else if (fn == this.options.main) {
         await doAction(fn, "file", ()=> this.#main(), style);
       }
-      else if (fn == this.config.base) {
+      else if (fn == this.options.base) {
         await doAction(fn, "file", ()=> this.#views(), style);
       }
       else if (
-        fn.startsWith(this.config.views.folder) && 
-        this.config.views.only.test(fn)
+        fn.startsWith(this.options.views.folder) && 
+        this.options.views.only.test(fn)
       ) {
         await doAction(fn, "file", ()=> this.#view(fn), style);
       }
@@ -165,18 +165,18 @@ export class SiteBuilder {
           const actions = new Map<string, MultiAction>();
           const start = Date.now();
           for (const [mod, files] of changes) {
-            if (mod == this.config.lib) {
+            if (mod == this.options.lib) {
               actions.set(mod, {mod, files, prom: ()=> this.#libs()})
             }
-            else if (mod == this.config.main) {
+            else if (mod == this.options.main) {
               actions.set(mod, {mod, files, prom: ()=> this.#main()})
             }
-            else if (mod == this.config.base) {
+            else if (mod == this.options.base) {
               actions.set(mod, {mod, files, prom: ()=> this.#views()})
             }
             else if (
-              mod.startsWith(this.config.views.folder) && 
-              this.config.views.only.test(mod)
+              mod.startsWith(this.options.views.folder) && 
+              this.options.views.only.test(mod)
             ) {
               actions.set(mod, {mod, files, prom: ()=> this.#view(mod)})
             }
@@ -226,7 +226,7 @@ export class SiteBuilder {
     }
 
     const watcher = new WatchDir(
-      this.config.src, 
+      this.options.src, 
       {
         recursive: true,
         delay: 220
@@ -250,17 +250,17 @@ export class SiteBuilder {
   }
 
   src(name: string, ...names: string[]): string {
-    return join(this.config.src, name, ...names)
+    return join(this.options.src, name, ...names)
   }
 
   out(name: string, ...names: string[]): string {
-    return join(this.config.out, name, ...names)
+    return join(this.options.out, name, ...names)
   }
 
   hash(filename: string): string {
     const [name, ext] = splitLast(filename, ".", 0);
     return name + (
-      this.config.hash ? ("." + this.config.hash): ""
+      this.options.hash ? ("." + this.options.hash): ""
     ) + ext;
   }
 
@@ -269,23 +269,23 @@ export class SiteBuilder {
     for (const [,{result}] of this.#map) {
       style += resultCSS(result) + "\n"
     }
-    return writeStr(this.hash(this.out(this.config.css.file)), style);
+    return writeStr(this.hash(this.out(this.options.css.file)), style);
   }
 
 
   async #env(clean: boolean | undefined) {
-    const out = this.out(this.config.views.folder);
+    const out = this.out(this.options.views.folder);
     await mkdir(out, {recursive: true});
     if (clean) {
-      await rm(this.config.out, {recursive: true})
+      await rm(this.options.out, {recursive: true})
     }
   }
 
   /**@TODO implement hash*/
 
   async #assets() {
-    if (!this.config.assets) return;
-    const {out, source} = this.config.assets;
+    if (!this.options.assets) return;
+    const {out, source} = this.options.assets;
     await trav(this.src(source), {
       onFile: async (parent, file) => {
         
@@ -305,29 +305,29 @@ export class SiteBuilder {
 
   async #libs() {
     try {
-      const result = await this.#compile(this.src(this.config.lib), {
+      const result = await this.#compile(this.src(this.options.lib), {
         treeshake: true,
         replaceAfter: [
           [/export *{ .+ };? *\n*/, ""],
         ]
       });
-      this.#map.set(this.config.lib, result);
+      this.#map.set(this.options.lib, result);
       const paths = await this.paths();
-      await writeStr(this.hash(this.out(this.config.lib.replace(/(\.\w+)+$/, ".js"))),
+      await writeStr(this.hash(this.out(this.options.lib.replace(/(\.\w+)+$/, ".js"))),
         `const paths = ${JSON.stringify(paths)};\nconst hash = ${
-          this.config.hash? `"${this.config.hash}"`: "null"
+          this.options.hash? `"${this.options.hash}"`: "null"
         }\n` +
         result.code
       )
     }
     catch(err) {
-      throw [this.config.lib, err]
+      throw [this.options.lib, err]
     }
   }
 
   async paths(): Promise<string[]> {
     const paths: string[] = [];
-    await trav(this.src(this.config.views.folder), {
+    await trav(this.src(this.options.views.folder), {
       onFile: (parent, file) => {
         paths.push("/" + join(parent, file.name).replace(/(\.\w+)+$/, ""));
       }
@@ -337,27 +337,27 @@ export class SiteBuilder {
 
   async #main() {
     try {
-      const result = await this.#compile(this.src(this.config.main), {
+      const result = await this.#compile(this.src(this.options.main), {
         treeshake: false,
         replaceAfter: [
           [/export *{ .+ };? *\n*/, ""],
         ]
       });
-      this.#map.set(this.config.main, result);
-      await writeStr(this.hash(this.out(this.config.main.replace(/(\.\w+)+$/, ".js"))),
+      this.#map.set(this.options.main, result);
+      await writeStr(this.hash(this.out(this.options.main.replace(/(\.\w+)+$/, ".js"))),
         result.code
       )
     }
     catch(err) {
-      throw [this.config.main, err]
+      throw [this.options.main, err]
     }
   }
 
   async #views() {
-    await trav(this.src(this.config.views.folder), {
+    await trav(this.src(this.options.views.folder), {
       onFile: async (parent, file) => {
         try {
-          await this.#view(join(this.config.views.folder, parent, file.name));
+          await this.#view(join(this.options.views.folder, parent, file.name));
         }
         catch(err) {
           throw [join(parent, file.name), err]
@@ -367,14 +367,14 @@ export class SiteBuilder {
   }
 
   async #view(path: string) {
-    if (!this.config.views.only.test(path)) {
+    if (!this.options.views.only.test(path)) {
       return;
     }
     const result = await this.#compile(this.src(path), {
       treeshake: false
     });
     this.#map.set(path, result);
-    const outPath = this.out(path.slice(this.config.views.folder.length))
+    const outPath = this.out(path.slice(this.options.views.folder.length))
     .replace(/\/index.tsx/, ".tsx")
     await writeStr(this.hash(outPath.replace(/(\.\w+)+$/, "/script.js")),
       result.code
@@ -391,22 +391,22 @@ export class SiteBuilder {
 
   async #html(path: string): Promise<string> {
     try {
-      const {code: htmlFuncSource} = await this.#compile(this.src(this.config.base), {
+      const {code: htmlFuncSource} = await this.#compile(this.src(this.options.base), {
         replaceAfter: [
           [/export *{ .+ };? *\n*/, ""],
         ]
       });
       const htmlFunc: HTMLFunction = eval(`${htmlFuncSource}; html;`);
       if (typeof htmlFunc !== "function") {
-        throw `Base ${this.config.base} does not export a function called "html"`
+        throw `Base ${this.options.base} does not export a function called "html"`
       }
       const str = await htmlFunc({
         scripts: [
-          `/${this.hash(this.config.lib.replace(/\.tsx?$/, ".js"))}`,
-          `/${this.hash(this.config.main.replace(/\.tsx?$/, ".js"))}`,
+          `/${this.hash(this.options.lib.replace(/\.tsx?$/, ".js"))}`,
+          `/${this.hash(this.options.main.replace(/\.tsx?$/, ".js"))}`,
         ],
         styles: [
-          `/${this.hash(this.config.css.file)}`,
+          `/${this.hash(this.options.css.file)}`,
         ],
         path,
         builder: this
@@ -415,7 +415,7 @@ export class SiteBuilder {
       return str;
     }
     catch(err) {
-      throw [this.config.base, err]
+      throw [this.options.base, err]
     }
   }
 
@@ -425,12 +425,12 @@ export class SiteBuilder {
 
     const CSSACT: CSSAct = {
       name: "css",
-      match: this.config.css.match,
+      match: this.options.css.match,
       action: async (source, id) => {
 
-        const compiled = await this.config.css.transform(source);
+        const compiled = await this.options.css.transform(source);
         order++
-        if (id.endsWith(`.m.${this.config.css.ext}`)) {
+        if (id.endsWith(`.m.${this.options.css.ext}`)) {
           const data = analyzeCss(id, compiled);
           return {
             text: `export default ${data.exports}`,
@@ -447,16 +447,16 @@ export class SiteBuilder {
     }
 
     return await Wrap.build({
-      ...this.config.wrap,
+      ...this.options.wrap,
       ...opts,
       replaceAfter: [
-        ...(this.config.wrap.replaceAfter || []),
+        ...(this.options.wrap.replaceAfter || []),
         ...(opts?.replaceAfter || []),
       ],
       script,
       transform: [
         CSSACT, 
-        ...(this.config.wrap.transform || []),
+        ...(this.options.wrap.transform || []),
         ...(opts?.transform || []),
       ]
     });

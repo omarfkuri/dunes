@@ -3,7 +3,7 @@ import type { Act, Acts, ActsResult, StrResult, StringOpts } from "@dunes/wrap"
 import type { SiteBuilder } from "src/index.js"
 
 
-export interface SiteBuildConfig {
+export interface BuilderOptions {
   /** Output folder */
   out?: Recommend<"out">
 
@@ -29,6 +29,7 @@ export interface SiteBuildConfig {
 
   /** Wrap Options */
   wrap?: WrapOptions
+  
   /** 
    * # Libraries script 
    * 
@@ -37,16 +38,16 @@ export interface SiteBuildConfig {
    * them in every file
    * 
    * */
-  
   lib?: Recommend<"lib.ts">
+  
   /** 
    * # Main script 
    * 
    * Included in every page
    * 
    * */
-  
   main?: Recommend<"main.ts">
+
   /** 
    * # Base HTML
    * 
@@ -205,4 +206,36 @@ export interface HTMLFunctionEvent {
   styles: string[]
   path: string
   builder: SiteBuilder
+}
+
+/**
+ * Configuration for CLI tool
+ * */
+export interface BuilderConfig {
+  
+  /**
+   * Builder Options
+   * */
+  options: BuilderOptions
+
+  /**
+   * Build options
+   * */
+  build?: WatchOptions & {
+    inactive?: boolean
+  }
+  
+  /**
+   * Produce options
+   * */
+  produce?: ProduceOptions & {
+    inactive?: boolean
+  }
+
+  /**
+   * Watch for changes
+   * */
+  watch?: WatchOptions & {
+    inactive?: boolean
+  }
 }

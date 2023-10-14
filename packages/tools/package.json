@@ -1,6 +1,6 @@
 {
   "name": "@dunes/tools",
-  "version": "0.9.84",
+  "version": "0.9.85",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -19,5 +19,8 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/omarfkuri/dunes.git"
+  },
+  "dependencies": {
+    "@types/node": "^20.8.6"
   }
 }

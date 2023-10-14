@@ -35,6 +35,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/js-beautify": "^1.14.1",
     "js-beautify": "^1.14.9",
-    "puppeteer": "^21.3.8"
+    "puppeteer": "^21.3.8",
+    "types-package-json": "^2.0.39"
   }
 }
