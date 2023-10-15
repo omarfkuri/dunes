@@ -3,53 +3,54 @@ import { verify } from "../src/index.js";
 
 const obj: object = {
   name: "Hey man",
-  date: 33,
+  date: new Date(),
   chin: {
     some: 27
   },
   shan: ["Some", "body", "once", "told", "me"],
   hobbies: [
     {name: "Soccer"},
-    {name: "Tennis"},
+    {name: 99},
     {name: "Baseball"},
     {name: "Dance"},
   ]
 };
 
-
-
-try {
-
-  verify<{
+type R = {
     name: string
-    date: number
+    date: Date
     chin: {
       [key: string]: any
     }
     shan: string[]
-    hobbies: {
+    hobbies?: {
       name: string
     }[]
-  }>(obj, {
+  }
+
+try {
+
+  verify<R>(obj, {
     name: "string",
-    date: "number",
-    chin: {
-      type: "object",
-      props: {}
+    date(p, name) {
+      if (!(p instanceof Date)) {
+        throw `${name} is not a Date.`
+      }
     },
+    chin: "object",
     shan: {
-      type: "array",
       item: "string"
     },
-    hobbies: {
-      type: "array",
-      item: {
-        type: "object",
-        props: {
-          name: "string"
+    hobbies: [
+      {
+        item: {
+          prop: {
+            name: "string"
+          }
         }
-      }
-    }
+      },
+      "undefined"
+    ]
   });
 
   console.log(obj.name, obj.date, obj.chin.some)
@@ -58,3 +59,34 @@ catch(error) {
   console.log("ERROR!")
   console.warn(error)
 }
+// try {
+
+//   verify<R>(obj, {
+//     name: "string",
+//     date: "number",
+//     chin: {
+//       type: "object",
+//       props: {}
+//     },
+//     shan: {
+//       type: "array",
+//       item: "string"
+//     },
+//     hobbies: {
+//       type: "array",
+//       or: "undefined",
+//       item: {
+//         type: "object",
+//         props: {
+//           name: "string"
+//         }
+//       }
+//     }
+//   });
+
+//   console.log(obj.name, obj.date, obj.chin.some)
+// }
+// catch(error) {
+//   console.log("ERROR!")
+//   console.warn(error)
+// }

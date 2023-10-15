@@ -1,18 +1,130 @@
 import "@dunes/types";
-import type { DeepPartial } from "@dunes/tools";
-import type { AnyVerifier, InferType, Verifier } from "./types.js";
+import type { InferType, Type,  } from "./types.js";
+import type { DeepPartial, Many } from "@dunes/tools";
 
 
-export function verify<
-  X extends {[key: PropertyKey]: any},
-  const V extends Verifier<X> = Verifier<X>>(
-  x: DeepPartial<X>, 
-  verifier: V,
-  parent: PropertyKey | null = null
-): asserts x is X {
+type VerifierDecl<X extends {[key: PropertyKey]: any}> = {
+  [K in keyof X]: Verifier<X[K]>
+}
 
-  for (const [name, verVal] of Object.entries(verifier)) {
-    switchVerifier(x[name], name, verVal, parent);
+type Verifier<X> = Many<(
+  | Type
+  | (X extends object? ObjVer<X>: never)
+  | (X extends any[]? ArrVer<X>: never)
+  | FunVer<X>
+)>
+
+type FunVer<X> = (value: X, path: string) => asserts value is X;
+
+type ArrVer<X extends any[]> = {
+  item: Verifier<X[number]>
+}
+
+type ObjVer<X extends object> = {
+  prop: VerifierDecl<X>
+}
+
+type VerRes = (
+  {
+    ok: true
+  }
+  |
+  {
+    ok: false
+    error: string
+  }
+)
+
+export function verify<X extends object>(
+  obj: DeepPartial<X>,
+  ver: VerifierDecl<X>,
+  parent: string | null = null
+): asserts obj is X {
+  for (const prop in ver) {
+    const value = obj[prop]!;
+    const verifier = ver[prop]!;
+
+    const res = verifyType(prop, value, verifier, parent);
+    if (!res.ok) {
+      throw res.error;
+    }
+    
+  }
+}
+
+function verifyType(
+  prop: PropertyKey,
+  value: any,
+  verifier: Verifier<any>,
+  parent: string | null
+): VerRes
+{
+  const path = ((parent !== null) ? (
+    typeof prop === "string"
+    ? `${parent}.`
+    : `${parent}[`
+    ) : "") + String(prop) + (
+    typeof prop === "string"? "": "]"
+  );
+
+  if (typeof verifier === "string") {
+    if (!verifyValue(value, verifier)) {
+      return {
+        ok: false,
+        error: `Prop '${path}' is ${typeof value}. Expected ${verifier}`
+      }
+    }
+  }
+
+  else if (typeof verifier === "function") {
+    // @ts-expect-errors
+    verifier(value, path);
+  }
+
+  else if (typeof verifier !== "object") {
+    return {
+      ok: false,
+      error: `Unexpected verifier type ${typeof verifier}`
+    }
+  }
+  
+  else if (Array.isArray(verifier)) {
+    let pass = false;
+    const errors: string[] = []
+    for (const veri of verifier) {
+      const result = verifyType(prop, value, veri, parent);
+      if (result.ok) {
+        pass = true;
+      }
+      else {
+        errors.push(result.error);
+      }
+    }
+
+    if (!pass) {
+      return {
+        ok: false,
+        error: `${errors.length} errors occurred`
+      }
+    }
+  }
+  else if ("prop" in verifier) {
+    verify(value, verifier.prop, path)
+  }
+  
+  else if ("item" in verifier) {
+    if (!Array.isArray(value)) {
+      throw ""
+    }
+    let i = 0;
+    for (const item of value) {
+      verifyType(i, item, verifier.item, path)
+      i++;
+    }
+  }
+
+  return {
+    ok: true
   }
 }
 
@@ -23,99 +135,4 @@ function verifyValue<T extends any>(
   if (t === "null") return x === null
   if (t === "array") Array.isArray(x)
   return typeof x === t;
-}
-
-function switchVerifier<T extends AnyVerifier<any>>(
-  value: unknown, 
-  name: PropertyKey, 
-  verVal: T,
-  parentIn: PropertyKey | null
-) {
-  const nameStr = typeof name === "string";
-  const parent = (parentIn? (
-    String(parentIn) + (nameStr? ".": "[")
-  ): "") + String(name) + (nameStr? "": "]");
-
-  if (typeof verVal === "string") {
-    if (!verifyValue(value, verVal)) {
-      throw new VerifierError(
-        `Property '${String(name)}' is ${typeof value}. Expected ${verVal}.`,
-        parentIn
-      )
-    }
-  }
-  else if (Array.isArray(verVal)) {
-    if (!verVal.some(val => verifyValue(value, val))) {
-      throw new VerifierError(
-        `Property '${String(name)}' is ${typeof value}. Expected ${verVal.join(" | ")}.`,
-        parentIn
-      )
-    }
-  }
-  else if (typeof verVal === "function") {
-    // @ts-expect-error
-    verVal(value as any);
-  }
-  else if (typeof verVal !== "object") {
-    throw new VerifierError(
-      `Type ${typeof verVal} cannot be used to verify '${String(name)}'`,
-      parentIn
-    )
-  }
-  else if (verVal.type === "object") {
-
-    if (!value || typeof value !== "object") {
-      throw new VerifierError(
-        `Value for '${String(name)}' is not an object`,
-        parentIn
-      )
-    }
-
-    if ("test" in verVal) {
-      let i = 0;
-      const entries = Object.entries(value);
-      for (const entry of entries) {
-        // @ts-expect-error
-        verVal.test(entry, i, entries);
-        i++
-      }
-    }
-
-    else {
-      verify(value as any, verVal.props, parent);
-    }
-  }
-  else {
-
-    if (!value || !Array.isArray(value)) {
-      throw new VerifierError(
-        `Value for '${String(name)}' is not an array`,
-        parentIn
-      )
-    }
-
-    if ("test" in verVal) {
-      let i = 0;
-      for (const item of value as any[]) {
-        // @ts-expect-error
-        verVal.test(item, i, value);
-        i++
-      }
-    }
-
-    else {
-      let i = 0;
-      for (const item of value as any[]) {
-        switchVerifier(item, i, verVal.item, parent);
-        i++
-      }
-    }
-  }
-}
-
-class VerifierError extends Error {
-
-  constructor(message: string, parent: PropertyKey | null) {
-    super("@ " + String(parent) +  "\n" + message);
-  }
 }
