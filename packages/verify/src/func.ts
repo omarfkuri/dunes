@@ -87,7 +87,7 @@ function checkVerifier(
     if (!pass) {
       return {
         ok: false,
-        error: `${errors.length} errors occurred.\n-` + errors.join(";\n- ")
+        error: `${errors.length} errors occurred.\n- ` + errors.join(";\n- ")
       }
     }
   }
