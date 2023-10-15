@@ -1,40 +1,11 @@
 import "@dunes/types";
-import type { InferType, Type,  } from "./types.js";
-import type { DeepPartial, Many } from "@dunes/tools";
+import type { DeepPartial } from "@dunes/tools";
 
+import type { InferType, VerRes, Verifier, VerifierDecl,  } from "./types.js";
 
-type VerifierDecl<X extends {[key: PropertyKey]: any}> = {
-  [K in keyof X]: Verifier<X[K]>
-}
-
-type Verifier<X> = Many<(
-  | Type
-  | (X extends object? ObjVer<X>: never)
-  | (X extends any[]? ArrVer<X>: never)
-  | FunVer<X>
-)>
-
-type FunVer<X> = (value: X, path: string) => asserts value is X;
-
-type ArrVer<X extends any[]> = {
-  item: Verifier<X[number]>
-}
-
-type ObjVer<X extends object> = {
-  prop: VerifierDecl<X>
-}
-
-type VerRes = (
-  {
-    ok: true
-  }
-  |
-  {
-    ok: false
-    error: string
-  }
-)
-
+/**
+ * Asserts that variable `obj` is object `X`
+ * */
 export function verify<X extends object>(
   obj: DeepPartial<X>,
   ver: VerifierDecl<X>,
@@ -44,15 +15,26 @@ export function verify<X extends object>(
     const value = obj[prop]!;
     const verifier = ver[prop]!;
 
-    const res = verifyType(prop, value, verifier, parent);
+    const res = checkVerifier(prop, value, verifier, parent);
     if (!res.ok) {
       throw res.error;
     }
-    
   }
 }
 
-function verifyType(
+/**
+ * Asserts that variable `x` is of type `T`
+ * */
+export function isType<T extends any>(
+  x: unknown, 
+  t: InferType<T>,
+): x is T {
+  if (t === "null") return x === null
+  if (t === "array") Array.isArray(x)
+  return typeof x === t;
+}
+
+function checkVerifier(
   prop: PropertyKey,
   value: any,
   verifier: Verifier<any>,
@@ -68,7 +50,7 @@ function verifyType(
   );
 
   if (typeof verifier === "string") {
-    if (!verifyValue(value, verifier)) {
+    if (!isType(value, verifier)) {
       return {
         ok: false,
         error: `Prop '${path}' is ${typeof value}. Expected ${verifier}`
@@ -92,7 +74,7 @@ function verifyType(
     let pass = false;
     const errors: string[] = []
     for (const veri of verifier) {
-      const result = verifyType(prop, value, veri, parent);
+      const result = checkVerifier(prop, value, veri, parent);
       if (result.ok) {
         pass = true;
       }
@@ -118,7 +100,7 @@ function verifyType(
     }
     let i = 0;
     for (const item of value) {
-      verifyType(i, item, verifier.item, path)
+      checkVerifier(i, item, verifier.item, path)
       i++;
     }
   }
@@ -126,13 +108,4 @@ function verifyType(
   return {
     ok: true
   }
-}
-
-function verifyValue<T extends any>(
-  x: unknown, 
-  t: InferType<T>,
-): x is T {
-  if (t === "null") return x === null
-  if (t === "array") Array.isArray(x)
-  return typeof x === t;
 }

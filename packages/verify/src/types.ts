@@ -33,71 +33,34 @@ export type InferType<T> = (
   Type
 )
 
-export type InferResult<T extends Type> = (
-  T extends "function"? Function:
-  T extends "string"? string :
-  T extends "number"? number :
-  T extends "symbol"? symbol :
-  T extends "boolean"? boolean :
-  T extends "bigint"? bigint :
-  T extends "undefined"? undefined :
-  T extends "null"? null:
-  T extends "array"? any[]:
-  T extends "object"? {[key: PropertyKey]: any}:
-  any
-)
-
-export type Entry<T, K extends keyof T = keyof T> = [K, T[K]];
-
-export type VerObj<T> = {
-  or?: Many<InferType<T>>
-  type: "object" | "array"
+export type VerifierDecl<X extends {[key: PropertyKey]: any}> = {
+  [K in keyof X]: Verifier<X[K]>
 }
 
-export type ObjectVerifier<T extends object> = VerObj<T> & {
-  type: "object"
-} & (
-  | { props: Verifier<T> }
-  | { test: ObjectVerifierFn<T> }
-)
+export type Verifier<X> = Many<(
+  | Type
+  | (X extends object? ObjVer<X>: never)
+  | (X extends any[]? ArrVer<X>: never)
+  | FunVer<X>
+)>
 
-export type ObjectVerifierFn<T extends object> = {
-  (entry: Entry<T>, i: number, arr: Entry<T>[]): asserts arr is Entry<T>[]
+export type FunVer<X> = (value: X, path: string) => asserts value is X;
+
+export type ArrVer<X extends any[]> = {
+  item: Verifier<X[number]>
 }
 
-
-
-export type ArrayVerifier<T extends any[]> = VerObj<T> & {
-  type: "array"
-} & (
-  | { item: AnyVerifier<T[number]> }
-  | { test: ArrayVerifierFn<T> }
-)
-
-export type ArrayVerifierFn<T extends any[]> = {
-  (item: T[number], i: number, arr: T): asserts arr is T
+export type ObjVer<X extends object> = {
+  prop: VerifierDecl<X>
 }
 
-
-
-export type Verifier<T> = {
-  [K in keyof T]: AnyVerifier<T[K]>;
-}
-
-export type AnyVerifier<T> = (
-  | Many<InferType<T>>
-  | VerifierObjValue<T>
-  | VerifierFuncValye<T>
+export type VerRes = (
+  {
+    ok: true
+  }
+  |
+  {
+    ok: false
+    error: string
+  }
 )
-
-export type VerifierObjValue<T> = (
-  T extends any[]
-  ? ArrayVerifier<T>
-  : T extends object
-  ? ObjectVerifier<T>
-  : never
-)
-
-export type VerifierFuncValye<T> = {
-  (value: T): asserts value is T
-}

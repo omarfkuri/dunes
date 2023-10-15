@@ -49,7 +49,7 @@ try {
           }
         }
       },
-      "undefined"
+      "undefined",
     ]
   });
 
