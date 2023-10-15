@@ -91,4 +91,5 @@ try {
 catch(error) {
   console.log("There was an error");
   console.warn(error);
+  process.exit();
 }
