@@ -72,14 +72,19 @@ function checkVerifier(
   
   else if (Array.isArray(verifier)) {
     const errors: string[] = []
+    let pass = false;
     for (const veri of verifier) {
       const result = checkVerifier(prop, value, veri, parent);
       if (!result.ok) {
         errors.push(result.error);
       }
+      else {
+        pass = true;
+        break;
+      }
     }
 
-    if (!errors.length) {
+    if (!pass) {
       return {
         ok: false,
         error: `${errors.length} errors occurred.\n-` + errors.join(";\n- ")
