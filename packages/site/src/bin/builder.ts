@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
 import { verify } from "@dunes/verify";
-import { join } from "path";
+import { resolve } from "path";
 import type { BuilderConfig } from "src/index.js";
 
-const SCRIPT_NAME = "build.js"
+const [,,SCRIPT_NAME = "build.js"] = process.argv;
 
-const {default: config} = await import(join(process.cwd(), SCRIPT_NAME));
+let config;
+const configPath = resolve(SCRIPT_NAME);
+try {
+  ({default: config} = await import(configPath));
+}
+catch(error) {
+  console.log("Could not find", configPath);
+  process.exit(0);
+}
 
 if (!config || typeof config !== "object") {
   throw "No config";

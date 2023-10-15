@@ -1,13 +1,13 @@
 {
   "name": "@dunes/site",
-  "version": "0.9.58",
+  "version": "0.9.64",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
     "build": "rm -rf lib && tsc && npm version patch",
-    "test": "ts-node test/entry"
+    "test": "ts-node src/bin/builder test/index.js"
   },
   "bin": {
     "builder": "./lib/bin/builder.js"
