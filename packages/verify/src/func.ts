@@ -53,7 +53,7 @@ function checkVerifier(
     if (!isType(value, verifier)) {
       return {
         ok: false,
-        error: `Prop '${path}' is ${typeof value}. Expected ${verifier}`
+        error: `Prop '${path}' is ${typeof value}. Expected ${verifier}.`
       }
     }
   }
@@ -66,7 +66,7 @@ function checkVerifier(
   else if (typeof verifier !== "object") {
     return {
       ok: false,
-      error: `Unexpected verifier type ${typeof verifier}`
+      error: `Unexpected verifier type ${typeof verifier}.`
     }
   }
   
@@ -86,17 +86,26 @@ function checkVerifier(
     if (!pass) {
       return {
         ok: false,
-        error: `${errors.length} errors occurred`
+        error: `${errors.length} errors occurred.`
       }
     }
   }
   else if ("prop" in verifier) {
+    if (!value || Array.isArray(value)) {
+      return {
+        ok: false,
+        error: `Prop '${path}' is ${typeof value}. Expected object.`
+      }
+    }
     verify(value, verifier.prop, path)
   }
   
   else if ("item" in verifier) {
-    if (!Array.isArray(value)) {
-      throw ""
+    if (!value || !Array.isArray(value)) {
+      return {
+        ok: false,
+        error: `Prop '${path}' is ${typeof value}. Expected array.`
+      }
     }
     let i = 0;
     for (const item of value) {

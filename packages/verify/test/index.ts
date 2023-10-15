@@ -1,20 +1,7 @@
 
 import { verify } from "../src/index.js";
 
-const obj: object = {
-  name: "Hey man",
-  date: new Date(),
-  chin: {
-    some: 27
-  },
-  shan: ["Some", "body", "once", "told", "me"],
-  hobbies: [
-    {name: "Soccer"},
-    {name: 99},
-    {name: "Baseball"},
-    {name: "Dance"},
-  ]
-};
+const obj: object = {};
 
 type R = {
     name: string
