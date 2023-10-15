@@ -1,0 +1,15 @@
+{
+	"extends": "../../tsconfig.json",
+  "exclude": ["test", "lib"],
+	"compilerOptions": {
+		"outDir": "lib",
+		"declaration": true,
+
+    "sourceMap": true,
+    "declarationMap": true,
+    
+
+		"jsx": "react",
+		"jsxFactory": "Elem.create"
+	}
+}
