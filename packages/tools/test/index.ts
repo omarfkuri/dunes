@@ -1,10 +1,5 @@
 
-
-
-
-
 import { verify } from "../src/index.js";
-
 
 const obj: object = {
   name: "Hey man",
@@ -21,7 +16,10 @@ const obj: object = {
   ]
 };
 
+
+
 try {
+
   verify<{
     name: string
     date: number
@@ -35,23 +33,24 @@ try {
   }>(obj, {
     name: "string",
     date: "number",
-
-    chin: "object",
+    chin: {
+      type: "object",
+      props: {}
+    },
     shan: {
       type: "array",
-      items: "string",
-      or: "number"
+      item: "string"
     },
     hobbies: {
       type: "array",
-      items: {
+      item: {
         type: "object",
         props: {
-          name: "string",
+          name: "string"
         }
       }
-    },
-  })
+    }
+  });
 
   console.log(obj.name, obj.date, obj.chin.cachin)
 }
