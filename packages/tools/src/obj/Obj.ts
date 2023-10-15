@@ -9,6 +9,7 @@ interface Affector<
   (entry: [K, T], i: number, entries: [K, T][]): [K2, T2]
 }
 
+
 export function affect<
   K extends PropertyKey, 
   T extends any, 
