@@ -221,7 +221,7 @@ export interface BuilderConfig {
   /**
    * Build options
    * */
-  build?: WatchOptions & {
+  build?: BuildOptions & {
     inactive?: boolean
   }
   
