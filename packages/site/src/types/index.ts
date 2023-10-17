@@ -96,27 +96,31 @@ export type ModuleMap = Map<string, CompileResult>;
 
 export interface BuildOptions {
   clean?: boolean
-  onStart?(): Prom<void>
-  onSuccess?(took: number): Prom<void>
-  onFailure?(took: number): Prom<void>
+  onStart?(e: BuildEv): Prom<void>
+  onSuccess?(e: BuildEv): Prom<void>
+  onFailure?(e: Err<BuildEv>): Prom<void>
 }
 
-interface BaseWatchEv {
+export interface BuildEv {
   took: number
+  builder: SiteBuilder
+}
+
+interface BaseWatchEv extends BuildEv {
   style: boolean
 }
 
 interface BaseActEv extends BaseWatchEv {
-  type: "dependency" | "file"
+
   name: string
 }
 
 interface FileEvent extends BaseActEv {
-  type: "file"
+
 }
 
 interface DepEvent extends BaseActEv {
-  type: "dependency"
+
   original: string
   files: Set<string>
 }
@@ -133,18 +137,16 @@ interface MultiEv extends BaseWatchEv {
 
 type Err<T> = T & {error: unknown}
 
-type WatchEv = FileEvent | DepEvent
-
 export interface WatchOptions {
-  onFileBuilding?(e: WatchEv): Prom<void>
-  onFileBuilt?(e: WatchEv): Prom<void>
-  onFileFailure?(e: Err<WatchEv>): Prom<void>
+  onFileBuilding?(e: FileEvent): Prom<void>
+  onFileBuilt?(e: FileEvent): Prom<void>
+  onFileFailure?(e: Err<FileEvent>): Prom<void>
 
   onDepStart?(e: MultiEv): Prom<void>
 
-  onDepBuilding?(e: WatchEv): Prom<void>
-  onDepBuilt?(e: WatchEv): Prom<void>
-  onDepFailure?(e: Err<WatchEv>): Prom<void>
+  onDepBuilding?(e: DepEvent): Prom<void>
+  onDepBuilt?(e: DepEvent): Prom<void>
+  onDepFailure?(e: Err<DepEvent>): Prom<void>
 
   onDepFinish?(e: MultiEv): Prom<void>
 }
@@ -155,10 +157,13 @@ export interface ProduceOptions {
   do?: {
     [path: string]: ProducePropsFn
   }
-  onStart?(): Prom<void>
-  onSuccess?(took: number): Prom<void>
-  onFailure?(took: number): Prom<void>
+  onStart?(e: ProduceEv): Prom<void>
+  onSuccess?(e: ProduceEv): Prom<void>
+  onFailure?(e: Err<ProduceEv>): Prom<void>
 }
+
+export interface ProduceEv extends BuildEv {}
+
 
 export interface ProducePropsFn {
   (path: string): Promise<ProduceProps>

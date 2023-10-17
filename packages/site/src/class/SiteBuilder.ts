@@ -7,7 +7,6 @@ import type {
   CSSAnalysis,
   HTMLFunction,
   ProduceOptions,
-  ProduceResult,
   MultiAction,
   BuildOptions,
   cssObj,
@@ -59,7 +58,7 @@ export class SiteBuilder {
     const start = Date.now();
 
     try {
-      await options.onStart?.();
+      await options.onStart?.({took: 0, builder: this});
       const goWrite = async (path: string): Promise<void> => {
         const page = await browser.newPage();
 
@@ -92,11 +91,11 @@ export class SiteBuilder {
       }
 
       await browser.close();
-      await options.onSuccess?.(Date.now() - start);
+      await options.onSuccess?.({took: Date.now() - start, builder: this});
     }
     catch(error) {
       if (options.onFailure) {
-        await options.onFailure(Date.now() - start);
+        await options.onFailure({took: Date.now() - start, builder: this, error});
       }
       else {
         throw error;
@@ -109,7 +108,6 @@ export class SiteBuilder {
 
     const doAction = async (
       name: string, 
-      type: "file", 
       func: () => Promise<any>, 
       style: boolean,
     ) => {
@@ -117,13 +115,17 @@ export class SiteBuilder {
 
       try {
         await options.onFileBuilding?.({
-          name, type, style,
+          name, 
+          style,
           took: 0,
+          builder: this
         })
         await func();
         await options.onFileBuilt?.({
-          name, type, style,
+          name, 
+          style,
           took: Date.now() - start,
+          builder: this
         })
       }
       catch(error) {
@@ -132,8 +134,10 @@ export class SiteBuilder {
           return;
         }
         await options.onFileFailure({
-          name, type, style, error, 
+          name, 
+          style, error, 
           took: Date.now() - start,
+          builder: this
         })
       }
     }
@@ -143,19 +147,19 @@ export class SiteBuilder {
       const style = this.options.css.match.test(fn);
 
       if (fn == this.options.lib) {
-        await doAction(fn, "file", ()=> this.#libs(), style);
+        await doAction(fn, ()=> this.#libs(), style);
       }
       else if (fn == this.options.main) {
-        await doAction(fn, "file", ()=> this.#main(), style);
+        await doAction(fn, ()=> this.#main(), style);
       }
       else if (fn == this.options.base) {
-        await doAction(fn, "file", ()=> this.#views(), style);
+        await doAction(fn, ()=> this.#views(), style);
       }
       else if (
         fn.startsWith(this.options.views.folder) && 
         this.options.views.only.test(fn)
       ) {
-        await doAction(fn, "file", ()=> this.#view(fn), style);
+        await doAction(fn, ()=> this.#view(fn), style);
       }
 
       else {
@@ -173,7 +177,7 @@ export class SiteBuilder {
         }
         
         if (changes.size) {
-          await options.onDepStart?.({changes, took: 0, style})
+          await options.onDepStart?.({changes, took: 0, style, builder: this})
           const actions = new Map<string, MultiAction>();
           const start = Date.now();
           for (const [mod, files] of changes) {
@@ -201,17 +205,20 @@ export class SiteBuilder {
             try {
               await options.onDepBuilding?.({
                 name: fn, 
-                type: "dependency", 
                 files, 
                 original: mod,
                 style,
                 took: 0,
+                builder: this,
               })
               await prom();
               await options.onDepBuilt?.({
-                name: fn, type: "dependency", files, original: mod,
+                name: fn, 
+                files, 
+                original: mod,
                 style,
                 took: Date.now() - start,
+                builder: this,
               })
             }
             catch(error) {
@@ -220,16 +227,25 @@ export class SiteBuilder {
                 return;
               }
               await options.onDepFailure({
-                name: fn, type: "dependency", files, error, original: mod,
+                name: fn, 
+                files, 
+                error, 
+                original: mod,
                 style,
                 took: Date.now() - start,
+                builder: this,
               })
             }
 
           }
           
 
-          await options.onDepFinish?.({changes, took: Date.now() - start, style})
+          await options.onDepFinish?.({
+            changes, 
+            took: Date.now() - start, 
+            style,
+            builder: this
+          })
 
 
         }
@@ -252,18 +268,18 @@ export class SiteBuilder {
   async build(options: BuildOptions): Promise<void> {
     const start = Date.now();
     try {
-      await options.onStart?.();
+      await options.onStart?.({took: 0, builder: this});
       await this.#env(options.clean);
       await this.#libs();
       await this.#main();
       await this.#views();
       await this.#globalCSS();
       await this.#assets();
-      await options.onSuccess?.(Date.now() - start);
+      await options.onSuccess?.({took: Date.now() - start, builder: this});
     }
     catch(error) {
       if (options.onFailure) {
-        await options.onFailure(Date.now() - start);
+        await options.onFailure({took: Date.now() - start, builder: this, error});
       }
       else {
         throw error;
