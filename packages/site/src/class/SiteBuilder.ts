@@ -450,8 +450,86 @@ export class SiteBuilder {
           }
         }
 
+        if (this.options.bundle.onLoad)  {
+          const bun = await this.options.bundle.onLoad(source, filename);
+          if (bun) {
+            if (bun.text) {
+              source = bun.text;
+            }
+            if (bun.stop) {
+              return {
+                text: source,
+                stop: bun.stop
+              } 
+            }
+          }
+        }
+        if (opts?.onLoad)  {
+          const bun = await opts?.onLoad(source, filename);
+          if (bun) {
+            if (bun.text) {
+              source = bun.text;
+            }
+            if (bun.stop) {
+              return {
+                text: source,
+                stop: bun.stop
+              } 
+            }
+          }
+        }
         return await opts?.onLoad?.(source, filename);
 
+      },
+
+      onConclude: async (code, filename) => {
+        if (this.options.bundle.onConclude)  {
+          code = await this.options.bundle.onConclude(code, filename);
+        }
+        if (opts?.onConclude)  {
+          code = await opts?.onConclude(code, filename);
+        }
+        return code;
+      },
+
+      onResult: async (code, filename) => {
+        if (this.options.bundle.onResult)  {
+          const bun = await this.options.bundle.onResult(code, filename);
+          if (bun) {
+            if (bun.text) {
+              code = bun.text;
+            }
+            if (bun.stop) {
+              return {
+                text: code,
+                stop: bun.stop
+              } 
+            }
+          }
+        }
+        if (opts?.onResult)  {
+          const bun = await opts?.onResult(code, filename);
+          if (bun) {
+            if (bun.text) {
+              code = bun.text;
+            }
+            if (bun.stop) {
+              return {
+                text: code,
+                stop: bun.stop
+              } 
+            }
+          }
+        } 
+      },
+
+      onParse: async (ast, trav, filename) => {
+        if (this.options.bundle.onParse)  {
+          await this.options.bundle.onParse(ast, trav, filename);
+        }
+        if (opts?.onParse)  {
+          await opts?.onParse(ast, trav, filename);
+        }
       },
     });
 
