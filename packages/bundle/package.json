@@ -1,6 +1,6 @@
 {
   "name": "@dunes/bundle",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
