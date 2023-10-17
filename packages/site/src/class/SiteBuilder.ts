@@ -4,29 +4,28 @@ import type {
   BuildResult,
   WatchOptions,
   WatchResult,
-  CompileOptions,
   CompileResult,
   ModuleMap,
-  CSSResult,
   CSSAnalysis,
   HTMLFunction,
-  CSSAct,
   ProduceOptions,
   ProduceResult,
   MultiAction,
   BuildOptions,
+  cssObj,
 } from "../types/index.js";
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { WatchDir, readString, trav, writeStr } from "@dunes/sys";
 import { splitLast } from "@dunes/tools";
-import { Wrap } from "@dunes/wrap";
 import puppeteer from "puppeteer";
 import jsb from "js-beautify";
+import { Bundler, type BundlerConfig } from "@dunes/bundle";
 
 export class SiteBuilder {
 
   #map: ModuleMap = new Map();
+  #bundler: Bundler
 
   options: Required<BuilderOptions>
 
@@ -42,7 +41,7 @@ export class SiteBuilder {
         only: /\.tsx$/
       },
       assets: null,
-      wrap: {},
+      bundle: {},
       css: {
         match: /\.css/,
         file: "global.css",
@@ -54,6 +53,8 @@ export class SiteBuilder {
       base: "base.tsx",
       ...options,
     };
+
+    this.#bundler = new Bundler(this.options.bundle);
   }
 
   async produce(options: ProduceOptions): ProduceResult {
@@ -149,7 +150,7 @@ export class SiteBuilder {
       else {
         const changes = new Map<string, Set<string>>();
         for (const [mod, comp] of this.#map) {
-          for (const file of comp.watch) {
+          for (const file of comp.bundle.watchFiles) {
             if (!file.endsWith(fn)) continue;
             if (!(mod in changes)) {
               changes.set(mod, new Set([fn]));
@@ -266,8 +267,8 @@ export class SiteBuilder {
 
   #globalCSS() {
     let style = "";
-    for (const [,{result}] of this.#map) {
-      style += resultCSS(result) + "\n"
+    for (const [,{css}] of this.#map) {
+      style += resultCSS(css);
     }
     return writeStr(this.hash(this.out(this.options.css.file)), style);
   }
@@ -305,17 +306,18 @@ export class SiteBuilder {
     try {
       const result = await this.#compile(this.src(this.options.lib), {
         treeshake: true,
-        replaceAfter: [
-          [/export *{ .+ };? *\n*/, ""],
-        ]
+        onConclude(code) {
+          return code.replace(/export *{ .+ };? *\n*/, "");
+        },
       });
+      const code = await result.bundle.code();
       this.#map.set(this.options.lib, result);
       const paths = await this.paths();
       await writeStr(this.hash(this.out(this.options.lib.replace(/(\.\w+)+$/, ".js"))),
         `const paths = ${JSON.stringify(paths)};\nconst hash = ${
           this.options.hash? `"${this.options.hash}"`: "null"
         }\n` +
-        result.code
+        code
       )
     }
     catch(err) {
@@ -337,13 +339,14 @@ export class SiteBuilder {
     try {
       const result = await this.#compile(this.src(this.options.main), {
         treeshake: false,
-        replaceAfter: [
-          [/export *{ .+ };? *\n*/, ""],
-        ]
+        onConclude(code) {
+          return code.replace(/export *{ .+ };? *\n*/, "");
+        },
       });
+      const code = await result.bundle.code();
       this.#map.set(this.options.main, result);
       await writeStr(this.hash(this.out(this.options.main.replace(/(\.\w+)+$/, ".js"))),
-        result.code
+        code
       )
     }
     catch(err) {
@@ -371,14 +374,15 @@ export class SiteBuilder {
     const result = await this.#compile(this.src(path), {
       treeshake: false
     });
+    const code = await result.bundle.code();
     this.#map.set(path, result);
     const outPath = this.out(path.slice(this.options.views.folder.length))
     .replace(/\/index.tsx/, ".tsx")
     await writeStr(this.hash(outPath.replace(/(\.\w+)+$/, "/script.js")),
-      result.code
+      code
     )
     await writeStr(this.hash(outPath.replace(/(\.\w+)+$/, "/styles.css")),
-      resultCSS(result.result)
+      resultCSS(result.css)
     )
     const html = await this.#html(path);
     await writeStr(outPath.replace(/(\.\w+)+$/, "/index.html"),
@@ -389,11 +393,12 @@ export class SiteBuilder {
 
   async #html(path: string): Promise<string> {
     try {
-      const {code: htmlFuncSource} = await this.#compile(this.src(this.options.base), {
-        replaceAfter: [
-          [/export *{ .+ };? *\n*/, ""],
-        ]
+      const {bundle} = await this.#compile(this.src(this.options.base), {
+        onConclude(code) {
+          return code.replace(/export *{ .+ };? *\n*/, "");
+        },
       });
+      const htmlFuncSource = await bundle.code();
       const htmlFunc: HTMLFunction = eval(`${htmlFuncSource}; html;`);
       if (typeof htmlFunc !== "function") {
         throw `Base ${this.options.base} does not export a function called "html"`
@@ -417,57 +422,53 @@ export class SiteBuilder {
     }
   }
 
-  async #compile(path: string, opts?: CompileOptions): Promise<CompileResult> {
-    const script = await readString(path);
+  async #compile(path: string, opts?: BundlerConfig): Promise<CompileResult> {
     let order = 0;
-
-    const CSSACT: CSSAct = {
-      name: "css",
-      match: this.options.css.match,
-      action: async (source, id) => {
-
-        const compiled = await this.options.css.transform(source);
-        order++
-        if (id.endsWith(`.m.${this.options.css.ext}`)) {
-          const data = analyzeCss(id, compiled);
-          return {
-            text: `export default ${data.exports}`,
-            data: {text: data.css, order}
-          }
-        }
-        else {
-          return {
-            text: "export {}",
-            data: {text: compiled, order}
-          }
-        }
-      }
-    }
-
-    return await Wrap.build({
-      ...this.options.wrap,
+    const css: cssObj[] = []
+    const source = await readString(path);
+    const bundle = await this.#bundler.bundleScript(source, undefined, {
       ...opts,
-      replaceAfter: [
-        ...(this.options.wrap.replaceAfter || []),
-        ...(opts?.replaceAfter || []),
-      ],
-      script,
-      transform: [
-        CSSACT, 
-        ...(this.options.wrap.transform || []),
-        ...(opts?.transform || []),
-      ]
+      onLoad: async (source, filename) => {
+        
+        if (this.options.css.match.test(filename)) {
+          const compiled = await this.options.css.transform(source);
+          order++
+          if (filename.endsWith(`.m.${this.options.css.ext}`)) {
+            const data = analyzeCss(filename, compiled);
+            css.push({text: data.css, order});
+            return {
+              text: `export default ${data.exports}`,
+              stop: true,
+            }
+          }
+          else {
+            css.push({text: compiled, order});
+            return {
+              text: "export {}",
+              stop: true,
+            }
+          }
+        }
+
+        return await opts?.onLoad?.(source, filename);
+
+      },
     });
+
+    return {
+      bundle,
+      css
+    }
   }
 }
 
-
-function resultCSS(result: CSSResult): string {
-  return result.css
+function resultCSS(result: cssObj[]): string {
+  return result
     .sort((a, b) => a.order - b.order)
     .map(({text}) => text)
     .join("\n")
 }
+
 
 function analyzeCss(id: string, source: string): CSSAnalysis {
 

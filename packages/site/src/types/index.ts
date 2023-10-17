@@ -1,5 +1,5 @@
+import type { Bundle, BundlerConfig } from "@dunes/bundle"
 import type { Prom, Recommend } from "@dunes/tools"
-import type { Act, Acts, ActsResult, StrResult, StringOpts } from "@dunes/wrap"
 import type { SiteBuilder } from "src/index.js"
 
 
@@ -28,7 +28,7 @@ export interface BuilderOptions {
   css?: CSSOptions
 
   /** Wrap Options */
-  wrap?: WrapOptions
+  bundle?: BundlerConfig
   
   /** 
    * # Libraries script 
@@ -80,18 +80,16 @@ export interface ViewOptions {
   only: RegExp
 }
 
-export type WrapOptions = Omit<
-  StringOpts<Acts>,
-  "script"
->;
 
-export type CompileOptions = Omit<
-  StringOpts<Acts>,
-  "script" | "plugs"
->;
+export type CompileResult = {
+  bundle: Bundle
+  css: cssObj[]
+}
 
-export type CompileResult = StrResult<readonly [CSSAct]>;
-
+export type cssObj = {
+  text: string
+  order: number
+}
 
 export type ModuleMap = Map<string, CompileResult>;
 
@@ -177,20 +175,6 @@ export interface IDDef {
 
 export type ProduceResult = Promise<void>
 
-
-export type CSSResult = ActsResult<[CSSAct]>
-
-export interface CSSAct extends Act {
-  name: "css"
-  match: any
-  action(source: string, id: string): Promise<{
-    text: string
-    data: {
-      text: string
-      order: number
-    }
-  }>
-}
 
 export interface CSSAnalysis {
   exports: string

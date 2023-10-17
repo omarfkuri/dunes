@@ -1,16 +1,20 @@
 
 
 import localResolve from '@dunes/wrap-plug';
-import { SiteBuilder } from '../src';
+import { SiteBuilder } from '../src/index.js';
 import { jsxPreset, tsPreset } from '@dunes/bab';
 import nodeResolve from '@rollup/plugin-node-resolve';
 
 const builder = new SiteBuilder({
   src: "test/src",
   out: "test/out",
-  wrap: {
+  
+})
+
+/*
+wrap: {
     replaceAfter: [
-      [/export *{ .+ };? *\n*/, ""],
+      [/export *{ .+ };? *\n* /, ""],
       [/let \w+\$\d+ = /g, ""],
       [
         /(Router|Comp|Fire|Elem|FireAuth|FireStore)\$\d+/g, 
@@ -43,32 +47,33 @@ const builder = new SiteBuilder({
       nodeResolve(),
     ]
   }
-})
 
-try {
-  const result = await builder.build({
-    clean: true
-  });
-  console.log("Finished in", result.took);
-}
-catch(error) {
-  console.warn(error)
-}
+*/
 
-console.log("watching...")
-await builder.watch({
+// try {
+//   const result = await builder.build({
+//     clean: true
+//   });
+//   console.log("Finished in", result.took);
+// }
+// catch(error) {
+//   console.warn(error)
+// }
 
-  onActionStart(e) {
-    console.log("Building", e.name);
-  },
-  onActionFinish(e) {
-    console.log("Built", e.name, "in", e.took);
-  },
+// console.log("watching...")
+// await builder.watch({
 
-  onActionFailure({error}) {
-    console.log(error);
-    console.log("THERE WAS AN ERROR");
-  },
+//   onActionStart(e) {
+//     console.log("Building", e.name);
+//   },
+//   onActionFinish(e) {
+//     console.log("Built", e.name, "in", e.took);
+//   },
 
-});
-process.exit(0);
+//   onActionFailure({error}) {
+//     console.log(error);
+//     console.log("THERE WAS AN ERROR");
+//   },
+
+// });
+// process.exit(0);
