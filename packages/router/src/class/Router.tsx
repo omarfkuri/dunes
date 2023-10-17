@@ -55,6 +55,10 @@ export class Router {
 		await this.#reveal(this.latestView, this.latestURL, this.latestReq, "reload")
 	}
 
+  /**
+   * @todo Set title
+   **/
+
 	async render(href: string) {
 		const req = new URL(href);
 		const url = new URL(href);
