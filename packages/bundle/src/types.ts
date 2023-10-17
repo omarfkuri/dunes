@@ -1,7 +1,7 @@
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
-import type { OutputOptions } from "rollup"
-import type { Bab, BabWrap } from "@dunes/bab"
+import type { OutputOptions, Plugin } from "rollup"
+import type { Bab, Babs } from "./Bundler.js"
 
 export interface BundlerConfig {
   jsx?: JSXOptions | false
@@ -9,6 +9,11 @@ export interface BundlerConfig {
   resolve?: RollupNodeResolveOptions
   treeshake?: boolean
   output?: OutputOptions
+  
+  /**
+   * Plug more plugins in
+   * */
+  plug?: Plugin[]
 
   /**
    * Runs before every file
@@ -18,7 +23,7 @@ export interface BundlerConfig {
   /**
    * Runs after every parse
    * */
-  onParse?(bab: Bab, babWrap: BabWrap, filename: string): Prom<void>
+  onParse?(bab: Bab, babs: Babs, filename: string): Prom<void>
 
   /**
    * Runs after transform concludes

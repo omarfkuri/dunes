@@ -2,11 +2,11 @@ import { readString, writeStr } from "@dunes/sys";
 import type { BundlerConfig } from "./types.js";
 import { rollup, type RollupBuild } from "rollup";
 import parser from "@babel/parser";
-import { type TransformOptions } from "@babel/core";
+import { transformFromAstSync, type TransformOptions, traverse } from "@babel/core";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import virtual from "@rollup/plugin-virtual";
 import { resolve } from "path";
-import { BabWrap } from "@dunes/bab";
+import type { File } from "@babel/types";
 
 
 export class Bundler {
@@ -49,7 +49,7 @@ export class Bundler {
       );
     }
 
-    const babs = new BabWrap(
+    const babs = new Babs(
       parserOptions, 
       transformOptions
     );
@@ -60,6 +60,7 @@ export class Bundler {
       input: "source",
       treeshake: config.treeshake,
       plugins: [
+        ...(config.plug || []),
         {
           name: "parser",
           async transform(source, id) {
@@ -69,9 +70,9 @@ export class Bundler {
               source = prepared.text;
               if (prepared.stop) return source;
             }
-            const bab = babs.read(source);
+            const bab = babs.parse(source);
             await onParse?.(bab, babs, filename);
-            const code = bab.convert({ filename })?.code || "";
+            const code = bab.code({ filename });
             const concluded = await onResult?.(code, filename);
             if (concluded && concluded.text) {
               source = concluded.text;
@@ -129,36 +130,36 @@ export class Bundle {
 }
 
 
-// export class Babs {
-//   constructor(
-//     public parseOptions: parser.ParserOptions,
-//     public transformOptions: TransformOptions,
-//   ) {}
+export class Babs {
+  constructor(
+    public parseOptions: parser.ParserOptions,
+    public transformOptions: TransformOptions,
+  ) {}
 
-//   parse(script: string, opts?: parser.ParserOptions): Bab {
-//     const ast = parser.parse(script, {
-//       ...this.parseOptions,
-//       ...opts
-//     });
-//     return new Bab(ast, this);
-//   }
-// }
+  parse(script: string, opts?: parser.ParserOptions): Bab {
+    const ast = parser.parse(script, {
+      ...this.parseOptions,
+      ...opts
+    });
+    return new Bab(ast, this);
+  }
+}
 
-// export class Bab {
-//   constructor(
-//     public ast: parser.ParseResult<File>, 
-//     public babs: Babs
-//   ) {}
+export class Bab {
+  constructor(
+    public ast: parser.ParseResult<File>, 
+    public babs: Babs
+  ) {}
 
-//   code(options: TransformOptions): string {
-//     const r = transformFromAstSync(this.ast, undefined, {
-//       ...this.babs.transformOptions,
-//       ...options,
-//     });
-//     return r?.code || "";
-//   }
+  code(options: TransformOptions): string {
+    const r = transformFromAstSync(this.ast, undefined, {
+      ...this.babs.transformOptions,
+      ...options,
+    });
+    return r?.code || "";
+  }
 
-//   traverse(options: import("@babel/traverse").TraverseOptions) {
-//     traverse(this.ast, options);
-//   }
-// }
+  traverse(options: import("@babel/traverse").TraverseOptions) {
+    traverse(this.ast, options);
+  }
+}
