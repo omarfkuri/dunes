@@ -22,7 +22,7 @@
     "noImplicitThis": true,  
     "useUnknownInCatchVariables": true,  
     "alwaysStrict": true,  
-    "noImplicitReturns": true,  
+    // "noImplicitReturns": true,  
     "noFallthroughCasesInSwitch": true,  
     "noUncheckedIndexedAccess": true,  
     "noImplicitOverride": true,  

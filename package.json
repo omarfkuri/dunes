@@ -1,7 +1,6 @@
 {
   "name": "dunes",
   "private": true,
-
   "scripts": {
     "build": "echo 'No build script'",
     "create": "node scripts/create-pack.js"
