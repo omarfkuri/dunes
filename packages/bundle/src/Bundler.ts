@@ -2,11 +2,10 @@ import { readString, writeStr } from "@dunes/sys";
 import type { BundlerConfig } from "./types.js";
 import { rollup, type RollupBuild } from "rollup";
 import parser from "@babel/parser";
-import type { TransformOptions } from "@babel/core";
+import { transformFromAstSync, type TransformOptions, traverse } from "@babel/core";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import virtual from "@rollup/plugin-virtual";
 import { resolve } from "path";
-import { Babs } from "./Babs.js";
 
 
 export class Bundler {
@@ -19,7 +18,6 @@ export class Bundler {
   }
   
   async bundleScript(source: string, path = "script.ts", sub?: Partial<BundlerConfig>): Promise<Bundle> {
-    
 
     const config = {
       ...this.config,
@@ -49,9 +47,6 @@ export class Bundler {
         ["@babel/preset-typescript", config.ts]
       );
     }
-
-    const babs = new Babs(parserOptions, transformOptions);
-
     const {onParse, onLoad, onResult} = config
     const entry = resolve(path);
     const bundler = this;
@@ -68,9 +63,12 @@ export class Bundler {
               source = prepared.text;
               if (prepared.stop) return source;
             }
-            const bab = babs.read(source);
-            await onParse?.({bab, babs, filename, bundler});
-            const result = bab.transform({filename});
+            const ast = parser.parse(source, parserOptions);
+            await onParse?.({ast, traverse, filename, bundler});
+            const result = transformFromAstSync(ast, undefined, {
+              ...transformOptions,
+              filename
+            });
             const code = result?.code || "";
             const concluded = await onResult?.({code, filename, bundler});
             if (concluded && concluded.text) {

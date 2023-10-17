@@ -1,10 +1,10 @@
-import type { Program } from "@babel/types"
+import type { File, Program } from "@babel/types"
 import type { traverse } from "@babel/core"
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
 import type { OutputOptions } from "rollup"
 import type { Bundler } from "./Bundler.js"
-import type { Bab, Babs } from "./Babs.js"
+import type { ParseResult } from "@babel/parser"
 
 export interface BundlerConfig {
   jsx?: JSXOptions | false
@@ -62,8 +62,8 @@ export interface LoadEvent extends BundleEvent {
 }
 
 export interface ParseEvent extends BundleEvent {
-  babs: Babs
-  bab: Bab
+  ast: ParseResult<File>
+  traverse: typeof traverse
 }
 
 export interface ResultEvent extends BundleEvent {
