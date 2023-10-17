@@ -1,7 +1,5 @@
 node_modules
-packages/**/lib
-!packages/styles/lib
-packages/**/rollup.config.js
+packages/**/
 
 .DS_Store
 .monitor
