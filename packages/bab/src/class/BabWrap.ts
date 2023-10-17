@@ -35,3 +35,5 @@ class Bab {
   }
 
 }
+
+export { type Bab }
