@@ -3,7 +3,7 @@ import { dirname, join, resolve } from "path";
 import type { BundlerConfig } from "./types.js";
 
 
-export const localResolve: BundlerConfig["onParse"] = (ast, trav, filename) => {
+export const localResolve: BundlerConfig["onParse"] = (bab, _, filename) => {
   const extensions = ["ts", "tsx", "js", "jsx"];
 
   function makeFile(pastDir: string, src: string): string {
@@ -38,7 +38,7 @@ export const localResolve: BundlerConfig["onParse"] = (ast, trav, filename) => {
   
   const pastDir = dirname(filename);
 
-  trav(ast, {
+  bab.traverse({
     ImportDeclaration(path) {
       if (path.node.leadingComments) {
         const comment = path.node.leadingComments[path.node.leadingComments.length-1];

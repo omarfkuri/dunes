@@ -1,9 +1,7 @@
-import type { File } from "@babel/types"
-import type { traverse, } from "@babel/core"
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
 import type { OutputOptions } from "rollup"
-import type { ParseResult } from "@babel/parser"
+import type { Bab, BabWrap } from "@dunes/bab"
 
 export interface BundlerConfig {
   jsx?: JSXOptions | false
@@ -20,7 +18,7 @@ export interface BundlerConfig {
   /**
    * Runs after every parse
    * */
-  onParse?(ast: ParseResult<File>, trav: typeof traverse, filename: string): Prom<void>
+  onParse?(bab: Bab, babWrap: BabWrap, filename: string): Prom<void>
 
   /**
    * Runs after transform concludes

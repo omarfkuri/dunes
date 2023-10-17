@@ -2,10 +2,11 @@ import { readString, writeStr } from "@dunes/sys";
 import type { BundlerConfig } from "./types.js";
 import { rollup, type RollupBuild } from "rollup";
 import parser from "@babel/parser";
-import { transformFromAstSync, type TransformOptions, traverse } from "@babel/core";
+import { type TransformOptions } from "@babel/core";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import virtual from "@rollup/plugin-virtual";
 import { resolve } from "path";
+import { BabWrap } from "@dunes/bab";
 
 
 export class Bundler {
@@ -47,6 +48,12 @@ export class Bundler {
         ["@babel/preset-typescript", config.ts]
       );
     }
+
+    const babs = new BabWrap(
+      parserOptions, 
+      transformOptions
+    );
+
     const {onParse, onLoad, onResult} = config
     const entry = resolve(path);
     const build = await rollup({
@@ -62,13 +69,9 @@ export class Bundler {
               source = prepared.text;
               if (prepared.stop) return source;
             }
-            const ast = parser.parse(source, parserOptions);
-            await onParse?.(ast, traverse, filename);
-            const result = transformFromAstSync(ast, undefined, {
-              ...transformOptions,
-              filename
-            });
-            const code = result?.code || "";
+            const bab = babs.read(source);
+            await onParse?.(bab, babs, filename);
+            const code = bab.convert({ filename })?.code || "";
             const concluded = await onResult?.(code, filename);
             if (concluded && concluded.text) {
               source = concluded.text;
@@ -86,6 +89,8 @@ export class Bundler {
   }
 
 }
+
+
 
 export class Bundle {
   #build: RollupBuild
@@ -110,9 +115,7 @@ export class Bundle {
         code += chunk.code + "\n";
       }
     }
-    const finish = await this.#config.onConclude?.(
-      code, this.entry
-    );
+    const finish = await this.#config.onConclude?.(code, this.entry);
     return finish || code;
   }
 
@@ -124,3 +127,38 @@ export class Bundle {
     return eval(await this.code());
   }
 }
+
+
+// export class Babs {
+//   constructor(
+//     public parseOptions: parser.ParserOptions,
+//     public transformOptions: TransformOptions,
+//   ) {}
+
+//   parse(script: string, opts?: parser.ParserOptions): Bab {
+//     const ast = parser.parse(script, {
+//       ...this.parseOptions,
+//       ...opts
+//     });
+//     return new Bab(ast, this);
+//   }
+// }
+
+// export class Bab {
+//   constructor(
+//     public ast: parser.ParseResult<File>, 
+//     public babs: Babs
+//   ) {}
+
+//   code(options: TransformOptions): string {
+//     const r = transformFromAstSync(this.ast, undefined, {
+//       ...this.babs.transformOptions,
+//       ...options,
+//     });
+//     return r?.code || "";
+//   }
+
+//   traverse(options: import("@babel/traverse").TraverseOptions) {
+//     traverse(this.ast, options);
+//   }
+// }
