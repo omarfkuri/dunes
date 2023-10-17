@@ -3,7 +3,7 @@
 import { c } from "@dunes/sys";
 import { verify } from "@dunes/verify";
 import { resolve } from "path";
-import type { BuilderConfig } from "src/index.js";
+import { SiteBuilder, type BuilderConfig } from "../../src/index.js";
 const [,,SCRIPT_NAME = "build.js"] = process.argv;
 
 let config: unknown;
@@ -71,7 +71,7 @@ try {
       prop: {
         clean: ["boolean", "undefined"]
       }
-    }, "undefined"],
+    }, "undefined", "boolean"],
 
     watch: [{
       prop: {
@@ -85,14 +85,14 @@ try {
         onDepFailure: ["function", "undefined"],
         onDepFinish: ["function", "undefined"],
       }
-    }, "undefined"],
+    }, "undefined", "boolean"],
 
     produce: [{
       prop: {
         origin: "string",
         do: ["object", "undefined"]
       }
-    }, "undefined"]
+    }, "undefined", "boolean"]
   });
 }
 catch(error) {
@@ -103,8 +103,47 @@ catch(error) {
   )
 }
 
-console.log("OK!", config)
-process.exit(0);
+
+const builder = new SiteBuilder(config.options);
+
+if (config.build) {
+  if (config.build as never === true) {
+    raise("ConfigError", "'build' cannot be true")
+  }
+  try {
+    await builder.build(config.build);
+  }
+  catch(error) {
+    raise("BuildError", String(error), error);
+  }
+}
+
+if (config.produce) {
+  if (config.produce as never === true) {
+    raise("ConfigError", "'produce' cannot be true")
+  }
+  try {
+    await builder.produce(config.produce);
+  }
+  catch(error) {
+    raise("ProduceError", String(error), error);
+  }
+}
+
+if (config.watch) {
+  if (config.watch as never === true) {
+    raise("ConfigError", "'watch' cannot be true")
+  }
+  try {
+    await builder.watch(config.watch);
+  }
+  catch(error) {
+    raise("WatchError", String(error), error);
+  }
+}
+else {
+  process.exit(0);
+}
 
 
 function raise(title: string, message: string, error?: unknown): never {

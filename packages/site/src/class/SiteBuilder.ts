@@ -1,9 +1,7 @@
 import type { WatchListener } from "fs";
 import type { 
   BuilderOptions,
-  BuildResult,
   WatchOptions,
-  WatchResult,
   CompileResult,
   ModuleMap,
   CSSAnalysis,
@@ -57,44 +55,57 @@ export class SiteBuilder {
     this.#bundler = new Bundler(this.options.bundle);
   }
 
-  async produce(options: ProduceOptions): ProduceResult {
+  async produce(options: ProduceOptions): Promise<void> {
+    const start = Date.now();
 
-    const goWrite = async (path: string): Promise<void> => {
-      const page = await browser.newPage();
+    try {
+      await options.onStart?.();
+      const goWrite = async (path: string): Promise<void> => {
+        const page = await browser.newPage();
 
-      await page.goto(options.origin + path, {
-        waitUntil: 'networkidle2'
-      });
-      const str = await page.content();
+        await page.goto(options.origin + path, {
+          waitUntil: 'networkidle2'
+        });
+        const str = await page.content();
 
-      if (!path.endsWith("/index")) {
-        path += "/index"
+        if (!path.endsWith("/index")) {
+          path += "/index"
+        }
+
+        await writeStr(this.out(path) + ".html", jsb.html(str))
       }
 
-      await writeStr(this.out(path) + ".html", jsb.html(str))
-    }
 
+      const browser = await puppeteer.launch({headless: "new"});
+      const paths = await this.paths();
 
-    const browser = await puppeteer.launch({headless: "new"});
-    const paths = await this.paths();
-
-    for (const path of paths) {
-      if (options.do && path in options.do) {
-        const {ids, path: p} = await options.do[path]!(path);
-        for (const {id} of ids) {
-          await goWrite(join(p, id));
+      for (const path of paths) {
+        if (options.do && path in options.do) {
+          const {ids, path: p} = await options.do[path]!(path);
+          for (const {id} of ids) {
+            await goWrite(join(p, id));
+          }
+        }
+        else {
+          await goWrite(path)
         }
       }
+
+      await browser.close();
+      await options.onSuccess?.(Date.now() - start);
+    }
+    catch(error) {
+      if (options.onFailure) {
+        await options.onFailure(Date.now() - start);
+      }
       else {
-        await goWrite(path)
+        throw error;
       }
     }
-
-    await browser.close();
 
   }
 
-  watch(options: WatchOptions): WatchResult {
+  watch(options: WatchOptions): Promise<void> {
 
     const doAction = async (
       name: string, 
@@ -238,16 +249,27 @@ export class SiteBuilder {
     return watcher.start()
   }
 
-  async build(options: BuildOptions): BuildResult {
+  async build(options: BuildOptions): Promise<void> {
     const start = Date.now();
-    await this.#env(options.clean);
-    await this.#libs();
-    await this.#main();
-    await this.#views();
-    await this.#globalCSS();
-    await this.#assets();
+    try {
+      await options.onStart?.();
+      await this.#env(options.clean);
+      await this.#libs();
+      await this.#main();
+      await this.#views();
+      await this.#globalCSS();
+      await this.#assets();
+      await options.onSuccess?.(Date.now() - start);
+    }
+    catch(error) {
+      if (options.onFailure) {
+        await options.onFailure(Date.now() - start);
+      }
+      else {
+        throw error;
+      }
+    }  
 
-    return {took: Date.now() - start}
   }
 
   src(name: string, ...names: string[]): string {

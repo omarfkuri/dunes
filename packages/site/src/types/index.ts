@@ -96,11 +96,10 @@ export type ModuleMap = Map<string, CompileResult>;
 
 export interface BuildOptions {
   clean?: boolean
+  onStart?(): Prom<void>
+  onSuccess?(took: number): Prom<void>
+  onFailure?(took: number): Prom<void>
 }
-
-export type BuildResult = Promise<{
-  took: number
-}>
 
 interface BaseWatchEv {
   took: number
@@ -150,14 +149,15 @@ export interface WatchOptions {
   onDepFinish?(e: MultiEv): Prom<void>
 }
 
-export type WatchResult = Promise<void>
-
 
 export interface ProduceOptions {
   origin: string
   do?: {
     [path: string]: ProducePropsFn
   }
+  onStart?(): Prom<void>
+  onSuccess?(took: number): Prom<void>
+  onFailure?(took: number): Prom<void>
 }
 
 export interface ProducePropsFn {
@@ -172,7 +172,6 @@ export interface ProduceProps {
 export interface IDDef {
   id: string
 }
-
 export type ProduceResult = Promise<void>
 
 
@@ -205,21 +204,21 @@ export interface BuilderConfig {
   /**
    * Build options
    * */
-  build?: BuildOptions & {
+  build?: false | (BuildOptions & {
     inactive?: boolean
-  }
+  })
   
   /**
    * Produce options
    * */
-  produce?: ProduceOptions & {
+  produce?: false | (ProduceOptions & {
     inactive?: boolean
-  }
+  })
 
   /**
    * Watch for changes
    * */
-  watch?: WatchOptions & {
+  watch?: false | (WatchOptions & {
     inactive?: boolean
-  }
+  })
 }
