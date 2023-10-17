@@ -1,6 +1,6 @@
 {
   "name": "@dunes/site",
-  "version": "0.9.65",
+  "version": "0.9.66",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -27,6 +27,7 @@
     "@babel/core": "^7.23.0",
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.0",
+    "@dunes/bundle": "^0.9.3",
     "@dunes/sys": "^0.9.58",
     "@dunes/tag": "^0.9.67",
     "@dunes/tools": "^0.9.80",
