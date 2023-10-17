@@ -6,10 +6,10 @@ import { rollup, type RollupBuild } from "rollup";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import virtual from "@rollup/plugin-virtual";
 
-import { BabWrap } from "@dunes/bab";
 import { readString, writeStr } from "@dunes/sys";
 
 import type { BundlerConfig } from "./types.js";
+import { BabWrap } from "./BabWrap.js";
 
 
 export class Bundler {
