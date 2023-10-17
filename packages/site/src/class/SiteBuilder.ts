@@ -60,18 +60,44 @@ export class SiteBuilder {
     try {
       await options.onStart?.({took: 0, builder: this});
       const goWrite = async (path: string): Promise<void> => {
-        const page = await browser.newPage();
+        const start = Date.now();
+        try {
 
-        await page.goto(options.origin + path, {
-          waitUntil: 'networkidle2'
-        });
-        const str = await page.content();
+          await options.onPageStart?.({
+            took: 0, 
+            builder: this,
+            path
+          });
+          
+          const page = await browser.newPage();
+          await page.goto(options.origin + path, {
+            waitUntil: 'networkidle2'
+          });
+          const str = await page.content();
 
-        if (!path.endsWith("/index")) {
-          path += "/index"
+          if (!path.endsWith("/index")) {
+            path += "/index"
+          }
+
+          await writeStr(this.out(path) + ".html", jsb.html(str))
+
+          await options.onPageSuccess?.({
+            took: Date.now() - start, 
+            builder: this,
+            path
+          });
         }
-
-        await writeStr(this.out(path) + ".html", jsb.html(str))
+        catch(error) {
+          if (!options.onPageFailure) {
+            throw error;
+          }          
+          await options.onPageFailure?.({
+            took: Date.now() - start, 
+            builder: this,
+            path,
+            error
+          });
+        }
       }
 
 

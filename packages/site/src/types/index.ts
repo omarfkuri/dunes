@@ -158,12 +158,21 @@ export interface ProduceOptions {
     [path: string]: ProducePropsFn
   }
   onStart?(e: ProduceEv): Prom<void>
+
+  onPageStart?(e: ProducePageEv): Prom<void>
+  onPageSuccess?(e: ProducePageEv): Prom<void>
+  onPageFailure?(e: Err<ProducePageEv>): Prom<void>
+
   onSuccess?(e: ProduceEv): Prom<void>
   onFailure?(e: Err<ProduceEv>): Prom<void>
 }
 
 export interface ProduceEv extends BuildEv {}
 
+
+export interface ProducePageEv extends BuildEv {
+  path: string
+}
 
 export interface ProducePropsFn {
   (path: string): Promise<ProduceProps>
