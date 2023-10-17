@@ -38,7 +38,7 @@ export const localResolve: OnParse = (e) => {
   
   const pastDir = dirname(e.filename);
 
-  e.bab.traverse({
+  e.traverse(e.ast, {
     ImportDeclaration(path) {
       if (path.node.source.type == "StringLiteral") {
         path.node.source.value = makeFile(pastDir, path.node.source.value);

@@ -2,7 +2,7 @@ import type { OnParse } from "../types.js";
 
 
 export const keepImports: OnParse = (e) => {
-  e.bab.traverse({
+  e.traverse(e.ast, {
     ImportDeclaration(path) {
       if (path.node.leadingComments) {
         const comment = path.node.leadingComments[path.node.leadingComments.length-1];
