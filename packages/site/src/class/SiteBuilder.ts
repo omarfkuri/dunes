@@ -281,8 +281,6 @@ export class SiteBuilder {
     }
   }
 
-  /**@TODO implement hash*/
-
   async #assets() {
     if (!this.options.assets) return;
     const {out, source} = this.options.assets;
