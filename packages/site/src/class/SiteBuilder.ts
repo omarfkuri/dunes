@@ -130,7 +130,7 @@ export class SiteBuilder {
 
   }
 
-  watch(options: WatchOptions): Promise<void> {
+  async watch(options: WatchOptions): Promise<void> {
 
     const doAction = async (
       name: string, 
@@ -288,7 +288,8 @@ export class SiteBuilder {
       listener
     );
 
-    return watcher.start()
+    await watcher.start()
+    await options.onStart?.();
   }
 
   async build(options: BuildOptions): Promise<void> {

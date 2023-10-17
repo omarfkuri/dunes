@@ -138,6 +138,7 @@ interface MultiEv extends BaseWatchEv {
 type Err<T> = T & {error: unknown}
 
 export interface WatchOptions {
+  onStart?(): Prom<void>;
   onFileBuilding?(e: FileEvent): Prom<void>
   onFileBuilt?(e: FileEvent): Prom<void>
   onFileFailure?(e: Err<FileEvent>): Prom<void>
