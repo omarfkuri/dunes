@@ -13,7 +13,7 @@ export class BabWrap {
   #opts: TransformOptions | undefined
   constructor(
     readonly parseOpts: ParserOptions,
-    opts: TransformOptions | undefined
+    opts?: TransformOptions
   ) {
     this.#opts = opts;
   }
