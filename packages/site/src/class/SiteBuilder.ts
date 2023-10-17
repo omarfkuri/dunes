@@ -58,7 +58,7 @@ export class SiteBuilder {
     const start = Date.now();
 
     try {
-      await options.onStart?.({took: 0, builder: this});
+      await options.onStart?.({builder: this});
       const goWrite = async (path: string): Promise<void> => {
         const start = Date.now();
         try {
@@ -288,14 +288,14 @@ export class SiteBuilder {
       listener
     );
 
-    await watcher.start()
-    await options.onStart?.();
+    await options.onStart?.({builder: this});
+    return watcher.start()
   }
 
   async build(options: BuildOptions): Promise<void> {
     const start = Date.now();
     try {
-      await options.onStart?.({took: 0, builder: this});
+      await options.onStart?.({builder: this});
       await this.#env(options.clean);
       await this.#libs();
       await this.#main();

@@ -96,14 +96,17 @@ export type ModuleMap = Map<string, CompileResult>;
 
 export interface BuildOptions {
   clean?: boolean
-  onStart?(e: BuildEv): Prom<void>
+  onStart?(e: BaseEv): Prom<void>
   onSuccess?(e: BuildEv): Prom<void>
   onFailure?(e: Err<BuildEv>): Prom<void>
 }
 
-export interface BuildEv {
-  took: number
+export interface BaseEv {
   builder: SiteBuilder
+}
+
+export interface BuildEv extends BaseEv{
+  took: number
 }
 
 interface BaseWatchEv extends BuildEv {
@@ -138,7 +141,7 @@ interface MultiEv extends BaseWatchEv {
 type Err<T> = T & {error: unknown}
 
 export interface WatchOptions {
-  onStart?(): Prom<void>;
+  onStart?(e: BaseEv): Prom<void>;
   onFileBuilding?(e: FileEvent): Prom<void>
   onFileBuilt?(e: FileEvent): Prom<void>
   onFileFailure?(e: Err<FileEvent>): Prom<void>
@@ -158,7 +161,7 @@ export interface ProduceOptions {
   do?: {
     [path: string]: ProducePropsFn
   }
-  onStart?(e: ProduceEv): Prom<void>
+  onStart?(e: BaseEv): Prom<void>
 
   onPageStart?(e: ProducePageEv): Prom<void>
   onPageSuccess?(e: ProducePageEv): Prom<void>
