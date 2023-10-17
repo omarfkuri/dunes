@@ -1,9 +1,0 @@
-src
-test
-node_modules
-
-.DS_Store
-.monitor
-
-package-lock.json
-yarn.lock
