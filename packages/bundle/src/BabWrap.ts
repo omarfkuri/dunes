@@ -1,5 +1,5 @@
 import parser, { type ParseResult, type ParserOptions } from "@babel/parser";
-import { transformFromAstSync, traverse, type TransformOptions, NodePath } from "@babel/core";
+import { transformFromAstSync, traverse, type TransformOptions, type NodePath } from "@babel/core";
 import type { File, Node } from "@babel/types";
 import type { Scope, TraverseOptions } from "@babel/traverse";
 
