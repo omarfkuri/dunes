@@ -1,9 +1,10 @@
-import type { Node } from "@babel/types"
+import type { Program } from "@babel/types"
 import type { traverse } from "@babel/core"
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
 import type { OutputOptions } from "rollup"
 import type { Bundler } from "./Bundler.js"
+import type { Bab, Babs } from "./Babs.js"
 
 export interface BundlerConfig {
   jsx?: JSXOptions | false
@@ -61,8 +62,8 @@ export interface LoadEvent extends BundleEvent {
 }
 
 export interface ParseEvent extends BundleEvent {
-  ast: Node
-  traverse: typeof traverse
+  babs: Babs
+  bab: Bab
 }
 
 export interface ResultEvent extends BundleEvent {

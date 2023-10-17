@@ -38,7 +38,7 @@ export const localResolve: OnParse = (e) => {
   
   const pastDir = dirname(e.filename);
 
-  e.traverse(e.ast, {
+  e.bab.traverse({
     ImportDeclaration(path) {
       if (path.node.leadingComments) {
         const comment = path.node.leadingComments[path.node.leadingComments.length-1];
