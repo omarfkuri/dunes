@@ -3,7 +3,8 @@
 import { c } from "@dunes/sys";
 import { verify } from "@dunes/verify";
 import { resolve } from "path";
-import { SiteBuilder, type BuilderConfig } from "../../src/index.js";
+import { SiteBuilder, } from "../class/SiteBuilder.js";
+import type { BuilderConfig  } from "../types/index.js";
 const [,,SCRIPT_NAME = "build.js"] = process.argv;
 
 let config: unknown;
