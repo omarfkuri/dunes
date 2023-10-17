@@ -107,19 +107,19 @@ catch(error) {
 
 const builder = new SiteBuilder(config.options);
 
-if (config.build) {
+if (config.build === undefined || (config.build && config.build.inactive !== true)) {
   if (config.build as never === true) {
     raise("ConfigError", "'build' cannot be true")
   }
   try {
-    await builder.build(config.build);
+    await builder.build(config.build || {});
   }
   catch(error) {
     raise("BuildError", String(error), error);
   }
 }
 
-if (config.produce) {
+if (config.produce && config.produce.inactive !== true) {
   if (config.produce as never === true) {
     raise("ConfigError", "'produce' cannot be true")
   }
@@ -131,7 +131,7 @@ if (config.produce) {
   }
 }
 
-if (config.watch) {
+if (config.watch && config.watch.inactive !== true) {
   if (config.watch as never === true) {
     raise("ConfigError", "'watch' cannot be true")
   }
