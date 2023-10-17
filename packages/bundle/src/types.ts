@@ -1,9 +1,9 @@
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
-import type { OutputOptions, Plugin } from "rollup"
+import type { OutputOptions, Plugin as RollupPlugin } from "rollup"
 import type { Bab, Babs } from "./Bundler.js"
 
-export interface BundlerConfig {
+export interface BundlerConfig extends Load {
   jsx?: JSXOptions | false
   ts?: TSOptions | false
   resolve?: RollupNodeResolveOptions
@@ -11,10 +11,27 @@ export interface BundlerConfig {
   output?: OutputOptions
   
   /**
-   * Plug more plugins in
+   * A list of plugins
    * */
-  plug?: Plugin[]
+  plugins?: Plugin[]
+  
+  /**
+   * Plug more rollup plugins in
+   * */
+  plug?: RollupPlugin[]
+}
 
+export type CodeTrfResult = void | {
+  stop?: boolean
+  text: string | null
+}
+
+export interface Plugin extends Load {
+  name: string
+
+}
+
+interface Load {
   /**
    * Runs before every file
    * */
@@ -35,12 +52,6 @@ export interface BundlerConfig {
    * Runs on code result
    * */
   onConclude?(code: string, filename: string): Prom<string>
-
-}
-
-type CodeTrfResult = void | {
-  stop?: boolean
-  text: string | null
 }
 
 export interface JSXOptions {
