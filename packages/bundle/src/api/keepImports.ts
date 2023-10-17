@@ -1,8 +1,8 @@
 import type { BundlerConfig } from "../types.js";
 
 
-export const keepImports: BundlerConfig["onParse"] = (ast, trav) => {
-  trav(ast, {
+export const keepImports: BundlerConfig["onParse"] = (e) => {
+  e.bab.traverse({
     ImportDeclaration(path) {
       if (path.node.leadingComments) {
         const comment = path.node.leadingComments[path.node.leadingComments.length-1];

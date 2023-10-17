@@ -1,11 +1,15 @@
-import { readString, writeStr } from "@dunes/sys";
-import type { BundlerConfig } from "./types.js";
+import { resolve } from "path";
+
+import type { ParserOptions } from "@babel/parser";
+import type { TransformOptions } from "@babel/core";
 import { rollup, type RollupBuild } from "rollup";
-import parser from "@babel/parser";
-import { transformFromAstSync, type TransformOptions, traverse } from "@babel/core";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import virtual from "@rollup/plugin-virtual";
-import { resolve } from "path";
+
+import { BabWrap } from "@dunes/bab";
+import { readString, writeStr } from "@dunes/sys";
+
+import type { BundlerConfig } from "./types.js";
 
 
 export class Bundler {
@@ -24,7 +28,7 @@ export class Bundler {
       ...sub
     }
 
-    const parserOptions: parser.ParserOptions = {
+    const parserOptions: ParserOptions = {
       sourceType: "module",
       plugins: [
         "jsx", 
@@ -47,6 +51,8 @@ export class Bundler {
         ["@babel/preset-typescript", config.ts]
       );
     }
+    const babel = new BabWrap(parserOptions, transformOptions);
+    const bundler = this;
     const {onParse, onLoad, onResult} = config
     const entry = resolve(path);
     const build = await rollup({
@@ -57,19 +63,16 @@ export class Bundler {
           name: "parser",
           async transform(source, id) {
             const filename = id.startsWith("\0")? entry: id;
-            const prepared = await onLoad?.(source, filename);
+            const prepared = await onLoad?.({source, filename, bundler});
             if (prepared && prepared.text) {
               source = prepared.text;
               if (prepared.stop) return source;
             }
-            const ast = parser.parse(source, parserOptions);
-            await onParse?.(ast, traverse, filename);
-            const result = transformFromAstSync(ast, undefined, {
-              ...transformOptions,
-              filename
-            });
+            const bab = babel.read(source);
+            await onParse?.({bab, babel, filename, bundler});
+            const result = bab.convert({filename});
             const code = result?.code || "";
-            const concluded = await onResult?.(code, filename);
+            const concluded = await onResult?.({code, filename, bundler});
             if (concluded && concluded.text) {
               source = concluded.text;
               if (concluded.stop) return source;
@@ -82,7 +85,7 @@ export class Bundler {
       ]
     })
 
-    return new Bundle(entry, build, config);
+    return new Bundle(entry, build, config, this);
   }
 
 }
@@ -90,10 +93,17 @@ export class Bundler {
 export class Bundle {
   #build: RollupBuild
   #config: BundlerConfig
+  #bundler: Bundler
 
-  constructor(readonly entry: string, build: RollupBuild, config: BundlerConfig) {
+  constructor(
+    readonly entry: string, 
+    build: RollupBuild, 
+    config: BundlerConfig, 
+    bundler: Bundler
+  ) {
     this.#build = build;
     this.#config = config;
+    this.#bundler = bundler;
   }
 
   get watchFiles() {
@@ -111,7 +121,7 @@ export class Bundle {
       }
     }
     const finish = await this.#config.onConclude?.(
-      code, this.entry
+      {code, filename: this.entry, bundler: this.#bundler}
     );
     return finish || code;
   }
