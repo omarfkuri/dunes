@@ -1,7 +1,7 @@
-import type { BundlerConfig } from "../types.js";
+import type { OnParse } from "../types.js";
 import { js } from "@dunes/tools"
 
-export const includeScript: BundlerConfig["onParse"] = async (e) => {
+export const includeScript: OnParse = async (e) => {
   const scripts: string[] = [];
 
   e.bab.traverse({

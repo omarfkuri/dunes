@@ -1,7 +1,7 @@
-import type { BundlerConfig } from "../types.js";
+import type { OnParse } from "../types.js";
 
 
-export const keepImports: BundlerConfig["onParse"] = (e) => {
+export const keepImports: OnParse = (e) => {
   e.bab.traverse({
     ImportDeclaration(path) {
       if (path.node.leadingComments) {
