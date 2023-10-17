@@ -1,0 +1,39 @@
+{
+  "name": "@dunes/bundle",
+  "version": "0.9.3",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "build": "rm -rf lib && tsc && npm version patch",
+    "test": "ts-node test/index"
+  },
+  "keywords": [
+    "javascript",
+    "rollup",
+    "typescript",
+    "babel",
+    "compiler"
+  ],
+  "author": "Omar <omarfkuri@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/omarfkuri/dunes.git"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/parser": "^7.23.0",
+    "@babel/preset-react": "^7.22.15",
+    "@babel/preset-typescript": "^7.23.2",
+    "@babel/types": "^7.23.0",
+    "@dunes/sys": "^0.9.58",
+    "@dunes/tools": "^0.9.60",
+    "@rollup/plugin-node-resolve": "^15.2.1",
+    "@rollup/plugin-virtual": "^3.0.2",
+    "@types/babel__core": "^7.20.2",
+    "@types/node": "^20.8.6",
+    "rollup": "^3.29.4",
+    "tslib": "^2.6.2"
+  }
+}
