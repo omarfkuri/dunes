@@ -1,9 +1,9 @@
 import { existsSync } from "fs";
 import { dirname, join, resolve } from "path";
-import type { OnParse } from "../types.js";
+import type { BundlerConfig } from "./types.js";
 
 
-export const localResolve: OnParse = (e) => {
+export const localResolve: BundlerConfig["onParse"] = (ast, trav, filename) => {
   const extensions = ["ts", "tsx", "js", "jsx"];
 
   function makeFile(pastDir: string, src: string): string {
@@ -36,10 +36,22 @@ export const localResolve: OnParse = (e) => {
     return fileName;
   }
   
-  const pastDir = dirname(e.filename);
+  const pastDir = dirname(filename);
 
-  e.traverse(e.ast, {
+  trav(ast, {
     ImportDeclaration(path) {
+      if (path.node.leadingComments) {
+        const comment = path.node.leadingComments[path.node.leadingComments.length-1];
+        if (comment && comment.value.match(/\s*@keep\s*/)) {
+          if (path.node.leadingComments?.length) {
+            path.node.leadingComments = path.node.leadingComments.filter(e => e && !e.value.match(/\s*@keep\s*/))
+          }
+          if (path.node.trailingComments?.length) {
+            path.node.trailingComments = path.node.trailingComments.filter(e => e && !e.value.match(/\s*@keep\s*/))
+          }
+          return;
+        }
+      }
       if (path.node.source.type == "StringLiteral") {
         path.node.source.value = makeFile(pastDir, path.node.source.value);
       }

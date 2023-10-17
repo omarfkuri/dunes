@@ -1,10 +1,9 @@
-import type { Node } from "@babel/types"
-import type { traverse } from "@babel/core"
+import type { File } from "@babel/types"
+import type { traverse, } from "@babel/core"
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
 import type { OutputOptions } from "rollup"
-import type { Bundler } from "./Bundler.js"
-// import type { Bab, BabWrap } from "./BabWrap.js"
+import type { ParseResult } from "@babel/parser"
 
 export interface BundlerConfig {
   jsx?: JSXOptions | false
@@ -16,65 +15,27 @@ export interface BundlerConfig {
   /**
    * Runs before every file
    * */
-  onLoad?: OnLoad
+  onLoad?(source: string, filename: string): Prom<CodeTrfResult>
 
   /**
    * Runs after every parse
    * */
-  onParse?: OnParse
+  onParse?(ast: ParseResult<File>, trav: typeof traverse, filename: string): Prom<void>
 
   /**
    * Runs after transform concludes
    * */
-  onResult?: OnResult
+  onResult?(code: string, filename: string): Prom<CodeTrfResult>
   
 
   /**
    * Runs on code result
    * */
-  onConclude?: OnConclude
+  onConclude?(code: string, filename: string): Prom<string>
 
 }
 
-export interface OnLoad {
-  (event: LoadEvent): Prom<CodeTrfResult>
-}
-
-export interface OnParse {
-  (event: ParseEvent): Prom<void>
-}
-
-export interface OnResult {
-  (event: ResultEvent): Prom<CodeTrfResult>
-}
-
-export interface OnConclude {
-  (event: ConcludeEvent): Prom<string>
-}
-
-export interface BundleEvent {
-  filename: string
-  bundler: Bundler
-}
-
-export interface LoadEvent extends BundleEvent {
-  source: string
-}
-
-export interface ParseEvent extends BundleEvent {
-  ast: Node
-  traverse: typeof traverse
-}
-
-export interface ResultEvent extends BundleEvent {
-  code: string
-}
-
-export interface ConcludeEvent extends BundleEvent {
-  code: string
-}
-
-export type CodeTrfResult = void | {
+type CodeTrfResult = void | {
   stop?: boolean
   text: string | null
 }
@@ -84,10 +45,8 @@ export interface JSXOptions {
   useSpread?: boolean
   pragma?: string
   pragmaFrag?: string
-  runtime?: "classic" | (string & ({}))
+  runtime?: "classic" | (string & {})
 }
-
-export type Plug = [string, object]
 
 export interface TSOptions {
   /**
@@ -96,12 +55,14 @@ export interface TSOptions {
    * Also, `isTSX: true` requires `allExtensions: true`.
    * */
   isTSX?: boolean
+
   /**
    * Replace the function used when compiling JSX expressions. This is
    * so that we know that the import is not a type import, and should 
    * not be removed.
    * */
   jsxPragma?: string
+
   /**
    * Replace the function used when compiling JSX fragment expressions. This
    * is so that we know that the import is not a type import, and 

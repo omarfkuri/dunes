@@ -9,14 +9,14 @@ const bundler = new Bundler({
     pragma: "Elem.create"
   },
   
-  onLoad(e) {
+  onLoad(source) {
     return {
-      text: e.source.replace(/let \w+\$\d+ = /g, "")
+      text: source.replace(/let \w+\$\d+ = /g, "")
     }
   },
 
-  onConclude(e) {
-    return e.code
+  onConclude(source) {
+    return source
     .replace(/export *{ .+ };? *\n*/, "")
   },
 });

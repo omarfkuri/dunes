@@ -49,7 +49,6 @@ export class Bundler {
     }
     const {onParse, onLoad, onResult} = config
     const entry = resolve(path);
-    const bundler = this;
     const build = await rollup({
       input: "source",
       treeshake: config.treeshake,
@@ -58,19 +57,19 @@ export class Bundler {
           name: "parser",
           async transform(source, id) {
             const filename = id.startsWith("\0")? entry: id;
-            const prepared = await onLoad?.({source, filename, bundler});
+            const prepared = await onLoad?.(source, filename);
             if (prepared && prepared.text) {
               source = prepared.text;
               if (prepared.stop) return source;
             }
             const ast = parser.parse(source, parserOptions);
-            await onParse?.({ast, traverse, filename, bundler});
+            await onParse?.(ast, traverse, filename);
             const result = transformFromAstSync(ast, undefined, {
               ...transformOptions,
               filename
             });
             const code = result?.code || "";
-            const concluded = await onResult?.({code, filename, bundler});
+            const concluded = await onResult?.(code, filename);
             if (concluded && concluded.text) {
               source = concluded.text;
               if (concluded.stop) return source;
@@ -83,7 +82,7 @@ export class Bundler {
       ]
     })
 
-    return new Bundle(entry, build, config, this);
+    return new Bundle(entry, build, config);
   }
 
 }
@@ -91,16 +90,10 @@ export class Bundler {
 export class Bundle {
   #build: RollupBuild
   #config: BundlerConfig
-  #bundler: Bundler
 
-  constructor(readonly entry: string, 
-    build: RollupBuild, 
-    config: BundlerConfig,
-    bundler: Bundler,
-  ) {
+  constructor(readonly entry: string, build: RollupBuild, config: BundlerConfig) {
     this.#build = build;
     this.#config = config;
-    this.#bundler = bundler;
   }
 
   get watchFiles() {
@@ -118,7 +111,7 @@ export class Bundle {
       }
     }
     const finish = await this.#config.onConclude?.(
-      {code, filename: this.entry, bundler: this.#bundler}
+      code, this.entry
     );
     return finish || code;
   }
@@ -131,15 +124,3 @@ export class Bundle {
     return eval(await this.code());
   }
 }
-
-// class Tower {
-
-//   constructor(
-//     readonly parseOpts: parser.ParserOptions,
-//     readonly defConvOpts?: TransformOptions) {
-
-//   }
-
-  
-
-// }
