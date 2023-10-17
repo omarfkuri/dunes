@@ -19,6 +19,7 @@ export interface RouterConfig {
 	}
 	root: string
 	rootStyles: string
+  reveal?: Reveal
 }
 
 export interface Redirect {
@@ -36,3 +37,9 @@ export interface ViewConst {
 }
 
 export type ViewRevealType = "load" | "reload"
+
+
+export interface Reveal {
+  rememberScroll?: boolean
+  
+}
