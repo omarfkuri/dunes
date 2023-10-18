@@ -1,77 +1,24 @@
-import type { File, Program } from "@babel/types"
-import type { traverse } from "@babel/core"
 import type { Prom } from "@dunes/tools"
 import type { RollupNodeResolveOptions } from "@rollup/plugin-node-resolve"
-import type { OutputOptions } from "rollup"
-import type { Bundler } from "./Bundler.js"
-import type { ParseResult } from "@babel/parser"
+import type { OutputOptions, Plugin as RollupPlugin } from "rollup"
+import type { Bab, Babs } from "./Bundler.js"
 
-export interface BundlerConfig {
+export interface BundlerConfig extends Load {
   jsx?: JSXOptions | false
   ts?: TSOptions | false
   resolve?: RollupNodeResolveOptions
   treeshake?: boolean
   output?: OutputOptions
-
-  /**
-   * Runs before every file
-   * */
-  onLoad?: OnLoad
-
-  /**
-   * Runs after every parse
-   * */
-  onParse?: OnParse
-
-  /**
-   * Runs after transform concludes
-   * */
-  onResult?: OnResult
   
-
   /**
-   * Runs on code result
+   * A list of plugins
    * */
-  onConclude?: OnConclude
-
-}
-
-export interface OnLoad {
-  (event: LoadEvent): Prom<CodeTrfResult>
-}
-
-export interface OnParse {
-  (event: ParseEvent): Prom<void>
-}
-
-export interface OnResult {
-  (event: ResultEvent): Prom<CodeTrfResult>
-}
-
-export interface OnConclude {
-  (event: ConcludeEvent): Prom<string>
-}
-
-export interface BundleEvent {
-  filename: string
-  bundler: Bundler
-}
-
-export interface LoadEvent extends BundleEvent {
-  source: string
-}
-
-export interface ParseEvent extends BundleEvent {
-  ast: ParseResult<File>
-  traverse: typeof traverse
-}
-
-export interface ResultEvent extends BundleEvent {
-  code: string
-}
-
-export interface ConcludeEvent extends BundleEvent {
-  code: string
+  plugins?: Plugin[]
+  
+  /**
+   * Plug more rollup plugins in
+   * */
+  plug?: RollupPlugin[]
 }
 
 export type CodeTrfResult = void | {
@@ -79,15 +26,41 @@ export type CodeTrfResult = void | {
   text: string | null
 }
 
+export interface Plugin extends Load {
+  name: string
+
+}
+
+interface Load {
+  /**
+   * Runs before every file
+   * */
+  onLoad?(source: string, filename: string): Prom<CodeTrfResult>
+
+  /**
+   * Runs after every parse
+   * */
+  onParse?(bab: Bab, babs: Babs, filename: string): Prom<void>
+
+  /**
+   * Runs after transform concludes
+   * */
+  onResult?(code: string, filename: string): Prom<CodeTrfResult>
+  
+
+  /**
+   * Runs on code result
+   * */
+  onConclude?(code: string, filename: string): Prom<string>
+}
+
 export interface JSXOptions {
   useBuiltIns?: boolean
   useSpread?: boolean
   pragma?: string
   pragmaFrag?: string
-  runtime?: "classic" | (string & ({}))
+  runtime?: "classic" | (string & {})
 }
-
-export type Plug = [string, object]
 
 export interface TSOptions {
   /**
@@ -96,12 +69,14 @@ export interface TSOptions {
    * Also, `isTSX: true` requires `allExtensions: true`.
    * */
   isTSX?: boolean
+
   /**
    * Replace the function used when compiling JSX expressions. This is
    * so that we know that the import is not a type import, and should 
    * not be removed.
    * */
   jsxPragma?: string
+
   /**
    * Replace the function used when compiling JSX fragment expressions. This
    * is so that we know that the import is not a type import, and 

@@ -55,6 +55,10 @@ export class Router {
 		await this.#reveal(this.latestView, this.latestURL, this.latestReq, "reload")
 	}
 
+  /**
+   * @todo Set title
+   **/
+
 	async render(href: string) {
 		const req = new URL(href);
 		const url = new URL(href);
@@ -113,6 +117,15 @@ export class Router {
 		this.latestURL = url;
 
 		const hasRes = await view.hasShown(type);
+
+    if (url.hash) {
+      document.querySelector(url.hash)?.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "center"
+      })
+    }
+
 		if (hasRes) {
 			return await this.go(hasRes);
 		}

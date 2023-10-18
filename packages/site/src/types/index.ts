@@ -96,28 +96,34 @@ export type ModuleMap = Map<string, CompileResult>;
 
 export interface BuildOptions {
   clean?: boolean
+  onStart?(e: BaseEv): Prom<void>
+  onSuccess?(e: BuildEv): Prom<void>
+  onFailure?(e: Err<BuildEv>): Prom<void>
 }
 
-export type BuildResult = Promise<{
-  took: number
-}>
+export interface BaseEv {
+  builder: SiteBuilder
+}
 
-interface BaseWatchEv {
+export interface BuildEv extends BaseEv{
   took: number
+}
+
+interface BaseWatchEv extends BuildEv {
   style: boolean
 }
 
 interface BaseActEv extends BaseWatchEv {
-  type: "dependency" | "file"
+
   name: string
 }
 
 interface FileEvent extends BaseActEv {
-  type: "file"
+
 }
 
 interface DepEvent extends BaseActEv {
-  type: "dependency"
+
   original: string
   files: Set<string>
 }
@@ -134,23 +140,20 @@ interface MultiEv extends BaseWatchEv {
 
 type Err<T> = T & {error: unknown}
 
-type WatchEv = FileEvent | DepEvent
-
 export interface WatchOptions {
-  onFileBuilding?(e: WatchEv): Prom<void>
-  onFileBuilt?(e: WatchEv): Prom<void>
-  onFileFailure?(e: Err<WatchEv>): Prom<void>
+  onStart?(e: BaseEv): Prom<void>;
+  onFileBuilding?(e: FileEvent): Prom<void>
+  onFileBuilt?(e: FileEvent): Prom<void>
+  onFileFailure?(e: Err<FileEvent>): Prom<void>
 
   onDepStart?(e: MultiEv): Prom<void>
 
-  onDepBuilding?(e: WatchEv): Prom<void>
-  onDepBuilt?(e: WatchEv): Prom<void>
-  onDepFailure?(e: Err<WatchEv>): Prom<void>
+  onDepBuilding?(e: DepEvent): Prom<void>
+  onDepBuilt?(e: DepEvent): Prom<void>
+  onDepFailure?(e: Err<DepEvent>): Prom<void>
 
   onDepFinish?(e: MultiEv): Prom<void>
 }
-
-export type WatchResult = Promise<void>
 
 
 export interface ProduceOptions {
@@ -158,6 +161,21 @@ export interface ProduceOptions {
   do?: {
     [path: string]: ProducePropsFn
   }
+  onStart?(e: BaseEv): Prom<void>
+
+  onPageStart?(e: ProducePageEv): Prom<void>
+  onPageSuccess?(e: ProducePageEv): Prom<void>
+  onPageFailure?(e: Err<ProducePageEv>): Prom<void>
+
+  onSuccess?(e: ProduceEv): Prom<void>
+  onFailure?(e: Err<ProduceEv>): Prom<void>
+}
+
+export interface ProduceEv extends BuildEv {}
+
+
+export interface ProducePageEv extends BuildEv {
+  path: string
 }
 
 export interface ProducePropsFn {
@@ -172,7 +190,6 @@ export interface ProduceProps {
 export interface IDDef {
   id: string
 }
-
 export type ProduceResult = Promise<void>
 
 
@@ -205,21 +222,21 @@ export interface BuilderConfig {
   /**
    * Build options
    * */
-  build?: BuildOptions & {
+  build?: false | (BuildOptions & {
     inactive?: boolean
-  }
+  })
   
   /**
    * Produce options
    * */
-  produce?: ProduceOptions & {
+  produce?: false | (ProduceOptions & {
     inactive?: boolean
-  }
+  })
 
   /**
    * Watch for changes
    * */
-  watch?: WatchOptions & {
+  watch?: false | (WatchOptions & {
     inactive?: boolean
-  }
+  })
 }

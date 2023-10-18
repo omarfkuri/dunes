@@ -6,6 +6,7 @@ import { transformFromAstSync, type TransformOptions, traverse } from "@babel/co
 import nodeResolve from "@rollup/plugin-node-resolve";
 import virtual from "@rollup/plugin-virtual";
 import { resolve } from "path";
+import type { File } from "@babel/types";
 
 
 export class Bundler {
@@ -47,30 +48,32 @@ export class Bundler {
         ["@babel/preset-typescript", config.ts]
       );
     }
+
+    const babs = new Babs(
+      parserOptions, 
+      transformOptions
+    );
+
     const {onParse, onLoad, onResult} = config
     const entry = resolve(path);
-    const bundler = this;
     const build = await rollup({
       input: "source",
       treeshake: config.treeshake,
       plugins: [
+        ...(config.plug || []),
         {
           name: "parser",
           async transform(source, id) {
             const filename = id.startsWith("\0")? entry: id;
-            const prepared = await onLoad?.({source, filename, bundler});
+            const prepared = await onLoad?.(source, filename);
             if (prepared && prepared.text) {
               source = prepared.text;
               if (prepared.stop) return source;
             }
-            const ast = parser.parse(source, parserOptions);
-            await onParse?.({ast, traverse, filename, bundler});
-            const result = transformFromAstSync(ast, undefined, {
-              ...transformOptions,
-              filename
-            });
-            const code = result?.code || "";
-            const concluded = await onResult?.({code, filename, bundler});
+            const bab = babs.parse(source);
+            await onParse?.(bab, babs, filename);
+            const code = bab.code({ filename });
+            const concluded = await onResult?.(code, filename);
             if (concluded && concluded.text) {
               source = concluded.text;
               if (concluded.stop) return source;
@@ -83,25 +86,20 @@ export class Bundler {
       ]
     })
 
-    return new Bundle(entry, build, config, this);
+    return new Bundle(entry, build, config);
   }
 
 }
 
+
+
 export class Bundle {
   #build: RollupBuild
   #config: BundlerConfig
-  #bundler: Bundler
 
-  constructor(
-    readonly entry: string, 
-    build: RollupBuild, 
-    config: BundlerConfig,
-    bundler: Bundler,
-  ) {
+  constructor(readonly entry: string, build: RollupBuild, config: BundlerConfig) {
     this.#build = build;
     this.#config = config;
-    this.#bundler = bundler;
   }
 
   get watchFiles() {
@@ -118,9 +116,7 @@ export class Bundle {
         code += chunk.code + "\n";
       }
     }
-    const finish = await this.#config.onConclude?.(
-      {code, filename: this.entry, bundler: this.#bundler}
-    );
+    const finish = await this.#config.onConclude?.(code, this.entry);
     return finish || code;
   }
 
@@ -130,5 +126,40 @@ export class Bundle {
 
   async evaluate(): Promise<unknown> {
     return eval(await this.code());
+  }
+}
+
+
+export class Babs {
+  constructor(
+    public parseOptions: parser.ParserOptions,
+    public transformOptions: TransformOptions,
+  ) {}
+
+  parse(script: string, opts?: parser.ParserOptions): Bab {
+    const ast = parser.parse(script, {
+      ...this.parseOptions,
+      ...opts
+    });
+    return new Bab(ast, this);
+  }
+}
+
+export class Bab {
+  constructor(
+    public ast: parser.ParseResult<File>, 
+    public babs: Babs
+  ) {}
+
+  code(options: TransformOptions): string {
+    const r = transformFromAstSync(this.ast, undefined, {
+      ...this.babs.transformOptions,
+      ...options,
+    });
+    return r?.code || "";
+  }
+
+  traverse(options: import("@babel/traverse").TraverseOptions) {
+    traverse(this.ast, options);
   }
 }
