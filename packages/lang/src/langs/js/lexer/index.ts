@@ -5,12 +5,6 @@ export type { TokenType }
 export class JSLexer extends lexer.Lexer<TokenType> {
 
 	protected override read() {
-
-		// if (this.match(/ |\t/)) {
-		// 	this.eat();
-		// 	return null;
-		// }
-
 		if (this.isLetter()) {
 			const chars: lexer.Char[] = [this.eat()];
 			while (!this.finished() && (this.isLetter() || this.match(/[0-9]|_/))) {
@@ -148,6 +142,10 @@ export class JSLexer extends lexer.Lexer<TokenType> {
         if (this.is("="))
           return this.new("TripleEquals", equals, equals2, this.eat());
         return this.new("DoubleEquals", equals, equals2);
+      }
+      if (this.is(">")) {
+        const point = this.eat();
+        return this.new("Arrow", equals, point);
       }
       return this.new("Equals", equals);
     }

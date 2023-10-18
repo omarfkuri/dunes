@@ -7,6 +7,7 @@ export type TokenType = lexer.TType<(
 	| "Var"
 	| "Const"
 	| "Function"
+  | "Arrow"
 	| "Async"
 	| "Class"
 	| "If"

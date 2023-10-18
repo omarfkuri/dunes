@@ -1,4 +1,12 @@
 {
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "module": "ESNext"
+    },
+    "ignoreDiagnostics": [/*2503*/]
+  },
   "compilerOptions": {
     "lib": [
       "ES2020"

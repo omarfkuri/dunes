@@ -1,3 +1,4 @@
+import { js } from "@dunes/tools";
 import { parser } from "../../../index.js";
 import { JSLexer, type TokenType } from "../lexer/index.js";
 import type { 
@@ -15,6 +16,7 @@ import type {
 	DocComment,
 	Expression, 
 	FunctionDeclaration, 
+	FunctionExpression, 
 	Identifier, 
 	IfStatement, 
 	LineComment, 
@@ -193,12 +195,10 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
     const declarators: VariableDeclarator[] = [];
 
     while(this.willContinue() && !this.isAny("Comma", "Semicolon")) {
-
       const id = this.#parseAssignee();
-      
       this.#trim();
       if (this.is("Semicolon")) {
-        if (kind === "Const") {
+        if (kind === "Const" && declarators.length === 0) {
           throw ("Must specify expression for 'const'");
         }
         declarators.push(this.new("VariableDeclarator", {
@@ -207,7 +207,6 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
         }))
         break;
       }
-
       this.expect("Equals", (
         `Expected Equals after identifier in ${kind} declaration`
       ))
@@ -217,9 +216,11 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
       }))
       this.#trim();
 
-      if (this.isnt("Comma")) break;
-      this.eat();
-      this.#trim();
+      if (this.is("Comma")) {
+        this.eat();
+        this.#trim();
+      }
+      else break;
     }
 
     return declarators;
@@ -232,12 +233,11 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
 		if (generator) {
 			this.#trim();
 		}
-		const identifier = this.new("Identifier", {
+		const id = this.new("Identifier", {
 			symbol: this.expect("Identifier", (
 				`Expected Identifier for function declaration`
 			)).value
 		})
-      const id = this.#parseAssignee();
 		this.#trim();
 		this.expect("OpenParen", (
 			"Expected parenthesis after function identifier"
@@ -256,7 +256,7 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
 		return this.new("FunctionDeclaration", {
 			async, 
 			generator,
-			identifier, 
+			id, 
 			params, 
 			body, 
 		})
@@ -327,7 +327,7 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
 		this.#trim();
 
 		return this.new("ClassDeclaration", {
-			identifier, body, extend
+			id: identifier, body, extend
 		})
 	}
 
@@ -375,7 +375,7 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
 		this.#trim();
 
 		return this.new("ClassMethod", {
-			identifier,
+			id: identifier,
 			private: priv,
 			params,
 			body
@@ -397,7 +397,7 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
 		this.#trim();
 
 		return this.new("ClassProperty", {
-			identifier,
+			id: identifier,
 			private: priv,
 			init
 		})
@@ -627,9 +627,42 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
     }
   }
 
+  #parseSubAssignee(): Assignee {
+    const left = this.#parseAssignee();
+    this.#trim();
+    if (this.willContinue() && this.isAny(
+      "Equals", "PlusEquals", "DashEquals",
+      "PercentEquals", "SlashEquals", "AsteriskEquals"
+    )) {
+      const operator = this.eat().type;
+      this.#trim();
+      const right = this.#parseExpression();
+      this.#trim();
+
+      return this.new("AssignmentPattern", {
+        left, 
+        operator, 
+        right
+      })
+    }
+    return left;
+  }
+
 	#parsePrimary(): Expression {
 		switch(this.type()) {
-      
+      case "Async": {
+        this.eat();
+        this.#trim()
+        if (!this.is("Function")) {
+          throw "Expected function keyword after async."
+        }
+
+        return this.#parseFunctionExpression(true);
+      }
+
+      case "Function": {
+        return this.#parseFunctionExpression(false);
+      }
 
       case "DoubleSlash": {
         return this.#parseLineComment();
@@ -678,6 +711,45 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
 			}
 		}
 	}
+
+  #parseFunctionExpression(async: boolean): FunctionExpression {
+    this.eat();
+    this.#trim();
+    const generator = !!this.if("Asterisk");
+    if (generator) {
+      this.#trim();
+    }
+
+    let id: Identifier | null = null;
+
+    if (this.is("Identifier")) {
+      id = this.new("Identifier", {
+        symbol: this.eat().value
+      })
+      this.#trim();
+    }
+    this.expect("OpenParen", (
+      "Expected parenthesis after function identifier"
+    ))
+    this.#trim();
+
+    const params = this.#parseParameters();
+
+    if (!this.is("OpenBracket")) throw (
+      "Expected bracket to open function body"
+    )
+    this.#trim();
+    const body = this.#parseBlock();
+    this.#trim();
+
+    return this.new("FunctionExpression", {
+      async, 
+      generator,
+      id,
+      params, 
+      body, 
+    })
+  }
 
 	#parseIdentifier(): Identifier {
 		return this.new("Identifier", {
@@ -738,7 +810,7 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
     this.#trim();
     const entries: Expression[] = [];
     while (this.willContinue() && this.type() !== "CloseSquare") {
-      entries.push(this.#parseAssignee());
+      entries.push(this.#parseSubAssignee());
       this.#trim();
       if (this.type() === "Comma") {
         this.eat()
@@ -821,17 +893,35 @@ export class JSParser extends parser.Parser<TokenType, NodeTypes>
     return obj;
   }
 
-  #parseGroupExpression() {
+  #parseGroupExpression(): Expression {
     this.eat();
     this.#trim();
-    const group = this.new("GroupExpression", {
-      node: this.#parseExpression()
-    })
+    const node = this.#parseExpression();
+
+    if (this.isnt("Comma")) {
+      const group = this.new("GroupExpression", {node})
+      this.#trim();
+      this.expect("CloseParen", 
+        "Expected closing parenthesis to end group expression."
+      )
+      return group;
+    }
+    this.eat();
     this.#trim();
+    const nodes: Expression[] = [node];
+    while (this.willContinue() && this.isnt("CloseParen")) {
+      nodes.push(this.#parseExpression())
+      this.#trim();
+      if (this.is("Comma")) {
+        this.eat();
+        this.#trim();
+      }
+      else break;
+    }
     this.expect("CloseParen", 
       "Expected closing parenthesis to end group expression."
     )
-    return group;
+    return this.new("SequenceExpression", {nodes})
   }
 
   #parseNumericLiteral() {

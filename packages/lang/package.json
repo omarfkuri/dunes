@@ -9,6 +9,18 @@
     "type": "git",
     "url": "git://github.com/omarfkuri/dunes.git"
   },
+  "exports": {
+    ".": {
+      "main": "./lib/index.js",
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    },
+    "./js": {
+      "main": "./lib/langs/js/index.js",
+      "import": "./lib/langs/js/index.js",
+      "types": "./lib/langs/js/index.d.ts"
+    }
+  },
   "keywords": [
     "javascript",
     "random",

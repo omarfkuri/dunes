@@ -1,14 +1,21 @@
 import { js } from "@dunes/tools";
 import { JSParser } from "../src/langs/js/index.js";
-import { c } from "@dunes/sys"
+// import { c } from "@dunes/sys"
 
 
 const jsParser = new JSParser();
 
+// @ts-ignore
+// const [[[a = function([{n, s}] = 2) {}, s]]] = 2, r = 3;
+
 try {
 	const result = jsParser.produce(`
 
-    const n = 88, [myVar, {user = 22}] = 22;
+  const myFunc = function() {
+
+
+    return this.myFunc();
+  };
 
 	 `);
 

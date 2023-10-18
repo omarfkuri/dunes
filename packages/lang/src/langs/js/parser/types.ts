@@ -17,6 +17,7 @@ export type NodeType = (
   | "AssignmentExpression"
   | "MemberExpression"
   | "GroupExpression"
+  | "SequenceExpression"
   
   | "BlockComment"
   | "LineComment"
@@ -27,6 +28,7 @@ export type NodeType = (
   
   | "ArrayExpression"
   | "ArrayPattern"
+  | "AssignmentPattern"
 
 	| "NumericLiteral"
 	| "Property"
@@ -38,7 +40,10 @@ export type NodeType = (
   | "ClassMethod"
 	| "ClassProperty"
 
-	| "ReturnExpression"
+	| "FunctionExpression"
+  | "ArrowFunctionExpression"
+
+  | "ReturnExpression"
   | "ThrowExpression"
 	| "NewExpression"
 	| "TypeOfExpression"
@@ -61,13 +66,13 @@ export type AnyNode = (
   | AssignmentExpression
   | MemberExpression
   | GroupExpression
+  | SequenceExpression
   
   | BlockComment
   | LineComment
   | DocComment
 
   | ArrayExpression
-  | ArrayPattern
   | ObjectExpression
   | NumericLiteral
   | Property
@@ -75,9 +80,15 @@ export type AnyNode = (
   | StringLiteral
   | Identifier
   
+  | AssignmentPattern
+  | ArrayPattern
+  
   | ClassBody
   | ClassMethod
   | ClassProperty
+
+  | FunctionExpression
+  | ArrowFunctionExpression
 
   | ReturnExpression
   | ThrowExpression
@@ -91,6 +102,7 @@ export type Assignee = (
   | Identifier
   | ObjectPattern
   | ArrayPattern
+  | AssignmentPattern
 )
 
 export type Init = (
@@ -115,19 +127,23 @@ export interface NodeTypes extends parser.NodesObj {
 
   BinaryExpression: BinaryExpression
 	GroupExpression: GroupExpression
+  SequenceExpression: SequenceExpression
   CallExpression: CallExpression
   AssignmentExpression: AssignmentExpression
   MemberExpression: MemberExpression
 
+  Identifier: Identifier
 	NumericLiteral: NumericLiteral
-	Identifier: Identifier
-	StringLiteral: StringLiteral
-	ArrayPattern: ArrayPattern
+  StringLiteral: StringLiteral
+	
   ArrayExpression: ArrayExpression
 	ObjectExpression: ObjectExpression
-  ObjectPattern: ObjectPattern
 	Property: Property
+	
+  AssignmentPattern: AssignmentPattern
 	Parameter: Parameter
+	ArrayPattern: ArrayPattern
+  ObjectPattern: ObjectPattern
   
   ClassBody: ClassBody
   ClassMethod: ClassMethod
@@ -137,7 +153,10 @@ export interface NodeTypes extends parser.NodesObj {
 	LineComment: LineComment
 	DocComment: DocComment
 
-	ReturnExpression: ReturnExpression
+	FunctionExpression: FunctionExpression
+  ArrowFunctionExpression: ArrowFunctionExpression
+
+  ReturnExpression: ReturnExpression
   ThrowExpression: ThrowExpression
 	NewExpression: NewExpression
 	TypeOfExpression: TypeOfExpression
@@ -185,7 +204,7 @@ export interface VariableDeclarator extends Statement {
 
 export interface FunctionDeclaration extends Statement {
 	type: "FunctionDeclaration"
-	identifier: Identifier
+	id: Identifier
 	params: Parameter[]
 	async: boolean
 	generator: boolean
@@ -194,7 +213,7 @@ export interface FunctionDeclaration extends Statement {
 
 export interface ClassDeclaration extends Statement {
 	type: "ClassDeclaration"
-	identifier: Identifier
+	id: Identifier
 	extend: Init
 	body: ClassBody
 }
@@ -223,7 +242,7 @@ export interface BlockComment extends Statement {
 
 interface ClassVar extends Expression {
 	private: boolean
-	identifier: Identifier // | ComputedValue
+	id: Identifier // | ComputedValue
 }
 
 
@@ -352,3 +371,35 @@ export interface GroupExpression extends Expression {
   type: "GroupExpression"
   node: Expression
 }
+
+export interface AssignmentPattern extends Expression {
+  type: "AssignmentPattern"
+  operator: TokenType
+  left: Assignee
+  right: Expression
+}
+
+export interface SequenceExpression extends Expression {
+  type: "SequenceExpression"
+  nodes: Expression[]
+}
+
+export interface BaseFunctionExpression extends Expression {
+  async: boolean
+  generator: boolean
+  params: Parameter[]
+}
+
+export interface FunctionExpression extends BaseFunctionExpression {
+  type: "FunctionExpression"
+  body: BlockStatement
+  id: Identifier | null
+}
+
+export interface ArrowFunctionExpression extends BaseFunctionExpression {
+  type: "ArrowFunctionExpression"
+  expression: boolean
+  body: BlockStatement | Expression
+
+}
+
