@@ -1,4 +1,4 @@
-import type { Many } from "@dunes/tools"
+import type { Many } from "@dunes/tools/array"
 
 type BaseType = (
   | "function"

@@ -10,29 +10,36 @@ export class Router {
 	latestView?: View
 
 
-	#views = new Map<string, ViewConst>();
-	get root(): HTMLElement {
-		const root = document.querySelector<HTMLElement>(
-			this.config.root
-		);
-		if (!root) {
-			throw `${this.config.root} was not found`
-		}
-		return root;
-	}
-	get link(): HTMLLinkElement {
-		const link = document.querySelector<HTMLLinkElement>(
-			this.config.rootStyles
-		);
-		if (!link) {
-			throw `${this.config.rootStyles} was not found`
-		}
-		if (link.tagName !== "LINK")
-			throw `${this.config.rootStyles} is not a link`
-		return link;
-	}
+	#views;
 
-	constructor(public config: RouterConfig) {}
+	constructor(public config: RouterConfig) {
+    this.#views = new Map<string, ViewConst>()
+    this.config.pages = config.pages.map(page => {
+      return page
+    })
+  }
+  
+  get root(): HTMLElement {
+    const root = document.querySelector<HTMLElement>(
+      this.config.root
+    );
+    if (!root) {
+      throw `${this.config.root} was not found`
+    }
+    return root;
+  }
+ 
+  get link(): HTMLLinkElement {
+    const link = document.querySelector<HTMLLinkElement>(
+      this.config.rootStyles
+    );
+    if (!link) {
+      throw `${this.config.rootStyles} was not found`
+    }
+    if (link.tagName !== "LINK")
+      throw `${this.config.rootStyles} is not a link`
+    return link;
+  }
 
 	start() {
 		window.onpopstate = () => {
@@ -62,7 +69,13 @@ export class Router {
 	async render(href: string) {
 		const req = new URL(href);
 		const url = new URL(href);
-		await this.config.direct(url, req);
+
+    if (req.pathname.endsWith("/")) {
+      req.pathname = req.pathname.slice(0, -1);
+      url.pathname = url.pathname.slice(0, -1);
+    }
+
+    await this.config.direct(url, req);
 
     if (this.latestURL?.pathname === url.pathname
       || this.latestURL?.pathname === url.pathname + "/index") {
@@ -91,7 +104,7 @@ export class Router {
 
 		const view = new viewConst();
 
-		const desRes = await this.latestView?.willDestroy("load");
+		const desRes = await this.latestView?.willDestroy?.("load");
 		if (desRes) {
 			return await this.go(desRes);
 		}
@@ -100,7 +113,7 @@ export class Router {
 
 	async #reveal(view: View, url: URL, req: URL, type: ViewRevealType) {
     const {scrollTop, scrollLeft} = document.body;
-		const willRes = await view.willShow(type);
+		const willRes = await view.willShow?.(type);
 		if (willRes) {
 			return await this.go(willRes);
 		}
@@ -116,7 +129,11 @@ export class Router {
 		history.pushState("", "", req);
 		this.latestURL = url;
 
-		const hasRes = await view.hasShown(type);
+		const hasRes = await view.hasShown?.(type);
+
+    if (view.getTitle) {
+      document.title = view.getTitle();
+    }
 
     if (url.hash) {
       document.querySelector(url.hash)?.scrollIntoView({

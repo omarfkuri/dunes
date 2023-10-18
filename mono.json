@@ -1,0 +1,59 @@
+{
+  "name": "dunes",
+  "version": "0.0.1",
+  "defaultPackage": {
+    "version": "0.9.1",
+    "type": "module",
+    "license": "MIT",
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "scripts": {
+      "build": "rm -rf lib && tsc && npm version patch"
+    },
+    "keywords": [
+      "javascript",
+      "dom",
+      "query",
+      "typescript"
+    ],
+    "author": "Omar <omarfkuri@gmail.com>",
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/omarfkuri/dunes.git"
+    }
+  },
+  "defaultTsConfig": {
+    "exclude": [
+      "test",
+      "lib"
+    ],
+    "compilerOptions": {
+      "lib": ["ES2020"],
+
+      "outDir": "lib",
+      "declaration": true,
+      "sourceMap": true,
+      "declarationMap": true,
+      
+      "verbatimModuleSyntax": true,
+      "target": "ES2022",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      "useUnknownInCatchVariables": true,
+      "alwaysStrict": true,
+      "noFallthroughCasesInSwitch": true,
+      "noUncheckedIndexedAccess": true,
+      "noImplicitOverride": true,
+      "skipLibCheck": true
+    }
+  }
+}

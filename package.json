@@ -3,9 +3,17 @@
   "private": true,
   "scripts": {
     "build": "echo 'No build script'",
-    "create": "node scripts/create-pack.js"
+    "create": "mono create -n "
   },
+  "type": "module",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@dunes/mono": "^0.9.10"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "description": ""
 }

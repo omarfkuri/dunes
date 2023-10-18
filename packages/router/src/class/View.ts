@@ -13,7 +13,8 @@ export abstract class View {
 
 	abstract content(this: Comp<{}>, {view}: {view: View}, comp: Comp<{}>): JSX.Element
 
-	willShow(type: ViewRevealType): ViewEventRes {}
-	hasShown(type: ViewRevealType): ViewEventRes {}
-	willDestroy(type: ViewRevealType): ViewEventRes {}
+	willShow?(type: ViewRevealType): ViewEventRes;
+	hasShown?(type: ViewRevealType): ViewEventRes;
+	willDestroy?(type: ViewRevealType): ViewEventRes;
+  getTitle?(): string;
 }

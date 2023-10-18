@@ -14,7 +14,7 @@ import type {
 import { copyFile, mkdir, rm } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { WatchDir, readString, trav, writeStr } from "@dunes/sys";
-import { splitLast } from "@dunes/tools";
+import { splitLast } from "@dunes/tools/str";
 import puppeteer from "puppeteer";
 import jsb from "js-beautify";
 import { Bundler, type BundlerConfig } from "@dunes/bundle";
@@ -70,9 +70,14 @@ export class SiteBuilder {
           });
           
           const page = await browser.newPage();
-          await page.goto(options.origin + path, {
+          const res = await page.goto(options.origin + path, {
             waitUntil: 'networkidle2'
           });
+
+          if (res?.status() !== 200) {
+            throw res?.statusText();
+          }
+
           const str = await page.content();
 
           if (!path.endsWith("/index")) {

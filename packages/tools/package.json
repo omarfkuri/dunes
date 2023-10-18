@@ -1,14 +1,81 @@
 {
   "name": "@dunes/tools",
-  "version": "0.9.94",
+  "version": "0.9.98",
   "type": "module",
   "license": "MIT",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "typings": "./lib/index.d.ts",
+  "import": "./lib/index.js",
   "scripts": {
     "build": "rm -rf lib && tsc && npm version patch",
     "test": "ts-node test"
+  },
+  "exports": {
+    ".": {
+      "main": "./lib/index.js",
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    },
+    "./array": {
+      "main": "./lib/array/index.js",
+      "import": "./lib/array/index.js",
+      "types": "./lib/array/index.d.ts"
+    },
+    "./bool": {
+      "main": "./lib/bool/index.js",
+      "import": "./lib/bool/index.js",
+      "types": "./lib/bool/index.d.ts"
+    },
+    "./obj": {
+      "main": "./lib/obj/index.js",
+      "import": "./lib/obj/index.js",
+      "types": "./lib/obj/index.d.ts"
+    },
+    "./random": {
+      "main": "./lib/random/index.js",
+      "import": "./lib/random/index.js",
+      "types": "./lib/random/index.d.ts"
+    },
+    "./regexp": {
+      "main": "./lib/regexp/index.js",
+      "import": "./lib/regexp/index.js",
+      "types": "./lib/regexp/index.d.ts"
+    },
+    "./str": {
+      "main": "./lib/str/index.js",
+      "import": "./lib/str/index.js",
+      "types": "./lib/str/index.d.ts"
+    },
+    "./fix": {
+      "main": "./lib/fix/index.js",
+      "import": "./lib/fix/index.js",
+      "types": "./lib/fix/index.d.ts"
+    },
+    "./unicode": {
+      "main": "./lib/unicode/index.js",
+      "import": "./lib/unicode/index.js",
+      "types": "./lib/unicode/index.d.ts"
+    },
+    "./extra": {
+      "main": "./lib/extra.js",
+      "import": "./lib/extra.js",
+      "types": "./lib/extra.d.ts"
+    },
+    "./types": {
+      "main": "./lib/types/index.js",
+      "import": "./lib/types/index.js",
+      "types": "./lib/types/index.d.ts"
+    },
+    "./types/pack": {
+      "main": "./lib/types/packageJSON.js",
+      "import": "./lib/types/packageJSON.js",
+      "types": "./lib/types/packageJSON.d.ts"
+    },
+    "./types/tsc": {
+      "main": "./lib/types/tsconfigJSON.js",
+      "import": "./lib/types/tsconfigJSON.js",
+      "types": "./lib/types/tsconfigJSON.d.ts"
+    }
   },
   "keywords": [
     "javascript",

@@ -1,4 +1,3 @@
-import "@dunes/types";
 import type { DeepPartial } from "@dunes/tools";
 
 import type { InferType, VerRes, Verifier, VerifierDecl,  } from "./types.js";
@@ -30,7 +29,7 @@ export function isType<T extends any>(
   t: InferType<T>,
 ): x is T {
   if (t === "null") return x === null
-  if (t === "array") Array.isArray(x)
+  if (t === "array") return Array.isArray(x)
   return typeof x === t;
 }
 

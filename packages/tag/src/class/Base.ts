@@ -1,4 +1,4 @@
-import { isConstructor, isNone } from "@dunes/tools";
+import { isConstructor, isNone } from "@dunes/tools/bool";
 import { Content } from "./Content.js";
 import type { 
   Descendants, Properties, Template, 
